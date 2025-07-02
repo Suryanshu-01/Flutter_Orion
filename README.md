@@ -1,5 +1,5 @@
 <H2>This is Our First big project</H2>
-<br><h3>TEAM MEMBERS ARE:-</h3>
+<h3>TEAM MEMBERS ARE:-</h3>
 Kumar Suryanshu
 <br>
 Prakhar Srivastava
