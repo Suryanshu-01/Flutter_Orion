@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../dashboard/dashboard_screen.dart';
+import '../admin/parent_dashboard.dart';
 
 class SelectUser extends StatelessWidget {
   const SelectUser({super.key});
@@ -16,14 +18,24 @@ class SelectUser extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                // TODO: Go to user screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DashboardScreen(),
+                  ),
+                );
               },
               child: const Text("Continue as User"),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // TODO: Go to admin screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ParentDashboard(),
+                  ),
+                );
               },
               child: const Text("Continue as Admin"),
             ),
