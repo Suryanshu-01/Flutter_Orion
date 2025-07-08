@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:orion/screens/authentication/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:orion/screens/user/authentication/splash_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -17,7 +20,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SplashScreen(), // You can change this later to navigate after splash
+      home: const SplashScreen(),
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../dashboard/dashboard_screen.dart';
-import '../admin/parent_dashboard.dart';
+import 'package:orion/screens/user/authentication/wrapper.dart';
 
 class SelectUser extends StatelessWidget {
   const SelectUser({super.key});
@@ -17,12 +16,10 @@ class SelectUser extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
+              onPressed:() async{
+                await Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const DashboardScreen(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const Wrapper()),
                 );
               },
               child: const Text("Continue as User"),
@@ -30,12 +27,7 @@ class SelectUser extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ParentDashboard(),
-                  ),
-                );
+                // TODO: Go to admin screen
               },
               child: const Text("Continue as Admin"),
             ),
