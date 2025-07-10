@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.orion">
+    package="com.example.orion"> <!-- replace with your actual package name -->
 
-    <!-- Required to query text-handling activities -->
+    <!-- Required for querying text data via intent -->
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT" />
@@ -11,7 +11,7 @@
 
     <application
         android:label="orion"
-        android:name="${applicationName}"
+        android:name="${applicationName}" 
         android:icon="@mipmap/ic_launcher">
 
         <activity
@@ -24,6 +24,7 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
 
+            <!-- Optional: Set a fallback theme -->
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme" />
@@ -34,14 +35,11 @@
             </intent-filter>
         </activity>
 
-        <!-- ✅ Firebase notification icon support -->
+        <!-- Firebase config (added via google-services.json, no need to touch here) -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@mipmap/ic_launcher" />
 
-        <!-- ✅ Required for Flutter v2 embedding -->
-        <meta-data
-            android:name="flutterEmbedding"
-            android:value="2" />
     </application>
+
 </manifest>

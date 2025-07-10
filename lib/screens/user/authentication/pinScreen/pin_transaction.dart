@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:orion/screens/user/dashboard/dashboard_screen.dart'; // ✅ Make sure this path is correct
+import 'package:orion/screens/user/dashboard/dashboard_screen.dart'; // ✅ Ensure correct path
 
 class SetTransactionPinScreen extends StatefulWidget {
   const SetTransactionPinScreen({super.key});
@@ -37,18 +36,12 @@ class _SetTransactionPinScreenState extends State<SetTransactionPinScreen> {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) throw Exception("User not logged in");
 
-      // Save to Firestore
       await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
         'transactionPin': pin,
       }, SetOptions(merge: true));
 
-      // Save locally (optional)
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('transactionPin', pin);
-
       if (!mounted) return;
 
-      // ✅ Navigate to Dashboard directly (not using named routes)
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const DashboardScreen()),

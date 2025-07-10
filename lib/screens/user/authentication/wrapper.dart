@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:orion/screens/user/authentication/signup_screen.dart';
-import 'package:orion/screens/user/authentication/pinScreen/pin_loginScreen.dart';
 import 'package:orion/screens/user/authentication/user_deatils.dart';
-import 'package:orion/screens/user/transaction/get_phoneNumber.dart';
+import 'package:orion/screens/user/authentication/pinScreen/pin_loginScreen.dart';
+import 'package:orion/screens/user/authentication/pinScreen/pin_varification.dart'; // ✅ Rename for clarity
 
 class Wrapper extends StatefulWidget {
   const Wrapper({super.key});
@@ -19,37 +19,35 @@ class _WrapperState extends State<Wrapper> {
     return Scaffold(
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+        builder: (context, authSnapshot) {
+          if (authSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // User is NOT signed in
-          if (!snapshot.hasData) {
-            return const SignupScreen();
-          }
+          final user = authSnapshot.data;
 
-          final user = snapshot.data;
+          // ✅ Not logged in → go to Signup
+          if (user == null) return const SignupScreen();
 
-          // User is signed in → check Firestore
+          // ✅ User logged in → check Firestore document
           return FutureBuilder<DocumentSnapshot>(
-            future: FirebaseFirestore.instance.collection('users').doc(user!.uid).get(),
+            future: FirebaseFirestore.instance.collection('users').doc(user.uid).get(),
             builder: (context, userSnapshot) {
               if (userSnapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
 
               if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-                return const UserDetailsScreen(); // ✅ go here if doc missing
+                return const UserDetailsScreen(); // 🔹 No profile found
               }
 
               final userData = userSnapshot.data!.data() as Map<String, dynamic>?;
 
-              if (userData != null && userData.containsKey('loginPin')) {
-                return const GetPhoneNumber(); // ✅ Go to PIN verification
-              } else {
-                return const SetLoginPinScreen(); // ✅ Go to PIN setup
+              if (userData == null || !userData.containsKey('loginPin')) {
+                return const SetLoginPinScreen(); // 🔹 User hasn't set login PIN yet
               }
+
+              return const LoginPinScreen(); // 🔹 All good — verify login PIN
             },
           );
         },

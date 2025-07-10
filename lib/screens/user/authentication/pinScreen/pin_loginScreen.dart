@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'pin_transaction.dart'; // import your next screen
 
 class SetLoginPinScreen extends StatefulWidget {
@@ -37,14 +36,9 @@ class _SetLoginPinScreenState extends State<SetLoginPinScreen> {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) throw Exception("User not logged in");
 
-      // Save to Firestore
       await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
         'loginPin': pin,
       }, SetOptions(merge: true));
-
-      // Optional: Save locally
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('loginPin', pin);
 
       if (!mounted) return;
 

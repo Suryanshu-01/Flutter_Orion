@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pinput/pinput.dart';
-import 'package:orion/screens/user/dashboard/dashboard_screen.dart'; // ✅ Make sure this path is correct
+import 'package:orion/screens/user/transaction/get_phonenumber1.dart';
 
 class LoginPinScreen extends StatefulWidget {
   const LoginPinScreen({super.key});
@@ -15,19 +16,41 @@ class _LoginPinScreenState extends State<LoginPinScreen> {
   bool _isError = false;
 
   Future<void> _verifyPin(String enteredPin) async {
-    final prefs = await SharedPreferences.getInstance();
-    final storedPin = prefs.getString('loginPin');
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        _showError("User not logged in.");
+        return;
+      }
 
-    if (enteredPin == storedPin) {
-      // ✅ Navigate to Dashboard
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const DashboardScreen()),
-      );
-    } else {
-      setState(() => _isError = true);
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      final data = userDoc.data();
+
+      if (data == null || !data.containsKey('loginPin')) {
+        _showError("No login PIN found. Please register again.");
+        return;
+      }
+
+      final storedPin = data['loginPin'];
+
+      if (enteredPin == storedPin) {
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const GetPhoneNumber()),
+        );
+      } else {
+        setState(() => _isError = true);
+      }
+    } catch (e) {
+      _showError("Error verifying PIN: ${e.toString()}");
     }
+  }
+
+  void _showError(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+    );
   }
 
   @override

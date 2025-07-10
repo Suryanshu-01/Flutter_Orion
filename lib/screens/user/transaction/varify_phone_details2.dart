@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:orion/screens/user/transaction/get_amount.dart';
+import 'package:orion/screens/user/transaction/get_amount3.dart';
 
 class VerifyPhoneDetails extends StatefulWidget {
   final String phone;
@@ -30,9 +30,9 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
       errorText = '';
     });
 
-    if (phoneNumber.length != 10) {
+    if (phoneNumber.length != 10 || !RegExp(r'^\d{10}$').hasMatch(phoneNumber)) {
       setState(() {
-        errorText = "Phone number must be exactly 10 digits.";
+        errorText = "Please enter a valid 10-digit phone number.";
         isLoading = false;
       });
       return;
@@ -100,15 +100,25 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
                       style: const TextStyle(color: Colors.red, fontSize: 16),
                     ),
                   const Spacer(),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: userFound ? _goToNextScreen : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: userFound ? Colors.blue : Colors.white,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: userFound ? _goToNextScreen : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: userFound ? Colors.blue : Colors.grey,
+                          ),
+                          child: const Text("Pay"),
+                        ),
                       ),
-                      child: const Text("Pay"),
-                    ),
+                      const SizedBox(width: 10),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Edit"),
+                      )
+                    ],
                   ),
                 ],
               ),

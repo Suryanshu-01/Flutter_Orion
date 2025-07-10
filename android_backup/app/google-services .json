@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "3346416636",
+    "project_id": "orion-cc7de",
+    "storage_bucket": "orion-cc7de.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3346416636:android:c49b30418a332e5e05e879",
+        "android_client_info": {
+          "package_name": "com.example.orion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyvNJ5K9dj6M0sKQVGn_yeBVhfA_uKfao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
