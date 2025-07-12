@@ -73,6 +73,15 @@ flutter:
     - assets/animations/Flow_1.json
     - assets/images/loginScreen.png
     - assets/images/otpScreen.png
+    - assets/images/gojo_card.png
+    - assets/images/Grain_Cyan.png
+    - assets/images/guts_card.png
+    - assets/images/power_card.png
+    - assets/images/purple_gradient.png
+    - assets/images/star_card.png
+    - assets/images/toji_fushigiro.png
+    - assets/images/wall_titan.png
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

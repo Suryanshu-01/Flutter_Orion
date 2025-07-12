@@ -1,5 +1,3 @@
 {
-                "java.configuration.updateBuildConfiguration": "interactive",
-                "cmake.sourceDirectory": "C:/Users/LENOVO/Desktop/fempay/orion/linux",
-                "dart.flutterSdkPath": "C:\\src\\flutter"
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

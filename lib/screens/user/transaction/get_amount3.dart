@@ -19,8 +19,13 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
   bool _isValidAmount = false;
   final user = FirebaseAuth.instance.currentUser;
 
-  // 🆕 Payment type options
-  final List<String> _paymentTypes = ['Food', 'Travel', 'Entertainment', 'Education', 'Miscellaneous'];
+  final List<String> _paymentTypes = [
+    'Food',
+    'Travel',
+    'Entertainment',
+    'Education',
+    'Miscellaneous',
+  ];
   String _selectedType = 'Miscellaneous';
 
   @override
@@ -33,7 +38,10 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
     if (user == null) return;
 
     try {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .get();
       final data = doc.data();
       if (data != null && data['walletBalance'] != null) {
         setState(() {
@@ -53,16 +61,17 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
   void _validateAmount(String value) {
     final double? enteredAmount = double.tryParse(value);
     setState(() {
-      _isValidAmount = enteredAmount != null &&
+      _isValidAmount =
+          enteredAmount != null &&
           enteredAmount > 0 &&
           enteredAmount <= _walletBalance;
     });
   }
 
   void _showSnackBar(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: Colors.red),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red));
   }
 
   void _goToPinVerification() {
@@ -80,7 +89,7 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
         builder: (_) => VerifyTransactionPinScreen(
           receiverPhone: widget.receiverPhone,
           amount: amount,
-          paymentType: _selectedType, // Pass type to next screen
+          paymentType: _selectedType,
         ),
       ),
     );
@@ -89,62 +98,120 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Enter Amount")),
+      appBar: AppBar(
+        title: const Text(
+          "Enter Amount",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.cyan.shade700,
+        elevation: 0,
+      ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  Text(
-                    "Wallet Balance: ₹$_walletBalance",
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: _amountController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: const InputDecoration(
-                      labelText: "Enter amount",
-                      border: OutlineInputBorder(),
+          ? const Center(child: CircularProgressIndicator(color: Colors.cyan))
+          : Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.cyan.shade700, Colors.cyan.shade100],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.95),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
                     ),
-                    onChanged: _validateAmount,
-                  ),
-                  const SizedBox(height: 20),
-
-                  // 🆕 Dropdown for payment type
-                  DropdownButtonFormField<String>(
-                    value: _selectedType,
-                    items: _paymentTypes.map((type) {
-                      return DropdownMenuItem<String>(
-                        value: type,
-                        child: Text(type),
-                      );
-                    }).toList(),
-                    decoration: const InputDecoration(
-                      labelText: "Payment Type",
-                      border: OutlineInputBorder(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Wallet Balance: ₹$_walletBalance",
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        TextField(
+                          controller: _amountController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          decoration: InputDecoration(
+                            labelText: "Enter Amount",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onChanged: _validateAmount,
+                        ),
+                        const SizedBox(height: 20),
+                        DropdownButtonFormField<String>(
+                          value: _selectedType,
+                          decoration: InputDecoration(
+                            labelText: "Payment Type",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          items: _paymentTypes.map((type) {
+                            return DropdownMenuItem<String>(
+                              value: type,
+                              child: Text(type),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                _selectedType = value;
+                              });
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 30),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: (_isValidAmount && !_isLoading)
+                                ? _goToPinVerification
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: _isValidAmount
+                                  ? Colors.cyan.shade700
+                                  : Colors.grey,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              "Continue",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    onChanged: (value) {
-                      if (value != null) {
-                        setState(() {
-                          _selectedType = value;
-                        });
-                      }
-                    },
                   ),
-
-                  const SizedBox(height: 30),
-                  ElevatedButton(
-                    onPressed: (_isValidAmount && !_isLoading) ? _goToPinVerification : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _isValidAmount ? Colors.blue : Colors.grey,
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                    ),
-                    child: const Text("Continue", style: TextStyle(fontSize: 18)),
-                  )
-                ],
+                ),
               ),
             ),
     );

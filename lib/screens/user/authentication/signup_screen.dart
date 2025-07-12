@@ -33,7 +33,6 @@ class _SignupScreenState extends State<SignupScreen> {
         password: password,
       );
 
-      // ✅ Navigate to UserDetailsScreen after successful signup
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -58,7 +57,6 @@ class _SignupScreenState extends State<SignupScreen> {
     } catch (e) {
       _showError("Error: ${e.toString()}");
     } finally {
-      // ✅ Fix: Only call setState if widget is still mounted
       if (mounted) {
         setState(() => _isLoading = false);
       }
@@ -74,54 +72,73 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.cyan[50],
       appBar: AppBar(
         title: const Text("Sign Up"),
-        backgroundColor: const Color(0xFF0F2027),
+        backgroundColor: Colors.cyan[800],
+        elevation: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Image.asset(
-                    'assets/images/loginScreen.png',
-                    height: 150,
-                  ),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 36.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Image.asset(
+                  'assets/images/loginScreen.png',
+                  height: 150,
                 ),
-                const SizedBox(height: 30),
-                TextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: "Email",
-                    border: OutlineInputBorder(),
+              ),
+              const SizedBox(height: 40),
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  labelText: "Email",
+                  prefixIcon: const Icon(Icons.email_outlined),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: "Password",
-                    border: OutlineInputBorder(),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: "Password",
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
-                const SizedBox(height: 30),
-                _isLoading
+              ),
+              const SizedBox(height: 30),
+              SizedBox(
+                height: 55,
+                child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : ElevatedButton(
                         onPressed: signup,
                         style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          backgroundColor: const Color(0xFF0F2027),
+                          backgroundColor: Colors.cyan[800],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          textStyle: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        child: const Text("Sign Up", style: TextStyle(fontSize: 18)),
+                        child: const Text("Create Account"),
                       ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

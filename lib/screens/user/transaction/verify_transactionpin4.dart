@@ -1,25 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'transfer_screen5.dart'; // Make sure this contains TransferProcessingScreen
+import 'transfer_screen5.dart';
 
 class VerifyTransactionPinScreen extends StatefulWidget {
   final String receiverPhone;
   final double amount;
-  final String paymentType; // ✅ Added
+  final String paymentType;
 
   const VerifyTransactionPinScreen({
     super.key,
     required this.receiverPhone,
     required this.amount,
-    required this.paymentType, // ✅ Added
+    required this.paymentType,
   });
 
   @override
-  State<VerifyTransactionPinScreen> createState() => _VerifyTransactionPinScreenState();
+  State<VerifyTransactionPinScreen> createState() =>
+      _VerifyTransactionPinScreenState();
 }
 
-class _VerifyTransactionPinScreenState extends State<VerifyTransactionPinScreen> {
+class _VerifyTransactionPinScreenState
+    extends State<VerifyTransactionPinScreen> {
   final TextEditingController _pinController = TextEditingController();
   bool isLoading = false;
 
@@ -35,7 +37,10 @@ class _VerifyTransactionPinScreenState extends State<VerifyTransactionPinScreen>
     setState(() => isLoading = true);
 
     try {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .get();
       final data = doc.data();
       final correctPin = data?['transactionPin'];
 
@@ -46,7 +51,7 @@ class _VerifyTransactionPinScreenState extends State<VerifyTransactionPinScreen>
             builder: (_) => TransferProcessingScreen(
               receiverPhone: widget.receiverPhone,
               amount: widget.amount,
-              paymentType: widget.paymentType, // ✅ Pass it here
+              paymentType: widget.paymentType,
             ),
           ),
         );
@@ -69,39 +74,100 @@ class _VerifyTransactionPinScreenState extends State<VerifyTransactionPinScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Enter Transaction PIN")),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const Text(
-              "Enter your 4-digit transaction PIN to proceed",
-              style: TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 30),
-            TextField(
-              controller: _pinController,
-              keyboardType: TextInputType.number,
-              obscureText: true,
-              maxLength: 4,
-              decoration: const InputDecoration(
-                labelText: "Transaction PIN",
-                border: OutlineInputBorder(),
+      appBar: AppBar(
+        title: const Text(
+          "Enter Transaction PIN",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.cyan.shade700,
+        elevation: 0,
+      ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.cyan.shade700, Colors.cyan.shade100],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.95),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  const Text(
+                    "Enter your 4-digit transaction PIN to proceed",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 30),
+                  TextField(
+                    controller: _pinController,
+                    keyboardType: TextInputType.number,
+                    obscureText: true,
+                    maxLength: 4,
+                    decoration: InputDecoration(
+                      labelText: "Transaction PIN",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: isLoading ? null : _verifyPin,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isLoading
+                            ? Colors.grey
+                            : Colors.cyan.shade700,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: isLoading
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : const Text(
+                              "Pay",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: isLoading ? null : _verifyPin,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-              ),
-              child: isLoading
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text("Pay", style: TextStyle(fontSize: 18)),
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:orion/screens/user/authentication/pinScreen/pin_loginScreen.dart';
+
 class UserDetailsScreen extends StatefulWidget {
   const UserDetailsScreen({super.key});
 
@@ -35,9 +36,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
   Future<bool> _saveDetails() async {
     if (!_formKey.currentState!.validate() || _dob == null || _gender == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
       return false;
     }
 
@@ -55,14 +56,14 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         'gender': _gender,
         'uid': user.uid,
         'loginPin': null,
-        'walletBalance': 1000.0 // initialize pin field if needed
+        'walletBalance': 1000.0,
       }, SetOptions(merge: true));
 
       return true;
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       return false;
     } finally {
       setState(() => _isLoading = false);
@@ -72,77 +73,121 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('User Details')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
-                validator: (v) => v == null || v.isEmpty ? 'Enter name' : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (v) => v == null || v.isEmpty ? 'Enter email' : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _phoneController,
-                decoration: const InputDecoration(labelText: 'Phone'),
-                keyboardType: TextInputType.phone,
-                validator: (v) => v == null || v.isEmpty ? 'Enter phone' : null,
-              ),
-              const SizedBox(height: 12),
-              ListTile(
-                title: Text(
-                  _dob == null
-                      ? 'Select Date of Birth'
-                      : 'DOB: ${_dob!.toLocal().toString().split(' ')[0]}',
+      backgroundColor: Colors.cyan[50],
+      appBar: AppBar(
+        title: const Text('User Details'),
+        backgroundColor: Colors.cyan[800],
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                // Name
+                TextFormField(
+                  controller: _nameController,
+                  decoration: _inputDecoration("Name", Icons.person),
+                  validator: (v) =>
+                      v == null || v.isEmpty ? 'Enter name' : null,
                 ),
-                trailing: const Icon(Icons.calendar_today),
-                onTap: () => _pickDate(context),
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                value: _gender,
-                decoration: const InputDecoration(labelText: 'Gender'),
-                items: ['Male', 'Female', 'Other']
-                    .map((g) => DropdownMenuItem(
-                          value: g,
-                          child: Text(g),
-                        ))
-                    .toList(),
-                onChanged: (val) => setState(() => _gender = val),
-                validator: (v) => v == null ? 'Select gender' : null,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _isLoading
-                    ? null
-                    : () async {
-                        final success = await _saveDetails();
-                        if (success) {
-                          if (!mounted) return;
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (_) => const SetLoginPinScreen()),
-                          );
-                        }
-                      },
-                child: _isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text('Next'),
-              ),
-            ],
+                const SizedBox(height: 20),
+                // Email
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: _inputDecoration("Email", Icons.email_outlined),
+                  validator: (v) =>
+                      v == null || v.isEmpty ? 'Enter email' : null,
+                ),
+                const SizedBox(height: 20),
+                // Phone
+                TextFormField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: _inputDecoration("Phone", Icons.phone),
+                  validator: (v) =>
+                      v == null || v.isEmpty ? 'Enter phone' : null,
+                ),
+                const SizedBox(height: 20),
+                // DOB Picker
+                ListTile(
+                  tileColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  title: Text(
+                    _dob == null
+                        ? 'Select Date of Birth'
+                        : 'DOB: ${_dob!.toLocal().toString().split(' ')[0]}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  trailing: const Icon(Icons.calendar_today),
+                  onTap: () => _pickDate(context),
+                ),
+                const SizedBox(height: 20),
+                // Gender Dropdown
+                DropdownButtonFormField<String>(
+                  value: _gender,
+                  decoration: _inputDecoration("Gender", Icons.person_outline),
+                  items: ['Male', 'Female', 'Other']
+                      .map((g) => DropdownMenuItem(value: g, child: Text(g)))
+                      .toList(),
+                  onChanged: (val) => setState(() => _gender = val),
+                  validator: (v) => v == null ? 'Select gender' : null,
+                ),
+                const SizedBox(height: 40),
+                // Next Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : ElevatedButton(
+                          onPressed: () async {
+                            final success = await _saveDetails();
+                            if (success) {
+                              if (!mounted) return;
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const SetLoginPinScreen(),
+                                ),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.cyan[800],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text(
+                            'Next',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      prefixIcon: Icon(icon),
+      filled: true,
+      fillColor: Colors.white,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
     );
   }
 }
