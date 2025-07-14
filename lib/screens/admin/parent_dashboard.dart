@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ParentDashboard extends StatefulWidget {
-  const ParentDashboard({Key? key}) : super(key: key);
+  const ParentDashboard({super.key});
 
   @override
   State<ParentDashboard> createState() => _ParentDashboardState();
@@ -42,12 +42,14 @@ class _ParentDashboardState extends State<ParentDashboard> {
                 context: context,
                 builder: (context) => AlertDialog(
                   title: const Text("Notifications"),
-                  content: const Text("Real-time transaction alerts appear here."),
+                  content: const Text(
+                    "Real-time transaction alerts appear here.",
+                  ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
                       child: const Text("Close"),
-                    )
+                    ),
                   ],
                 ),
               );
@@ -58,10 +60,7 @@ class _ParentDashboardState extends State<ParentDashboard> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Colors.cyan.shade700,
-              Colors.cyan.shade100,
-            ],
+            colors: [Colors.cyan.shade700, Colors.cyan.shade100],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -142,10 +141,10 @@ class _ParentDashboardState extends State<ParentDashboard> {
               value: selectedFilter,
               icon: Icon(Icons.arrow_drop_down, color: Colors.cyan.shade700),
               items: filters
-                  .map((filter) => DropdownMenuItem(
-                        value: filter,
-                        child: Text(filter),
-                      ))
+                  .map(
+                    (filter) =>
+                        DropdownMenuItem(value: filter, child: Text(filter)),
+                  )
                   .toList(),
               onChanged: (value) {
                 if (value != null) {
@@ -156,7 +155,7 @@ class _ParentDashboardState extends State<ParentDashboard> {
               },
             ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -167,7 +166,9 @@ class _ParentDashboardState extends State<ParentDashboard> {
       children: transactions.map((tx) {
         return Card(
           color: Colors.white.withOpacity(0.95),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           elevation: 2,
           margin: const EdgeInsets.symmetric(vertical: 6),
           child: ListTile(
@@ -192,9 +193,11 @@ class _ParentDashboardState extends State<ParentDashboard> {
       child: SwitchListTile(
         activeColor: Colors.cyan.shade700,
         title: const Text("Lock All Payments"),
-        subtitle: Text(paymentLocked
-            ? "Payments are currently locked"
-            : "Payments are allowed"),
+        subtitle: Text(
+          paymentLocked
+              ? "Payments are currently locked"
+              : "Payments are allowed",
+        ),
         value: paymentLocked,
         onChanged: (value) {
           setState(() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orion/screens/admin/parent_dashboard.dart';
 import 'package:orion/screens/user/authentication/wrapper.dart';
 
 class SelectUser extends StatelessWidget {
@@ -85,7 +86,10 @@ class SelectUser extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      // TODO: Implement Admin navigation
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => ParentDashboard()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.cyan.shade400,
