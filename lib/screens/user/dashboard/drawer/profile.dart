@@ -7,7 +7,8 @@ import 'settings.dart';
 import '../../authentication/select_user.dart';
 import 'changetransaction.dart';
 import 'changelogin.dart';
-import '../../transaction/qr/qr_generater.dart'; // ✅ Import your QR code screen
+import '../QR/qr_generate.dart';
+// ✅ Import your QR code screen
 
 class ProfileManager extends StatefulWidget {
   const ProfileManager({super.key});
@@ -32,7 +33,10 @@ class _ProfileManagerState extends State<ProfileManager> {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
         final data = doc.data();
         if (data != null) {
           setState(() {
@@ -65,7 +69,14 @@ class _ProfileManagerState extends State<ProfileManager> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.cyan[800],
-        title: const Text("Profile", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+        title: const Text(
+          "Profile",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.menu, color: Colors.white),
@@ -78,14 +89,22 @@ class _ProfileManagerState extends State<ProfileManager> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [Colors.cyan[800]!, Colors.cyan[400]!]),
+                gradient: LinearGradient(
+                  colors: [Colors.cyan[800]!, Colors.cyan[400]!],
+                ),
               ),
-              child: const Text("Profile", style: TextStyle(color: Colors.white, fontSize: 24)),
+              child: const Text(
+                "Profile",
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.home),
               title: const Text("Home"),
-              onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const DashboardScreen())),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const DashboardScreen()),
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.person),
@@ -95,17 +114,26 @@ class _ProfileManagerState extends State<ProfileManager> {
             ListTile(
               leading: const Icon(Icons.admin_panel_settings),
               title: const Text("Admin/User"),
-              onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const SelectUser())),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const SelectUser()),
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text("Settings"),
-              onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SettingsUser())),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => SettingsUser()),
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.info_outline),
               title: const Text("About Us"),
-              onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const AboutUs())),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const AboutUs()),
+              ),
             ),
           ],
         ),
@@ -113,16 +141,26 @@ class _ProfileManagerState extends State<ProfileManager> {
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [Colors.cyan[700]!, Colors.white], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+          gradient: LinearGradient(
+            colors: [Colors.cyan[700]!, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: isLoading
-                ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                ? const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  )
                 : Column(
                     children: [
-                      const Icon(Icons.account_circle, size: 100, color: Colors.white),
+                      const Icon(
+                        Icons.account_circle,
+                        size: 100,
+                        color: Colors.white,
+                      ),
                       const SizedBox(height: 20),
                       Container(
                         width: double.infinity,
@@ -131,7 +169,11 @@ class _ProfileManagerState extends State<ProfileManager> {
                           color: Colors.white.withOpacity(0.95),
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
-                            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 5)),
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
                           ],
                         ),
                         child: Column(
@@ -151,19 +193,30 @@ class _ProfileManagerState extends State<ProfileManager> {
                           settingsTile(
                             label: "Change Transaction PIN",
                             icon: Icons.lock_outline,
-                            onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Changetransaction())),
+                            onTap: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => Changetransaction(),
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 20),
                           settingsTile(
                             label: "Change Login PIN",
                             icon: Icons.lock_outline,
-                            onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Changelogin())),
+                            onTap: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (_) => Changelogin()),
+                            ),
                           ),
                           const SizedBox(height: 20),
                           settingsTile(
                             label: "Show My QR Code",
                             icon: Icons.qr_code,
-                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GenerateQrCodeScreen())),
+                            onTap: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (_) => QrGenerate()),
+                            ),
                           ),
                         ],
                       ),
@@ -181,15 +234,29 @@ class _ProfileManagerState extends State<ProfileManager> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(color: Colors.black54, fontWeight: FontWeight.bold, fontSize: 14)),
+          Text(
+            title,
+            style: const TextStyle(
+              color: Colors.black54,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text(value, style: const TextStyle(color: Colors.black87, fontSize: 16)),
+          Text(
+            value,
+            style: const TextStyle(color: Colors.black87, fontSize: 16),
+          ),
         ],
       ),
     );
   }
 
-  Widget settingsTile({required String label, required IconData icon, required VoidCallback onTap}) {
+  Widget settingsTile({
+    required String label,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -198,13 +265,24 @@ class _ProfileManagerState extends State<ProfileManager> {
           color: Colors.white.withOpacity(0.95),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 5)),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
           ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(fontSize: 16, color: Colors.black87, fontWeight: FontWeight.w500)),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             Icon(icon, color: Colors.cyan),
           ],
         ),

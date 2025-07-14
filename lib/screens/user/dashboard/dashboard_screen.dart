@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../dashboard/drawer/profile.dart';
 import 'package:orion/screens/user/dashboard/drawer/aboutus.dart';
 import '../authentication/select_user.dart';
-import 'qr_scanner.dart';
 import '../transaction/get_phonenumber1.dart';
 import 'package:orion/screens/user/dashboard/drawer/settings.dart';
 import 'OrionCard/orionpage.dart';
-import 'package:orion/screens/user/features/transactionHistory.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -151,12 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             _buildCard(),
             const SizedBox(height: 20),
             _buildGrid(context, [
-              _buildFeature(context, Icons.qr_code_2, "QR Code", () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const QrScanner()),
-                );
-              }),
+              _buildFeature(context, Icons.qr_code_2, "QR Code", () {}),
               _buildFeature(context, Icons.send_to_mobile, "Transfer", () {
                 Navigator.push(
                   context,
@@ -167,12 +159,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 context,
                 Icons.account_balance_wallet,
                 "Balance",
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const TransactionHistoryScreen(),
-                  ),
-                ),
+                () => _handleClick("Balance"),
               ),
             ]),
             const SizedBox(height: 20),
