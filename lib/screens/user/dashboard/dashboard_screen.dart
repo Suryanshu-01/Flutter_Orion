@@ -9,6 +9,7 @@ import 'qr_scanner.dart';
 import '../transaction/get_phonenumber1.dart';
 import 'package:orion/screens/user/dashboard/drawer/settings.dart';
 import 'OrionCard/orionpage.dart';
+import 'package:orion/screens/user/features/transactionHistory.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -166,7 +167,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 context,
                 Icons.account_balance_wallet,
                 "Balance",
-                () => _handleClick("Balance"),
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TransactionHistoryScreen(),
+                  ),
+                ),
               ),
             ]),
             const SizedBox(height: 20),

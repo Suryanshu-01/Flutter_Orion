@@ -7,7 +7,7 @@ plugins {
     id("com.android.application") apply false
     id("org.jetbrains.kotlin.android") apply false
     // id("com.google.gms.google-services") version "4.4.1" apply false 
-    id("com.google.gms.google-services") version "4.4.3" apply false// ✅ Use exact version here only
+    id("com.google.gms.google-services") version "4.3.15" apply false// ✅ Use exact version here only
 }
 
 allprojects {

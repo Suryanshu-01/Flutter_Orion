@@ -7,13 +7,13 @@ import 'payment_success6.dart';
 class TransferProcessingScreen extends StatefulWidget {
   final String receiverPhone;
   final double amount;
-  final String paymentType; // ✅ Added
+  final String paymentType;
 
   const TransferProcessingScreen({
     super.key,
     required this.receiverPhone,
     required this.amount,
-    required this.paymentType, // ✅ Added
+    required this.paymentType,
   });
 
   @override
@@ -51,7 +51,6 @@ class _TransferProcessingScreenState extends State<TransferProcessingScreen> {
         final senderSnap = await transaction.get(senderRef);
         if (!senderSnap.exists) throw Exception("Sender not found");
 
-        // Parse sender balance safely
         final dynamic senderRaw = senderSnap['walletBalance'];
         double senderBalance;
         if (senderRaw is int) {
@@ -78,7 +77,6 @@ class _TransferProcessingScreenState extends State<TransferProcessingScreen> {
         final receiverDoc = receiverQuery.docs.first;
         final receiverRef = receiverDoc.reference;
 
-        // Parse receiver balance safely
         final dynamic receiverRaw = receiverDoc['walletBalance'];
         double receiverBalance;
         if (receiverRaw is int) {
@@ -95,42 +93,29 @@ class _TransferProcessingScreenState extends State<TransferProcessingScreen> {
         transaction.update(senderRef, {'walletBalance': senderBalance - amount});
         transaction.update(receiverRef, {'walletBalance': receiverBalance + amount});
 
-        // Record transaction details
+        // Prepare transaction details
         final now = DateTime.now();
         final today = DateFormat('yyyy-MM-dd').format(now);
         final time = DateFormat('HH:mm:ss').format(now);
         final transactionId = firestore.collection('transactions').doc().id;
 
-        // Debit Entry
-        transaction.set(
-          firestore.collection('transactions').doc('${transactionId}_debit'),
-          {
-            'transactionId': transactionId,
-            'from': sender.uid,
-            'to': receiverDoc.id,
-            'amount': amount,
-            'date': today,
-            'time': time,
-            'type': 'debit',
-            'status': 'success',
-            'category': widget.paymentType, // ✅ Log payment type
-          },
-        );
+        final transactionData = {
+          'transactionId': transactionId,
+          'from': sender.uid,
+          'to': receiverDoc.id,
+          'participants': [sender.uid, receiverDoc.id], // ✅ Key for easy querying
+          'amount': amount,
+          'date': today,
+          'time': time,
+          'type': 'transfer',
+          'status': 'success',
+          'category': widget.paymentType,
+        };
 
-        // Credit Entry
+        // Save single transaction record
         transaction.set(
-          firestore.collection('transactions').doc('${transactionId}_credit'),
-          {
-            'transactionId': transactionId,
-            'from': sender.uid,
-            'to': receiverDoc.id,
-            'amount': amount,
-            'date': today,
-            'time': time,
-            'type': 'credit',
-            'status': 'success',
-            'category': widget.paymentType, // ✅ Log payment type
-          },
+          firestore.collection('transactions').doc(transactionId),
+          transactionData,
         );
 
         return true;
