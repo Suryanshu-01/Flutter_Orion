@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orion/screens/user/features/transactionHistory.dart';
 
 class ParentDashboard extends StatefulWidget {
   const ParentDashboard({super.key});
@@ -76,6 +77,29 @@ class _ParentDashboardState extends State<ParentDashboard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildExpenditureSummary(),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.cyan.shade700,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const TransactionHistoryScreen(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  "Track your child's expenses",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
               const SizedBox(height: 20),
               _buildFilterDropdown(),
               const SizedBox(height: 10),
