@@ -75,28 +75,42 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Transaction History")),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _fetchTransactions(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF232526), // dark gray
+              Color(0xFF0f2027), // almost black
+              Color(0xFF000000), // black
+            ],
+          ),
+        ),
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: _fetchTransactions(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(child: Text("Error fetching transactions"));
-          }
+            if (snapshot.hasError || !snapshot.hasData) {
+              return const Center(child: Text("Error fetching transactions"));
+            }
 
-          final transactions = snapshot.data!;
-          if (transactions.isEmpty) {
-            return const Center(child: Text("No transactions yet"));
-          }
+            final transactions = snapshot.data!;
+            if (transactions.isEmpty) {
+              return const Center(child: Text("No transactions yet"));
+            }
 
-          return ListView.builder(
-            itemCount: transactions.length,
-            itemBuilder: (context, index) =>
-                _buildTransactionTile(transactions[index]),
-          );
-        },
+            return ListView.builder(
+              itemCount: transactions.length,
+              itemBuilder: (context, index) =>
+                  _buildTransactionTile(transactions[index]),
+            );
+          },
+        ),
       ),
     );
   }

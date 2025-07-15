@@ -93,8 +93,17 @@ class _VerifyPhoneDetailsQRState extends State<VerifyPhoneDetailsQR> {
       ),
       body: Container(
         width: double.infinity,
-        height: double.infinity,
-        color: Colors.white, // White background
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF232526), // dark gray
+              Color(0xFF0f2027), // almost black
+              Color(0xFF000000), // black
+            ],
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Center(

@@ -106,114 +106,138 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
         backgroundColor: Colors.cyan.shade700,
         elevation: 0,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Colors.cyan))
-          : Container(
-              width: double.infinity,
-              height: double.infinity,
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF232526), // dark gray
+              Color(0xFF0f2027), // almost black
+              Color(0xFF000000), // black
+            ],
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Container(
+              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.cyan.shade700, Colors.cyan.shade100],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
+                color: Colors.white.withOpacity(0.95),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-              child: Center(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 12,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Wallet Balance: ₹$_walletBalance",
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        TextField(
-                          controller: _amountController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          decoration: InputDecoration(
-                            labelText: "Enter Amount",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onChanged: _validateAmount,
-                        ),
-                        const SizedBox(height: 20),
-                        DropdownButtonFormField<String>(
-                          value: _selectedType,
-                          decoration: InputDecoration(
-                            labelText: "Payment Type",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          items: _paymentTypes.map((type) {
-                            return DropdownMenuItem<String>(
-                              value: type,
-                              child: Text(type),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            if (value != null) {
-                              setState(() {
-                                _selectedType = value;
-                              });
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 30),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: (_isValidAmount && !_isLoading)
-                                ? _goToPinVerification
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: _isValidAmount
-                                  ? Colors.cyan.shade700
-                                  : Colors.grey,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: const Text(
-                              "Continue",
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Wallet Balance: ₹$_walletBalance",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _amountController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+                    decoration: InputDecoration(
+                      labelText: "Enter Amount",
+                      labelStyle: const TextStyle(color: Colors.black87),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFF018594), width: 2),
+                      ),
+                    ),
+                    onChanged: _validateAmount,
+                  ),
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField<String>(
+                    value: _selectedType,
+                    decoration: InputDecoration(
+                      labelText: "Payment Type",
+                      labelStyle: const TextStyle(color: Colors.black87),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFF018594), width: 2),
+                      ),
+                    ),
+                    items: _paymentTypes.map((type) {
+                      return DropdownMenuItem<String>(
+                        value: type,
+                        child: Text(type, style: const TextStyle(color: Colors.black)),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          _selectedType = value;
+                        });
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: (_isValidAmount && !_isLoading)
+                          ? _goToPinVerification
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _isValidAmount
+                            ? const Color(0xFF018594)
+                            : Colors.grey,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        foregroundColor: Colors.white,
+                        elevation: 3,
+                      ),
+                      child: const Text(
+                        "Continue",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.1,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
+          ),
+        ),
+      ),
     );
   }
 }

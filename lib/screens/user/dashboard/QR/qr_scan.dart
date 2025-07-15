@@ -208,95 +208,109 @@ class _QrScanState extends State<QrScan> {
           ],
         ),
       ),
-      body: Stack(
-        children: [
-          // Scanner container with black card design
-          Container(
-            margin: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(25),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(25),
-              child: MobileScanner(
-                controller: _scannerController!, // Use the stored controller
-                onDetect: (Capture) {
-                  final List<Barcode> barcodes = Capture.barcodes;
-                  for (final barcode in barcodes) {
-                    print('Barcode Found! ${barcode.rawValue}');
-                    _handleQrCode(barcode.rawValue);
-                    break; // Process only the first barcode
-                  }
-                },
-              ),
-            ),
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF232526), // dark gray
+              Color(0xFF0f2027), // almost black
+              Color(0xFF000000), // black
+            ],
           ),
-          // Scanning frame overlay
-          Positioned.fill(
-            child: Container(
+        ),
+        child: Stack(
+          children: [
+            // Scanner container with black card design
+            Container(
               margin: const EdgeInsets.all(20),
-              child: CustomPaint(painter: ScannerFramePainter()),
-            ),
-          ),
-          // Instructions card at bottom
-          Positioned(
-            bottom: 30,
-            left: 20,
-            right: 20,
-            child: Container(
-              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: Colors.black,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(25),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
                   ),
                 ],
               ),
-              child: Column(
-                children: [
-                  const Icon(
-                    Icons.qr_code_scanner,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Point camera at QR code to scan',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    'Make sure the QR code is within the frame',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
-                      fontSize: 12,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                ],
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(25),
+                child: MobileScanner(
+                  controller: _scannerController!, // Use the stored controller
+                  onDetect: (Capture) {
+                    final List<Barcode> barcodes = Capture.barcodes;
+                    for (final barcode in barcodes) {
+                      print('Barcode Found! ${barcode.rawValue}');
+                      _handleQrCode(barcode.rawValue);
+                      break; // Process only the first barcode
+                    }
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+            // Scanning frame overlay
+            Positioned.fill(
+              child: Container(
+                margin: const EdgeInsets.all(20),
+                child: CustomPaint(painter: ScannerFramePainter()),
+              ),
+            ),
+            // Instructions card at bottom
+            Positioned(
+              bottom: 30,
+              left: 20,
+              right: 20,
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    const Icon(
+                      Icons.qr_code_scanner,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Point camera at QR code to scan',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      'Make sure the QR code is within the frame',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 12,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

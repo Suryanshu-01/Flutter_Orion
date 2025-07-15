@@ -84,12 +84,15 @@ class _VerifyTransactionPinScreenState
       ),
       body: Container(
         width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.cyan.shade700, Colors.cyan.shade100],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF232526), // dark gray
+              Color(0xFF0f2027), // almost black
+              Color(0xFF000000), // black
+            ],
           ),
         ),
         child: Center(
@@ -125,10 +128,18 @@ class _VerifyTransactionPinScreenState
                     keyboardType: TextInputType.number,
                     obscureText: true,
                     maxLength: 4,
+                    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
                       labelText: "Transaction PIN",
+                      labelStyle: const TextStyle(color: Colors.black87),
+                      filled: true,
+                      fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFF018594), width: 2),
                       ),
                     ),
                   ),
@@ -140,11 +151,17 @@ class _VerifyTransactionPinScreenState
                       style: ElevatedButton.styleFrom(
                         backgroundColor: isLoading
                             ? Colors.grey
-                            : Colors.cyan.shade700,
+                            : const Color(0xFF018594),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        foregroundColor: Colors.white,
+                        elevation: 3,
                       ),
                       child: isLoading
                           ? const SizedBox(
@@ -160,6 +177,8 @@ class _VerifyTransactionPinScreenState
                               style: TextStyle(
                                 fontSize: 18,
                                 color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.1,
                               ),
                             ),
                     ),

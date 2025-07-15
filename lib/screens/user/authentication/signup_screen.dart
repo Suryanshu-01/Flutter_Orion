@@ -78,67 +78,103 @@ class _SignupScreenState extends State<SignupScreen> {
         backgroundColor: Colors.cyan[800],
         elevation: 0,
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 36.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: Image.asset(
-                  'assets/images/loginScreen.png',
-                  height: 150,
-                ),
-              ),
-              const SizedBox(height: 40),
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  prefixIcon: const Icon(Icons.email_outlined),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF232526), // dark gray
+              Color(0xFF0f2027), // almost black
+              Color(0xFF000000), // black
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 36.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Image.asset(
+                    'assets/images/loginScreen.png',
+                    height: 150,
                   ),
-                  filled: true,
-                  fillColor: Colors.white,
                 ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  prefixIcon: const Icon(Icons.lock_outline),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 40),
+                TextField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+                  decoration: InputDecoration(
+                    labelText: "Email",
+                    labelStyle: const TextStyle(color: Colors.black87),
+                    prefixIcon: const Icon(Icons.email_outlined, color: Color(0xFF018594)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFF018594), width: 2),
+                    ),
                   ),
-                  filled: true,
-                  fillColor: Colors.white,
                 ),
-              ),
-              const SizedBox(height: 30),
-              SizedBox(
-                height: 55,
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : ElevatedButton(
-                        onPressed: signup,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.cyan[800],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    labelStyle: const TextStyle(color: Colors.black87),
+                    prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF018594)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFF018594), width: 2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                SizedBox(
+                  height: 55,
+                  child: _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : ElevatedButton(
+                          onPressed: signup,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF018594),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            textStyle: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            foregroundColor: Colors.white,
+                            elevation: 3,
                           ),
-                          textStyle: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                          child: const Text(
+                            "Create Account",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              letterSpacing: 1.1,
+                            ),
                           ),
                         ),
-                        child: const Text("Create Account"),
-                      ),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

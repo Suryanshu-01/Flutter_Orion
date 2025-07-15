@@ -91,12 +91,15 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
       ),
       body: Container(
         width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.cyan.shade700, Colors.cyan.shade100],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF232526), // dark gray
+              Color(0xFF0f2027), // almost black
+              Color(0xFF000000), // black
+            ],
           ),
         ),
         child: Padding(
@@ -166,7 +169,7 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
                                 onPressed: userFound ? _goToNextScreen : null,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: userFound
-                                      ? Colors.cyan.shade700
+                                      ? const Color(0xFF018594)
                                       : Colors.grey,
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 16,
@@ -174,12 +177,20 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
+                                  textStyle: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  foregroundColor: Colors.white,
+                                  elevation: 3,
                                 ),
                                 child: const Text(
                                   "Pay",
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.1,
                                   ),
                                 ),
                               ),

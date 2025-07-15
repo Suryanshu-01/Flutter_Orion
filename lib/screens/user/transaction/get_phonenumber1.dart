@@ -121,12 +121,15 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
       ),
       body: Container(
         width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.cyan.shade700, Colors.cyan.shade100],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF232526), // dark gray
+              Color(0xFF0f2027), // almost black
+              Color(0xFF000000), // black
+            ],
           ),
         ),
         child: Center(
@@ -164,18 +167,24 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(10),
                     ],
+                    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       prefixIcon: Icon(
                         Icons.phone,
-                        color: Colors.cyan.shade700,
+                        color: const Color(0xFF018594),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
                       ),
                       hintText: "Enter 10-digit phone number",
+                      hintStyle: const TextStyle(color: Colors.black54),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFF018594), width: 2),
+                      ),
                     ),
                     onChanged: _validatePhone,
                   ),
@@ -186,16 +195,22 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
                       onPressed: _isValid ? _goToNextScreen : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _isValid
-                            ? Colors.cyan.shade700
+                            ? const Color(0xFF018594)
                             : Colors.grey,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        foregroundColor: Colors.white,
+                        elevation: 3,
                       ),
                       child: const Text(
                         "Continue",
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 16, color: Colors.white, letterSpacing: 1.1, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),

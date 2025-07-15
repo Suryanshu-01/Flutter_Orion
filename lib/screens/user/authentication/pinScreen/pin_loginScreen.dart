@@ -63,7 +63,19 @@ class _SetLoginPinScreenState extends State<SetLoginPinScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Set Login PIN")),
-      body: Padding(
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF232526), // dark gray
+              Color(0xFF0f2027), // almost black
+              Color(0xFF000000), // black
+            ],
+          ),
+        ),
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
@@ -77,7 +89,20 @@ class _SetLoginPinScreenState extends State<SetLoginPinScreen> {
               keyboardType: TextInputType.number,
               obscureText: true,
               maxLength: 4,
-              decoration: const InputDecoration(labelText: "Enter PIN"),
+              style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+              decoration: InputDecoration(
+                labelText: "Enter PIN",
+                labelStyle: const TextStyle(color: Colors.black87),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Color(0xFF018594), width: 2),
+                ),
+              ),
             ),
             const SizedBox(height: 10),
             TextField(
@@ -85,14 +110,51 @@ class _SetLoginPinScreenState extends State<SetLoginPinScreen> {
               keyboardType: TextInputType.number,
               obscureText: true,
               maxLength: 4,
-              decoration: const InputDecoration(labelText: "Confirm PIN"),
+              style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+              decoration: InputDecoration(
+                labelText: "Confirm PIN",
+                labelStyle: const TextStyle(color: Colors.black87),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Color(0xFF018594), width: 2),
+                ),
+              ),
             ),
             const SizedBox(height: 30),
             _isLoading
                 ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _savePin,
-                    child: const Text("Save and Continue"),
+                : SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _savePin,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF018594),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        foregroundColor: Colors.white,
+                        elevation: 3,
+                      ),
+                      child: const Text(
+                        "Save and Continue",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          letterSpacing: 1.1,
+                        ),
+                      ),
+                    ),
                   ),
           ],
         ),

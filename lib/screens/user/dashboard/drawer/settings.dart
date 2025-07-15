@@ -77,13 +77,27 @@ class SettingsUser extends StatelessWidget {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Text(
-            "This is Settings!",
-            style: TextStyle(fontWeight: FontWeight.bold),
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF232526), // dark gray
+              Color(0xFF0f2027), // almost black
+              Color(0xFF000000), // black
+            ],
           ),
-        ],
+        ),
+        child: Column(
+          children: [
+            Text(
+              "This is Settings!",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       ),
     );
   }

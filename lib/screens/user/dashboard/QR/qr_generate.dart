@@ -248,7 +248,17 @@ class _QrGenerateState extends State<QrGenerate> {
       ),
       body: Container(
         width: double.infinity,
-        color: Colors.white,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF232526), // dark gray
+              Color(0xFF0f2027), // almost black
+              Color(0xFF000000), // black
+            ],
+          ),
+        ),
         child: isLoading
             ? const Center(child: CircularProgressIndicator())
             : error != null
@@ -271,7 +281,7 @@ class _QrGenerateState extends State<QrGenerate> {
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Colors.white,
                           fontFamily: 'Poppins',
                         ),
                         textAlign: TextAlign.center,
