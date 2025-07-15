@@ -7,6 +7,7 @@ import '../authentication/select_user.dart';
 import '../transaction/get_phonenumber1.dart';
 import 'package:orion/screens/user/dashboard/drawer/settings.dart';
 import 'OrionCard/orionpage.dart';
+import 'QR/qr_scan.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -148,7 +149,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             _buildCard(),
             const SizedBox(height: 20),
             _buildGrid(context, [
-              _buildFeature(context, Icons.qr_code_2, "QR Code", () {}),
+              _buildFeature(context, Icons.qr_code_2, "QR Code", () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => QrScan()),
+                );
+              }),
               _buildFeature(context, Icons.send_to_mobile, "Transfer", () {
                 Navigator.push(
                   context,

@@ -2,19 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:orion/screens/user/transaction/get_amount3.dart';
 
-class VerifyPhoneDetails extends StatefulWidget {
+class VerifyPhoneDetailsQR extends StatefulWidget {
   final String phone;
-  const VerifyPhoneDetails({
+  const VerifyPhoneDetailsQR({
     super.key,
     required this.phone,
     required String phoneNumber,
   });
 
   @override
-  State<VerifyPhoneDetails> createState() => _VerifyPhoneDetailsState();
+  State<VerifyPhoneDetailsQR> createState() => _VerifyPhoneDetailsQRState();
 }
 
-class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
+class _VerifyPhoneDetailsQRState extends State<VerifyPhoneDetailsQR> {
   String? userName;
   bool isLoading = false;
   bool userFound = false;
@@ -83,37 +83,33 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Verify Phone Details",
+          "Registered Number: ",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.cyan.shade700,
-        elevation: 0,
+        backgroundColor: Colors.white,
+        elevation: 3,
+        iconTheme: const IconThemeData(color: Colors.black),
+        titleTextStyle: const TextStyle(color: Colors.black),
       ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.cyan.shade700, Colors.cyan.shade100],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        color: Colors.white, // White background
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Center(
             child: isLoading
-                ? const CircularProgressIndicator(color: Colors.white)
+                ? const CircularProgressIndicator(color: Colors.black)
                 : Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
+                      color: Colors.black, // Black card/container
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 12,
-                          offset: const Offset(0, 6),
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 16,
+                          offset: const Offset(0, 8),
                         ),
                       ],
                     ),
@@ -126,7 +122,7 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: Colors.white, // White text on black card
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -134,7 +130,7 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
                           "Phone number: ${widget.phone}",
                           style: const TextStyle(
                             fontSize: 18,
-                            color: Colors.black87,
+                            color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -144,7 +140,7 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black87,
+                              color: Colors.white,
                             ),
                           ),
                         if (errorText.isNotEmpty)
@@ -153,7 +149,7 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
                             child: Text(
                               errorText,
                               style: const TextStyle(
-                                color: Colors.red,
+                                color: Colors.redAccent,
                                 fontSize: 16,
                               ),
                             ),
@@ -166,20 +162,22 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
                                 onPressed: userFound ? _goToNextScreen : null,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: userFound
-                                      ? Colors.cyan.shade700
+                                      ? Colors.white
                                       : Colors.grey,
+                                  foregroundColor: Colors.black,
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 16,
                                   ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
+                                  elevation: 2,
                                 ),
                                 child: const Text(
                                   "Pay",
                                   style: TextStyle(
                                     fontSize: 16,
-                                    color: Colors.white,
+                                    color: Colors.black,
                                   ),
                                 ),
                               ),
@@ -190,7 +188,7 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
                                 Navigator.pop(context);
                               },
                               style: TextButton.styleFrom(
-                                foregroundColor: Colors.cyan.shade700,
+                                foregroundColor: Colors.white,
                               ),
                               child: const Text(
                                 "Edit",

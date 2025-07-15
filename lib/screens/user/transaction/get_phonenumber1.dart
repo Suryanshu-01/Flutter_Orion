@@ -29,7 +29,10 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => VerifyPhoneDetails(phone: phoneNumber),
+          builder: (context) => VerifyPhoneDetails(
+            phone: phoneNumber,
+            phoneNumber: phoneNumber,
+          ),
         ),
       );
     } else {
