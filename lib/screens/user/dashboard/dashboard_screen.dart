@@ -8,6 +8,7 @@ import '../transaction/get_phonenumber1.dart';
 import 'package:orion/screens/user/dashboard/drawer/settings.dart';
 import 'OrionCard/orionpage.dart';
 import 'QR/qr_scan.dart';
+import 'Coupons/coupons.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -178,7 +179,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 context,
                 Icons.card_giftcard,
                 "Coupons",
-                () => _handleClick("Coupons"),
+                () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => Coupons()),
+                ),
               ),
               _buildFeature(
                 context,

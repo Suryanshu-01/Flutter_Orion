@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:qr_flutter/qr_flutter.dart'; // Add this import
 
 import '../../authentication/select_user.dart';
 import '../dashboard_screen.dart';
@@ -17,6 +18,9 @@ class Orionpage extends StatefulWidget {
 class _OrionpageState extends State<Orionpage> {
   String? userName = '';
   double? balance = 0.0;
+  String? phoneNumber = '';
+  bool isLoading = true;
+  String? error;
 
   final List<String> cardImages = [
     'assets/images/Grain_Cyan.png',
@@ -45,6 +49,13 @@ class _OrionpageState extends State<Orionpage> {
       setState(() {
         userName = doc['name'] ?? 'User';
         balance = doc['walletBalance'] ?? 0.0;
+        phoneNumber = doc['phone']?.toString() ?? '';
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        error = 'User not logged in';
+        isLoading = false;
       });
     }
   }
@@ -52,7 +63,6 @@ class _OrionpageState extends State<Orionpage> {
   Future<void> _selectCard(String imagePath) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      // Save selected card in Firestore immediately
       await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
         'selectedCard': imagePath,
       }, SetOptions(merge: true));
@@ -63,11 +73,12 @@ class _OrionpageState extends State<Orionpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black, // Set background to black
       appBar: AppBar(
         backgroundColor: Colors.cyan[800],
         elevation: 0,
         title: const Text(
-          "Choose Your Orion Card",
+          "Orion Card",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -139,121 +150,157 @@ class _OrionpageState extends State<Orionpage> {
       ),
       body: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
+        height: double.infinity,
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color.fromARGB(255, 1, 182, 185),
-              Colors.cyan.shade100,
+              Color(0xFF232526), // dark gray
+              Color(0xFF414345), // lighter gray
+              Colors.black,
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ✅ Name & balance wrapped nicely
-            Container(
-              padding: const EdgeInsets.all(16),
-              margin: const EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(
-                  255,
-                  189,
-                  223,
-                  239,
-                ).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Hi, $userName",
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 1, 64, 113),
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    "Balance: ₹${balance?.toStringAsFixed(2) ?? '0.00'}",
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 1, 64, 113),
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const Text(
-              "Select a card to use",
-              style: TextStyle(
-                color: Color.fromARGB(255, 0, 37, 85),
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // ✅ Cards in vertical scroll with slight shadow container
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(
-                    255,
-                    245,
-                    244,
-                    244,
-                  ).withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : error != null
+            ? Center(
+                child: Text(
+                  error!,
+                  style: const TextStyle(color: Colors.white),
                 ),
-                child: ListView.separated(
-                  itemCount: cardImages.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 16),
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () => _selectCard(cardImages[index]),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Image.asset(
-                          cardImages[index],
-                          height: 180, // smaller height for column
-                          width: double.infinity,
-                          fit: BoxFit.cover,
+              )
+            : SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Name & Balance
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        margin: const EdgeInsets.only(bottom: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Hi, $userName",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 26,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              "Balance: ₹${balance?.toStringAsFixed(2) ?? '0.00'}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  },
+
+                      // QR Code in a Box
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 30),
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            QrImageView(
+                              data: phoneNumber ?? 'No Data',
+                              version: QrVersions.auto,
+                              size: 180,
+                              backgroundColor: Colors.white,
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              phoneNumber ?? '',
+                              style: const TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // "Choose your Card:" text
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Choose your Card:",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Cards in a white box
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: cardImages.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 16),
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () => _selectCard(cardImages[index]),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Image.asset(
+                                  cardImages[index],
+                                  height: 180, // Increased height for larger cards
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-
-            const SizedBox(height: 20),
-
-            const Text(
-              "Tap a card to set it as your active OrionPay card.",
-              style: TextStyle(
-                color: Color.fromARGB(179, 47, 4, 203),
-                fontSize: 16,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
