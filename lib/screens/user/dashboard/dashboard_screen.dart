@@ -72,39 +72,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white, // gradient will be applied below
       appBar: AppBar(
-        backgroundColor: Colors.cyan.shade700,
+        backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
           "OrionPay",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         leading: Builder(
           builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white),
+            icon: const Icon(Icons.menu, color: Colors.black),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.white),
+            icon: const Icon(Icons.notifications, color: Colors.black),
             onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(Icons.search, color: Colors.white),
+            icon: const Icon(Icons.search, color: Colors.black),
             onPressed: () {},
           ),
         ],
       ),
       drawer: Drawer(
+        backgroundColor: Colors.white,
         child: ListView(
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(color: Colors.cyan.shade700),
+              decoration: const BoxDecoration(color: Colors.grey),
               child: const Text(
                 'Profile',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+                style: TextStyle(color: Colors.black, fontSize: 24),
               ),
             ),
             _drawerItem(Icons.home, 'Home', () => Navigator.pop(context)),
@@ -137,66 +138,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: Container(
         width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF232526), // dark gray
-              Color(0xFF0f2027), // almost black
-              Color(0xFF000000), // black
-            ],
-          ),
-        ),
+        color: Colors.white,
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
             _buildCard(),
             const SizedBox(height: 20),
-            _buildGrid(context, [
-              _buildFeature(context, Icons.qr_code_2, "QR Code", () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => QrScan()),
-                );
-              }),
-              _buildFeature(context, Icons.send_to_mobile, "Transfer", () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const GetPhoneNumber()),
-                );
-              }),
-              _buildFeature(
-                context,
-                Icons.account_balance_wallet,
-                "Balance",
-                () => _handleClick("Balance"),
-              ),
-            ]),
+            _buildFeatureGrid(),
             const SizedBox(height: 20),
-            _buildGrid(context, [
-              _buildFeature(
-                context,
-                Icons.card_giftcard,
-                "Coupons",
-                () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => Coupons()),
-                ),
-              ),
-              _buildFeature(
-                context,
-                Icons.request_page,
-                "Request",
-                () => _handleClick("Request"),
-              ),
-              _buildFeature(
-                context,
-                Icons.settings,
-                "Theme",
-                () => _handleClick("Theme"),
-              ),
-            ]),
+            _buildTransactionHistory(),
           ],
         ),
       ),
@@ -212,60 +162,317 @@ class _DashboardScreenState extends State<DashboardScreen> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.10), // subtle shadow
+              color: Colors.black.withOpacity(0.3),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
           ],
-          image: DecorationImage(
-            image: AssetImage(selectedImage),
-            fit: BoxFit.cover,
-          ),
         ),
-        alignment: Alignment.bottomLeft,
-        padding: const EdgeInsets.all(10),
-        child: Row(
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          fit: StackFit.expand,
           children: [
-            const SizedBox(width: 5),
-            FutureBuilder<DocumentSnapshot>(
-              future: FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                  .get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text(
-                    "     Loading...",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
+            // Card image
+            selectedImage.isNotEmpty
+                ? Image.asset(selectedImage, fit: BoxFit.cover)
+                : Container(color: Colors.grey.shade200),
+            // Card label and user name
+            Container(
+              alignment: Alignment.bottomLeft,
+              padding: const EdgeInsets.all(16),
+              child: FutureBuilder<DocumentSnapshot>(
+                future: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .get(),
+                builder: (context, snapshot) {
+                  String name = "OrionPay Card";
+                  if (snapshot.hasData &&
+                      snapshot.data != null &&
+                      snapshot.data!.exists) {
+                    name = snapshot.data!.get('name') ?? "OrionPay Card";
+                  }
+                  return Text(
+                    name,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   );
-                }
-                if (snapshot.hasError ||
-                    !snapshot.hasData ||
-                    !snapshot.data!.exists) {
-                  return const Text(
-                    "     OrionPay Card",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
-                }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-                final name = snapshot.data!.get('name') ?? 'User';
-                return Text(
-                  " $name",
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 19, 1, 86),
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                  ),
-                );
-              },
+  Widget _buildFeatureGrid() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Center( // <-- Center the row horizontally
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center, // <-- Center children in the row
+          children: [
+            _buildFeature(Icons.qr_code_2, "QR Code", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => QrScan()),
+              );
+            }),
+            const SizedBox(width: 20),
+            _buildFeature(Icons.send_to_mobile, "Transfer", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const GetPhoneNumber()),
+              );
+            }),
+            const SizedBox(width: 20),
+            _buildFeature(
+              Icons.card_giftcard,
+              "Coupons",
+              () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => Coupons()),
+              ),
+            ),
+            const SizedBox(width: 20),
+            _buildFeature(
+              Icons.request_page,
+              "Request",
+              () => _handleClick("Request"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTransactionHistory() {
+    final user = FirebaseAuth.instance.currentUser;
+
+    Future<List<Map<String, dynamic>>> _fetchTransactions() async {
+      if (user == null) return [];
+
+      final uid = user.uid;
+
+      final snapshot = await FirebaseFirestore.instance
+          .collection('transactions')
+          .where('participants', arrayContains: uid)
+          .get();
+
+      final transactions = snapshot.docs.map((doc) => doc.data()).toList();
+
+      // Sort transactions by datetime
+      transactions.sort((a, b) {
+        final dateTimeA =
+            DateTime.tryParse('${a['date']} ${a['time']}') ?? DateTime.now();
+        final dateTimeB =
+            DateTime.tryParse('${b['date']} ${b['time']}') ?? DateTime.now();
+        return dateTimeB.compareTo(dateTimeA); // Newest first
+      });
+
+      return transactions;
+    }
+
+    Widget _buildTransactionTile(Map<String, dynamic> data, {bool isModal = false}) {
+      final currentUserId = user?.uid;
+      final isSender = data['from'] == currentUserId;
+      final otherUserId = isSender ? data['to'] : data['from'];
+      final amount = data['amount'] ?? 0.0;
+      final date = data['date'] ?? '';
+      final time = data['time'] ?? '';
+      final category = data['category'] ?? 'Miscellaneous';
+
+      return FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance
+            .collection('users')
+            .doc(otherUserId)
+            .get(),
+        builder: (context, snapshot) {
+          String name = 'Unknown';
+          if (snapshot.hasData && snapshot.data!.exists) {
+            final userData = snapshot.data!.data() as Map<String, dynamic>;
+            name = userData['name'] ?? userData['phone'] ?? 'Unknown';
+          }
+
+          final textColor = isModal ? Colors.black : Colors.white;
+
+          return ListTile(
+            leading: Icon(
+              isSender ? Icons.arrow_upward : Icons.arrow_downward,
+              color: isSender ? Colors.red : Colors.green,
+            ),
+            title: Text(
+              '${isSender ? 'Paid to' : 'Received from'} $name',
+              style: TextStyle(color: textColor),
+            ),
+            subtitle: Text(
+              '$category • $date • $time',
+              style: TextStyle(color: textColor.withOpacity(0.7)),
+            ),
+            trailing: Text(
+              '₹${amount.toString()}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isSender ? Colors.red : Colors.green,
+                fontSize: 15,
+              ),
+            ),
+          );
+        },
+      );
+    }
+
+    // --- Modal for full-screen transaction history with animation ---
+    void _showTransactionHistoryModal() {
+      showGeneralDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: "Transaction History",
+        transitionDuration: const Duration(milliseconds: 300),
+        pageBuilder: (context, anim1, anim2) {
+          return Align(
+            alignment: Alignment.center,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.7,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              "Transaction History",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: FutureBuilder<List<Map<String, dynamic>>>(
+                        future: _fetchTransactions(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+                          if (snapshot.hasError || !snapshot.hasData) {
+                            return const Center(
+                              child: Text(
+                                "Error fetching transactions",
+                                style: TextStyle(color: Colors.black), // Modal is white, so black text
+                              ),
+                            );
+                          }
+                          final transactions = snapshot.data!;
+                          if (transactions.isEmpty) {
+                            return const Center(
+                              child: Text(
+                                "No transactions yet",
+                                style: TextStyle(color: Colors.black), // Modal is white, so black text
+                              ),
+                            );
+                          }
+                          return ListView.builder(
+                            itemCount: transactions.length,
+                            itemBuilder: (context, index) =>
+                                _buildTransactionTile(transactions[index], isModal: true),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+        transitionBuilder: (context, anim1, anim2, child) {
+          return ScaleTransition(
+            scale: CurvedAnimation(parent: anim1, curve: Curves.easeOutBack),
+            child: child,
+          );
+        },
+      );
+    }
+
+    // --- Main dashboard container, now tappable ---
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: _showTransactionHistoryModal,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Transaction History",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 15),
+            SizedBox(
+              height: 200,
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: _fetchTransactions(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError || !snapshot.hasData) {
+                    return const Center(
+                      child: Text(
+                        "Error fetching transactions",
+                        style: TextStyle(color: Colors.white), // <-- White text
+                      ),
+                    );
+                  }
+                  final transactions = snapshot.data!;
+                  if (transactions.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        "No transactions yet",
+                        style: TextStyle(color: Colors.white), // <-- White text
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    itemCount: transactions.length,
+                    itemBuilder: (context, index) =>
+                        _buildTransactionTile(transactions[index], isModal: false),
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -274,50 +481,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _drawerItem(IconData icon, String text, VoidCallback onTap) {
-    return ListTile(leading: Icon(icon), title: Text(text), onTap: onTap);
-  }
-
-  Widget _buildGrid(BuildContext context, List<Widget> children) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: children,
-      ),
+    return ListTile(
+      leading: Icon(icon, color: Colors.black),
+      title: Text(text, style: const TextStyle(color: Colors.black)),
+      onTap: onTap,
     );
   }
 
-  Widget _buildFeature(
-    BuildContext context,
-    IconData icon,
-    String label,
-    VoidCallback onTap,
-  ) {
+  Widget _buildFeature(IconData icon, String label, VoidCallback onTap) {
     return Column(
       children: [
         Material(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(50),
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(40),
           elevation: 6,
           child: InkWell(
             onTap: onTap,
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(40),
             child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Icon(icon, size: 40, color: Colors.cyan.shade700),
+              padding: const EdgeInsets.all(12),
+              child: Icon(icon, size: 30, color: Colors.black),
             ),
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 8),
         Text(
           label,
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
+            fontSize: 12,
           ),
         ),
       ],

@@ -47,7 +47,7 @@ class _SetTransactionPinScreenState extends State<SetTransactionPinScreen> {
         MaterialPageRoute(builder: (context) => const DashboardScreen()),
       );
     } catch (e) {
-      _showError("Failed to save PIN: ${e.toString()}");
+      _showError("Failed to save PIN: "+e.toString());
     } finally {
       setState(() => _isLoading = false);
     }
@@ -62,48 +62,124 @@ class _SetTransactionPinScreenState extends State<SetTransactionPinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Set Transaction PIN")),
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF232526), // dark gray
-              Color(0xFF0f2027), // almost black
-              Color(0xFF000000), // black
-            ],
-          ),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          "Set Transaction PIN",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            const Text("Set your secure 4-digit transaction PIN."),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _pinController,
-              keyboardType: TextInputType.number,
-              obscureText: true,
-              maxLength: 4,
-              decoration: const InputDecoration(labelText: "Enter PIN"),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _confirmPinController,
-              keyboardType: TextInputType.number,
-              obscureText: true,
-              maxLength: 4,
-              decoration: const InputDecoration(labelText: "Confirm PIN"),
-            ),
-            const SizedBox(height: 30),
-            _isLoading
-                ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _saveTransactionPin,
-                    child: const Text("Save and Continue to Dashboard"),
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Container(
+              width: 400,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
                   ),
-          ],
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    "Set your secure 4-digit transaction PIN.",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  TextField(
+                    controller: _pinController,
+                    keyboardType: TextInputType.number,
+                    obscureText: true,
+                    maxLength: 4,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                    decoration: InputDecoration(
+                      labelText: "Enter PIN",
+                      labelStyle: const TextStyle(color: Colors.white70),
+                      filled: true,
+                      fillColor: Colors.black,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Colors.white24),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Colors.white, width: 2),
+                      ),
+                      counterStyle: const TextStyle(color: Colors.white54),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _confirmPinController,
+                    keyboardType: TextInputType.number,
+                    obscureText: true,
+                    maxLength: 4,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                    decoration: InputDecoration(
+                      labelText: "Confirm PIN",
+                      labelStyle: const TextStyle(color: Colors.white70),
+                      filled: true,
+                      fillColor: Colors.black,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Colors.white24),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Colors.white, width: 2),
+                      ),
+                      counterStyle: const TextStyle(color: Colors.white54),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  _isLoading
+                      ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                      : SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: _saveTransactionPin,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              textStyle: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              foregroundColor: Colors.black,
+                              elevation: 3,
+                            ),
+                            child: const Text(
+                              "Save and Continue to Dashboard",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                letterSpacing: 1.1,
+                              ),
+                            ),
+                          ),
+                        ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

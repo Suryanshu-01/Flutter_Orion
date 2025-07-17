@@ -67,166 +67,96 @@ class _ProfileManagerState extends State<ProfileManager> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.cyan[800],
+        backgroundColor: Colors.white,
+        elevation: 0,
         title: const Text(
           "Profile",
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.cyan[800]!, Colors.cyan[400]!],
-                ),
-              ),
-              child: const Text(
-                "Profile",
-                style: TextStyle(color: Colors.white, fontSize: 24),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text("Home"),
-              onTap: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const DashboardScreen()),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text("Profile Manager"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.admin_panel_settings),
-              title: const Text("Admin/User"),
-              onTap: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const SelectUser()),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text("Settings"),
-              onTap: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => SettingsUser()),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text("About Us"),
-              onTap: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const AboutUs()),
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF232526), // dark gray
-              Color(0xFF0f2027), // almost black
-              Color(0xFF000000), // black
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(color: Colors.white),
-                  )
-                : Column(
-                    children: [
-                      const Icon(
-                        Icons.account_circle,
-                        size: 100,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(height: 20),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.95),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 10,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            profileDetail("Name", name),
-                            const Divider(),
-                            profileDetail("Email", email),
-                            const Divider(),
-                            profileDetail("Phone", phone),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Column(
-                        children: [
-                          settingsTile(
-                            label: "Change Transaction PIN",
-                            icon: Icons.lock_outline,
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => Changetransaction(),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          settingsTile(
-                            label: "Change Login PIN",
-                            icon: Icons.lock_outline,
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (_) => Changelogin()),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          settingsTile(
-                            label: "Show My QR Code",
-                            icon: Icons.qr_code,
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (_) => QrGenerate()),
-                            ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(color: Colors.black),
+                )
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.account_circle,
+                      size: 100,
+                      color: Colors.black,
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-          ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          profileDetail("Name", name),
+                          const Divider(color: Colors.white24),
+                          profileDetail("Email", email),
+                          const Divider(color: Colors.white24),
+                          profileDetail("Phone", phone),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Column(
+                      children: [
+                        settingsTile(
+                          label: "Change Transaction PIN",
+                          icon: Icons.lock_outline,
+                          onTap: () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => Changetransaction(),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        settingsTile(
+                          label: "Change Login PIN",
+                          icon: Icons.lock_outline,
+                          onTap: () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) => Changelogin()),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        settingsTile(
+                          label: "Show My QR Code",
+                          icon: Icons.qr_code,
+                          onTap: () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) => QrGenerate()),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
         ),
       ),
     );
@@ -241,7 +171,7 @@ class _ProfileManagerState extends State<ProfileManager> {
           Text(
             title,
             style: const TextStyle(
-              color: Colors.black54,
+              color: Colors.white70,
               fontWeight: FontWeight.bold,
               fontSize: 14,
             ),
@@ -249,7 +179,7 @@ class _ProfileManagerState extends State<ProfileManager> {
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(color: Colors.black87, fontSize: 16),
+            style: const TextStyle(color: Colors.white, fontSize: 16),
           ),
         ],
       ),
@@ -266,7 +196,7 @@ class _ProfileManagerState extends State<ProfileManager> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.95),
+          color: Colors.black,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -283,11 +213,11 @@ class _ProfileManagerState extends State<ProfileManager> {
               label,
               style: const TextStyle(
                 fontSize: 16,
-                color: Colors.black87,
+                color: Colors.white,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            Icon(icon, color: Colors.cyan),
+            Icon(icon, color: Colors.white),
           ],
         ),
       ),

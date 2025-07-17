@@ -46,7 +46,7 @@ class _LoginPinScreenState extends State<LoginPinScreen> {
         setState(() => _isError = true);
       }
     } catch (e) {
-      _showError("Error verifying PIN: ${e.toString()}");
+      _showError("Error verifying PIN: "+e.toString());
     }
   }
 
@@ -59,31 +59,24 @@ class _LoginPinScreenState extends State<LoginPinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Login PIN", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.cyan.shade700,
+        backgroundColor: Colors.white,
         elevation: 0,
-      ),
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF232526), // dark gray
-              Color(0xFF0f2027), // almost black
-              Color(0xFF000000), // black
-            ],
-          ),
+        title: const Text(
+          "Login PIN",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        child: Center(
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Container(
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.95),
+                color: Colors.black,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -101,7 +94,7 @@ class _LoginPinScreenState extends State<LoginPinScreen> {
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -114,12 +107,13 @@ class _LoginPinScreenState extends State<LoginPinScreen> {
                       height: 56,
                       textStyle: const TextStyle(
                         fontSize: 20,
-                        color: Colors.black,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.cyan.shade50,
+                        color: Colors.grey[900],
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.cyan.shade700),
+                        border: Border.all(color: Colors.white24),
                       ),
                     ),
                     onCompleted: (pin) => _verifyPin(pin),
@@ -128,7 +122,7 @@ class _LoginPinScreenState extends State<LoginPinScreen> {
                   if (_isError)
                     const Text(
                       'Incorrect PIN. Try again.',
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                     ),
                 ],
               ),
