@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../authentication/select_user.dart';
@@ -108,7 +109,7 @@ class _OrionpageState extends State<Orionpage> {
               title: Text("Home"),
               onTap: () => Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => DashboardScreen()),
+                MaterialPageRoute(builder: (_) => HomeScreen()),
               ),
             ),
             ListTile(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 import '../dashboard/dashboard_screen.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
@@ -81,7 +82,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const DashboardScreen(),
+                              builder: (_) => const HomeScreen(),
                             ),
                           );
                         } else {

@@ -26,17 +26,26 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onFabPressed() {
     if (_selectedIndex == 0) {
       // Dashboard FAB: QR scan
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const QrScan()));
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const QrScan()),
+      );
     } else if (_selectedIndex == 1) {
       // ExpenseTracker FAB: Set target
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const SetTargetScreen()));
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const SetTargetScreen()),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex],
+      body: IndexedStack( // <-- this keeps screen state persistent
+        index: _selectedIndex,
+        children: _screens,
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.deepPurple,
         onPressed: _onFabPressed,

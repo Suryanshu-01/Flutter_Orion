@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:orion/screens/user/dashboard/QR/qr_transaction1.dart';
-
+import 'package:orion/screens/user/transaction/varify_phone_details2.dart';
 import '../../authentication/select_user.dart' show SelectUser;
 import '../drawer/aboutus.dart';
 import '../drawer/profile.dart';
@@ -16,23 +15,59 @@ class QrScan extends StatefulWidget {
 
 class _QrScanState extends State<QrScan> {
   String? phoneNumber;
-  // Add controller as a class variable
-  MobileScannerController? _scannerController;
+  late final MobileScannerController _scannerController;
+  bool _hasScanned = false;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the scanner controller
     _scannerController = MobileScannerController(
+      facing: CameraFacing.back,
+      torchEnabled: false,
       detectionSpeed: DetectionSpeed.normal,
     );
   }
 
   @override
   void dispose() {
-    // Dispose the scanner controller when widget is disposed
-    _scannerController?.dispose();
+    _scannerController.dispose();
     super.dispose();
+  }
+
+  bool _isValidPhoneNumber(String? data) {
+    if (data == null || data.isEmpty) return false;
+    final cleaned = data.replaceAll(RegExp(r'\D'), '');
+    return cleaned.length == 10 && int.tryParse(cleaned) != null;
+  }
+
+  void _handleQrCode(String? scannedData) async {
+    if (_hasScanned) return;
+
+    if (_isValidPhoneNumber(scannedData)) {
+      _hasScanned = true;
+      await _scannerController.stop();
+      final cleanPhone = scannedData!.replaceAll(RegExp(r'\D'), '');
+
+      if (!mounted) return;
+
+      // Pop current QRScan screen first, then push the details screen
+      Navigator.pop(context);
+      // Optionally, you can add a slight delay to allow pop animation to finish
+      Future.delayed(const Duration(milliseconds: 300), () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => VerifyPhoneDetails(
+              phoneNumber: cleanPhone,
+              phone: cleanPhone,
+            ),
+          ),
+        );
+      });
+    } else {
+      _showErrorDialog();
+      _hasScanned = false; // Allow retry on error
+    }
   }
 
   void _showErrorDialog() {
@@ -53,16 +88,17 @@ class _QrScanState extends State<QrScan> {
             ),
           ),
           content: const Text(
-            'Not a Valid QR',
+            'Not a valid 10-digit phone number.',
             style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                _scannerController.start();
               },
               child: const Text(
-                'OK',
+                'Try Again',
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -74,43 +110,6 @@ class _QrScanState extends State<QrScan> {
         );
       },
     );
-  }
-
-  bool _isValidPhoneNumber(String? data) {
-    if (data == null || data.isEmpty) return false;
-
-    // Remove any non-digit characters
-    String cleanData = data.replaceAll(RegExp(r'[^0-9]'), '');
-
-    // Check if it's exactly 10 digits
-    return cleanData.length == 10 && int.tryParse(cleanData) != null;
-  }
-
-  void _handleQrCode(String? scannedData) async {
-    if (_isValidPhoneNumber(scannedData)) {
-      // Stop the camera before navigating
-      await _scannerController?.stop();
-
-      // Extract only digits from the scanned data
-      String cleanPhoneNumber = scannedData!.replaceAll(RegExp(r'[^0-9]'), '');
-
-      setState(() {
-        phoneNumber = cleanPhoneNumber;
-      });
-
-      // Navigate to transaction page with the phone number
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VerifyPhoneDetailsQR(
-            phoneNumber: phoneNumber!,
-            phone: phoneNumber!,
-          ),
-        ),
-      );
-    } else {
-      _showErrorDialog();
-    }
   }
 
   @override
@@ -136,14 +135,8 @@ class _QrScanState extends State<QrScan> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.black),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.black),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.search), onPressed: () {}),
         ],
       ),
       drawer: Drawer(
@@ -151,9 +144,9 @@ class _QrScanState extends State<QrScan> {
         child: ListView(
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.black,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
                 ),
@@ -183,27 +176,19 @@ class _QrScanState extends State<QrScan> {
             _drawerItem(Icons.home, 'Home', () => Navigator.pop(context)),
             _drawerItem(Icons.person, 'Profile Manager', () {
               Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => ProfileManager()),
-              );
+                  context, MaterialPageRoute(builder: (_) => ProfileManager()));
             }),
             _drawerItem(Icons.admin_panel_settings, 'Admin/User', () {
               Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => SelectUser()),
-              );
+                  context, MaterialPageRoute(builder: (_) => SelectUser()));
             }),
             _drawerItem(Icons.settings, 'Settings', () {
               Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => SettingsUser()),
-              );
+                  context, MaterialPageRoute(builder: (_) => SettingsUser()));
             }),
             _drawerItem(Icons.info_outline, 'About Us', () {
               Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => AboutUs()),
-              );
+                  context, MaterialPageRoute(builder: (_) => AboutUs()));
             }),
           ],
         ),
@@ -215,15 +200,14 @@ class _QrScanState extends State<QrScan> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF232526), // dark gray
-              Color(0xFF0f2027), // almost black
-              Color(0xFF000000), // black
+              Color(0xFF232526),
+              Color(0xFF0f2027),
+              Color(0xFF000000),
             ],
           ),
         ),
         child: Stack(
           children: [
-            // Scanner container with black card design
             Container(
               margin: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -240,26 +224,22 @@ class _QrScanState extends State<QrScan> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(25),
                 child: MobileScanner(
-                  controller: _scannerController!, // Use the stored controller
-                  onDetect: (Capture) {
-                    final List<Barcode> barcodes = Capture.barcodes;
-                    for (final barcode in barcodes) {
-                      print('Barcode Found! ${barcode.rawValue}');
-                      _handleQrCode(barcode.rawValue);
-                      break; // Process only the first barcode
+                  controller: _scannerController,
+                  onDetect: (capture) {
+                    final barcodes = capture.barcodes;
+                    if (barcodes.isNotEmpty) {
+                      _handleQrCode(barcodes.first.rawValue);
                     }
                   },
                 ),
               ),
             ),
-            // Scanning frame overlay
             Positioned.fill(
               child: Container(
                 margin: const EdgeInsets.all(20),
                 child: CustomPaint(painter: ScannerFramePainter()),
               ),
             ),
-            // Instructions card at bottom
             Positioned(
               bottom: 30,
               left: 20,
@@ -279,11 +259,8 @@ class _QrScanState extends State<QrScan> {
                 ),
                 child: Column(
                   children: [
-                    const Icon(
-                      Icons.qr_code_scanner,
-                      color: Colors.white,
-                      size: 30,
-                    ),
+                    const Icon(Icons.qr_code_scanner,
+                        color: Colors.white, size: 30),
                     const SizedBox(height: 10),
                     const Text(
                       'Point camera at QR code to scan',
@@ -316,7 +293,6 @@ class _QrScanState extends State<QrScan> {
   }
 }
 
-// Custom painter for scanning frame
 class ScannerFramePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -327,68 +303,50 @@ class ScannerFramePainter extends CustomPainter {
 
     const cornerLength = 40.0;
     const frameSize = 250.0;
+    final center = Offset(size.width / 2, size.height / 2);
+    final frameLeft = center.dx - frameSize / 2;
+    final frameTop = center.dy - frameSize / 2;
+    final frameRight = center.dx + frameSize / 2;
+    final frameBottom = center.dy + frameSize / 2;
 
-    final centerX = size.width / 2;
-    final centerY = size.height / 2;
-    final frameLeft = centerX - frameSize / 2;
-    final frameTop = centerY - frameSize / 2;
-    final frameRight = centerX + frameSize / 2;
-    final frameBottom = centerY + frameSize / 2;
+    // Top-left
+    canvas.drawLine(
+        Offset(frameLeft, frameTop + cornerLength),
+        Offset(frameLeft, frameTop), paint);
+    canvas.drawLine(
+        Offset(frameLeft, frameTop),
+        Offset(frameLeft + cornerLength, frameTop), paint);
 
-    // Draw corner lines
-    // Top-left corner
+    // Top-right
     canvas.drawLine(
-      Offset(frameLeft, frameTop + cornerLength),
-      Offset(frameLeft, frameTop),
-      paint,
-    );
+        Offset(frameRight - cornerLength, frameTop),
+        Offset(frameRight, frameTop), paint);
     canvas.drawLine(
-      Offset(frameLeft, frameTop),
-      Offset(frameLeft + cornerLength, frameTop),
-      paint,
-    );
+        Offset(frameRight, frameTop),
+        Offset(frameRight, frameTop + cornerLength), paint);
 
-    // Top-right corner
+    // Bottom-left
     canvas.drawLine(
-      Offset(frameRight - cornerLength, frameTop),
-      Offset(frameRight, frameTop),
-      paint,
-    );
+        Offset(frameLeft, frameBottom - cornerLength),
+        Offset(frameLeft, frameBottom), paint);
     canvas.drawLine(
-      Offset(frameRight, frameTop),
-      Offset(frameRight, frameTop + cornerLength),
-      paint,
-    );
+        Offset(frameLeft, frameBottom),
+        Offset(frameLeft + cornerLength, frameBottom), paint);
 
-    // Bottom-left corner
+    // Bottom-right
     canvas.drawLine(
-      Offset(frameLeft, frameBottom - cornerLength),
-      Offset(frameLeft, frameBottom),
-      paint,
-    );
+        Offset(frameRight - cornerLength, frameBottom),
+        Offset(frameRight, frameBottom), paint);
     canvas.drawLine(
-      Offset(frameLeft, frameBottom),
-      Offset(frameLeft + cornerLength, frameBottom),
-      paint,
-    );
-
-    // Bottom-right corner
-    canvas.drawLine(
-      Offset(frameRight - cornerLength, frameBottom),
-      Offset(frameRight, frameBottom),
-      paint,
-    );
-    canvas.drawLine(
-      Offset(frameRight, frameBottom),
-      Offset(frameRight, frameBottom - cornerLength),
-      paint,
-    );
+        Offset(frameRight, frameBottom),
+        Offset(frameRight, frameBottom - cornerLength), paint);
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+// Drawer item widget helper
 Widget _drawerItem(IconData icon, String text, VoidCallback onTap) {
   return Container(
     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),

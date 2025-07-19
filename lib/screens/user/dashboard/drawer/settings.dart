@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 import 'package:orion/screens/user/dashboard/dashboard_screen.dart';
 import 'package:orion/screens/user/authentication/select_user.dart';
 import 'aboutus.dart';
@@ -42,7 +43,7 @@ class SettingsUser extends StatelessWidget {
               title: Text("Home"),
               onTap: () => Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => DashboardScreen()),
+                MaterialPageRoute(builder: (_) => HomeScreen()),
               ),
             ),
             ListTile(

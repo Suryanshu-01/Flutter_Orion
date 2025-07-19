@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../dashboard_screen.dart';
+import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 import '../../authentication/select_user.dart';
 import 'aboutus.dart';
 
@@ -119,7 +119,7 @@ class _ChangetransactionState extends State<Changetransaction> {
               title: Text("Home"),
               onTap: () => Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => DashboardScreen()),
+                MaterialPageRoute(builder: (_) => HomeScreen()),
               ),
             ),
             ListTile(

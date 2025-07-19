@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 import 'package:orion/screens/user/transaction/varify_phone_details2.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../authentication/select_user.dart';
@@ -82,7 +83,7 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
               title: const Text("Home"),
               onTap: () => Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                MaterialPageRoute(builder: (_) => const HomeScreen()),
               ),
             ),
             ListTile(
@@ -138,11 +139,11 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black,
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),

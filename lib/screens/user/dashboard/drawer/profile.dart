@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 import 'aboutus.dart';
 import '../dashboard_screen.dart';
 import '../../authentication/select_user.dart';
@@ -98,7 +99,7 @@ class _ProfileManagerState extends State<ProfileManager> {
               title: Text("Home"),
               onTap: () => Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => DashboardScreen()),
+                MaterialPageRoute(builder: (_) => HomeScreen()),
               ),
             ),
             ListTile(
