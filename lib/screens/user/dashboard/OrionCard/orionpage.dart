@@ -1,8 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:qr_flutter/qr_flutter.dart'; // Add this import
+import 'package:qr_flutter/qr_flutter.dart';
 
+<<<<<<< HEAD
+=======
+import '../../authentication/select_user.dart';
+import '../dashboard_screen.dart';
+import '../drawer/aboutus.dart';
+>>>>>>> 94e9d0275f2bb4ede724026ae48af4e906c02adb
 
 class Orionpage extends StatefulWidget {
   const Orionpage({super.key});
@@ -83,153 +89,210 @@ class _OrionpageState extends State<Orionpage> {
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    const Color.fromARGB(255, 252, 252, 252),
+                    const Color.fromARGB(255, 148, 149, 149),
+                  ],
+                ),
+              ),
+              child: Text(
+                "Profile",
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text("Home"),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => DashboardScreen()),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text("Profile Manager"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.admin_panel_settings),
+              title: Text("Admin/User"),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => SelectUser()),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text("Settings"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.info_outline),
+              title: Text("About Us"),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => AboutUs()),
+              ),
+            ),
+          ],
+        ),
+      ),
       body: Center(
         child: isLoading
-            ? const Center(child: CircularProgressIndicator(color: Colors.black))
+            ? const Center(
+                child: CircularProgressIndicator(color: Colors.black),
+              )
             : error != null
-                ? Center(
-                    child: Text(
-                      error!,
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                  )
-                : SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Name & Balance
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(20),
-                            margin: const EdgeInsets.only(bottom: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 5),
-                                ),
-                              ],
+            ? Center(
+                child: Text(
+                  error!,
+                  style: const TextStyle(color: Colors.black),
+                ),
+              )
+            : SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Name & Balance
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        margin: const EdgeInsets.only(bottom: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Hi, $userName",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  "Balance: ₹${balance?.toStringAsFixed(2) ?? '0.00'}",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // QR Code in a black card
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 30),
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                QrImageView(
-                                  data: phoneNumber ?? 'No Data',
-                                  version: QrVersions.auto,
-                                  size: 180,
-                                  backgroundColor: Colors.white,
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  phoneNumber ?? '',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // "Choose your Card:" text
-                          const Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Choose your Card:",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Hi, $userName",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 26,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
-
-                          // Cards in a black card
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.08),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
+                            const SizedBox(height: 5),
+                            Text(
+                              "Balance: ₹${balance?.toStringAsFixed(2) ?? '0.00'}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                            child: ListView.separated(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: cardImages.length,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 16),
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () => _selectCard(cardImages[index]),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: Image.asset(
-                                      cardImages[index],
-                                      height: 180, // Increased height for larger cards
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
+
+                      // QR Code in a black card
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 30),
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            QrImageView(
+                              data: phoneNumber ?? 'No Data',
+                              version: QrVersions.auto,
+                              size: 180,
+                              backgroundColor: Colors.white,
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              phoneNumber ?? '',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // "Choose your Card:" text
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Choose your Card:",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Cards in a black card
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: cardImages.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 16),
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () => _selectCard(cardImages[index]),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Image.asset(
+                                  cardImages[index],
+                                  height:
+                                      180, // Increased height for larger cards
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
+                ),
+              ),
       ),
     );
   }

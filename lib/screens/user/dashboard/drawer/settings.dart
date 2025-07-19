@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:orion/screens/user/dashboard/dashboard_screen.dart';
+import 'package:orion/screens/user/authentication/select_user.dart';
+import 'aboutus.dart';
 
 class SettingsUser extends StatelessWidget {
   const SettingsUser({super.key});
@@ -19,6 +22,57 @@ class SettingsUser extends StatelessWidget {
           ),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.cyan[800]!, Colors.cyan[400]!],
+                ),
+              ),
+              child: Text(
+                "Profile",
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text("Home"),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => DashboardScreen()),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text("Profile Manager"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.admin_panel_settings),
+              title: Text("Admin/User"),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => SelectUser()),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text("Settings"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.info_outline),
+              title: Text("About Us"),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => AboutUs()),
+              ),
+            ),
+          ],
+        ),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -56,10 +110,7 @@ class SettingsUser extends StatelessWidget {
                   SizedBox(height: 16),
                   Text(
                     "You can add your settings options here.",
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.white70, fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
                 ],

@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../dashboard_screen.dart';
+import '../../authentication/select_user.dart';
+import 'aboutus.dart';
 
 class Changelogin extends StatefulWidget {
   const Changelogin({super.key});
@@ -98,6 +101,57 @@ class _ChangeloginState extends State<Changelogin> {
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.cyan[800]!, Colors.cyan[400]!],
+                ),
+              ),
+              child: Text(
+                "Profile",
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text("Home"),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => DashboardScreen()),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text("Profile Manager"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.admin_panel_settings),
+              title: Text("Admin/User"),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => SelectUser()),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text("Settings"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.info_outline),
+              title: Text("About Us"),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => AboutUs()),
+              ),
+            ),
+          ],
+        ),
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -125,7 +179,10 @@ class _ChangeloginState extends State<Changelogin> {
                     obscureText: true,
                     keyboardType: TextInputType.number,
                     maxLength: 4,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
                     decoration: InputDecoration(
                       labelText: "Enter Current Login PIN",
                       labelStyle: const TextStyle(color: Colors.white70),
@@ -137,7 +194,10 @@ class _ChangeloginState extends State<Changelogin> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white, width: 2),
+                        borderSide: const BorderSide(
+                          color: Colors.white,
+                          width: 2,
+                        ),
                       ),
                       counterStyle: const TextStyle(color: Colors.white54),
                     ),
@@ -161,7 +221,10 @@ class _ChangeloginState extends State<Changelogin> {
                       ),
                       child: _isLoading
                           ? const CircularProgressIndicator(color: Colors.black)
-                          : const Text("Verify Current PIN", style: TextStyle(color: Colors.black)),
+                          : const Text(
+                              "Verify Current PIN",
+                              style: TextStyle(color: Colors.black),
+                            ),
                     ),
                   ),
                   if (_showNewPinFields) ...[
@@ -171,7 +234,10 @@ class _ChangeloginState extends State<Changelogin> {
                       obscureText: true,
                       keyboardType: TextInputType.number,
                       maxLength: 4,
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
                       decoration: InputDecoration(
                         labelText: "Enter New PIN",
                         labelStyle: const TextStyle(color: Colors.white70),
@@ -183,7 +249,10 @@ class _ChangeloginState extends State<Changelogin> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.white, width: 2),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 2,
+                          ),
                         ),
                         counterStyle: const TextStyle(color: Colors.white54),
                       ),
@@ -194,7 +263,10 @@ class _ChangeloginState extends State<Changelogin> {
                       obscureText: true,
                       keyboardType: TextInputType.number,
                       maxLength: 4,
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
                       decoration: InputDecoration(
                         labelText: "Confirm New PIN",
                         labelStyle: const TextStyle(color: Colors.white70),
@@ -206,7 +278,10 @@ class _ChangeloginState extends State<Changelogin> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.white, width: 2),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 2,
+                          ),
                         ),
                         counterStyle: const TextStyle(color: Colors.white54),
                       ),
@@ -229,8 +304,13 @@ class _ChangeloginState extends State<Changelogin> {
                           elevation: 2,
                         ),
                         child: _isLoading
-                            ? const CircularProgressIndicator(color: Colors.black)
-                            : const Text("Update PIN", style: TextStyle(color: Colors.black)),
+                            ? const CircularProgressIndicator(
+                                color: Colors.black,
+                              )
+                            : const Text(
+                                "Update PIN",
+                                style: TextStyle(color: Colors.black),
+                              ),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -249,7 +329,10 @@ class _ChangeloginState extends State<Changelogin> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      child: const Text("Back to Settings", style: TextStyle(color: Colors.white)),
+                      child: const Text(
+                        "Back to Settings",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ],

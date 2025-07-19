@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'aboutus.dart';
+import '../dashboard_screen.dart';
+import '../../authentication/select_user.dart';
 import 'changetransaction.dart';
 import 'changelogin.dart';
 import '../QR/qr_generate.dart';
-// ✅ Import your QR code screen
 
 class ProfileManager extends StatefulWidget {
   const ProfileManager({super.key});
@@ -76,6 +78,57 @@ class _ProfileManagerState extends State<ProfileManager> {
           ),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.cyan[800]!, Colors.cyan[400]!],
+                ),
+              ),
+              child: Text(
+                "Profile",
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text("Home"),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => DashboardScreen()),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text("Profile Manager"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.admin_panel_settings),
+              title: Text("Admin/User"),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => SelectUser()),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text("Settings"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.info_outline),
+              title: Text("About Us"),
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => AboutUs()),
+              ),
+            ),
+          ],
+        ),
       ),
       body: Center(
         child: Padding(
