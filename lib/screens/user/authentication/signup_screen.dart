@@ -55,7 +55,7 @@ class _SignupScreenState extends State<SignupScreen> {
       }
       _showError(errorMessage);
     } catch (e) {
-      _showError("Error: "+e.toString());
+      _showError("Error: $e");
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);

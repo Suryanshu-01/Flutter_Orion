@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:qr_flutter/qr_flutter.dart'; // Add this import
 
-import '../../authentication/select_user.dart';
-import '../dashboard_screen.dart';
-import '../drawer/aboutus.dart';
-import '../drawer/settings.dart';
 
 class Orionpage extends StatefulWidget {
   const Orionpage({super.key});

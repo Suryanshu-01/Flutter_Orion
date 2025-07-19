@@ -63,7 +63,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Error: '+e.toString())));
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
       return false;
     } finally {
       setState(() => _isLoading = false);

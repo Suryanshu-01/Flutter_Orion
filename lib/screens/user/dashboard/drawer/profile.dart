@@ -1,10 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'aboutus.dart';
-import '../dashboard_screen.dart';
-import 'settings.dart';
-import '../../authentication/select_user.dart';
 import 'changetransaction.dart';
 import 'changelogin.dart';
 import '../QR/qr_generate.dart';

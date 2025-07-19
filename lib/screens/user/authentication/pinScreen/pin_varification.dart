@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 import 'package:pinput/pinput.dart';
-import '../../dashboard/dashboard_screen.dart';
 
 class LoginPinScreen extends StatefulWidget {
   const LoginPinScreen({super.key});
@@ -40,13 +40,13 @@ class _LoginPinScreenState extends State<LoginPinScreen> {
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       } else {
         setState(() => _isError = true);
       }
     } catch (e) {
-      _showError("Error verifying PIN: "+e.toString());
+      _showError("Error verifying PIN: $e");
     }
   }
 

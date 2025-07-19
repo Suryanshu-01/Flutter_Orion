@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import '../dashboard_screen.dart';
-import '../drawer/aboutus.dart';
-import '../../authentication/select_user.dart';
 
 class SettingsUser extends StatelessWidget {
   const SettingsUser({super.key});

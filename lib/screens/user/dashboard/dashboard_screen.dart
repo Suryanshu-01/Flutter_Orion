@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../dashboard/drawer/profile.dart';
+
+// Screens for navigation
+import 'package:orion/screens/user/dashboard/drawer/profile.dart';
 import 'package:orion/screens/user/dashboard/drawer/aboutus.dart';
-import '../authentication/select_user.dart';
-import '../transaction/get_phonenumber1.dart';
+import 'package:orion/screens/user/authentication/select_user.dart';
 import 'package:orion/screens/user/dashboard/drawer/settings.dart';
-import 'OrionCard/orionpage.dart';
-import 'QR/qr_scan.dart';
-import 'Coupons/coupons.dart';
+import 'package:orion/screens/user/transaction/get_phonenumber1.dart';
+import 'package:orion/screens/user/dashboard/OrionCard/orionpage.dart';
+import 'package:orion/screens/user/dashboard/QR/qr_scan.dart';
+import 'package:orion/screens/user/dashboard/Coupons/coupons.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -72,7 +74,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // gradient will be applied below
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -172,11 +174,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Card image
             selectedImage.isNotEmpty
                 ? Image.asset(selectedImage, fit: BoxFit.cover)
                 : Container(color: Colors.grey.shade200),
-            // Card label and user name
             Container(
               alignment: Alignment.bottomLeft,
               padding: const EdgeInsets.all(16),
@@ -216,9 +216,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         color: Colors.black,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Center( // <-- Center the row horizontally
+      child: Center(
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center, // <-- Center children in the row
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildFeature(Icons.qr_code_2, "QR Code", () {
               Navigator.push(
@@ -257,11 +257,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildTransactionHistory() {
     final user = FirebaseAuth.instance.currentUser;
 
-    Future<List<Map<String, dynamic>>> _fetchTransactions() async {
+    Future<List<Map<String, dynamic>>> fetchTransactions() async {
       if (user == null) return [];
 
       final uid = user.uid;
-
       final snapshot = await FirebaseFirestore.instance
           .collection('transactions')
           .where('participants', arrayContains: uid)
@@ -269,19 +268,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       final transactions = snapshot.docs.map((doc) => doc.data()).toList();
 
-      // Sort transactions by datetime
       transactions.sort((a, b) {
         final dateTimeA =
             DateTime.tryParse('${a['date']} ${a['time']}') ?? DateTime.now();
         final dateTimeB =
             DateTime.tryParse('${b['date']} ${b['time']}') ?? DateTime.now();
-        return dateTimeB.compareTo(dateTimeA); // Newest first
+        return dateTimeB.compareTo(dateTimeA);
       });
 
       return transactions;
     }
 
-    Widget _buildTransactionTile(Map<String, dynamic> data, {bool isModal = false}) {
+    Widget buildTransactionTile(Map<String, dynamic> data, {bool isModal = false}) {
       final currentUserId = user?.uid;
       final isSender = data['from'] == currentUserId;
       final otherUserId = isSender ? data['to'] : data['from'];
@@ -307,7 +305,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           return ListTile(
             leading: Icon(
               isSender ? Icons.arrow_upward : Icons.arrow_downward,
-              color: isSender ? Colors.red : Colors.green,
+              color: isSender ? Colors.redAccent : Colors.greenAccent,
             ),
             title: Text(
               '${isSender ? 'Paid to' : 'Received from'} $name',
@@ -321,7 +319,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               '₹${amount.toString()}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: isSender ? Colors.red : Colors.green,
+                color: isSender ? Colors.redAccent : Colors.greenAccent,
                 fontSize: 15,
               ),
             ),
@@ -330,8 +328,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
     }
 
-    // --- Modal for full-screen transaction history with animation ---
-    void _showTransactionHistoryModal() {
+    void showTransactionHistoryModal() {
       showGeneralDialog(
         context: context,
         barrierDismissible: true,
@@ -374,7 +371,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     Expanded(
                       child: FutureBuilder<List<Map<String, dynamic>>>(
-                        future: _fetchTransactions(),
+                        future: fetchTransactions(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Center(child: CircularProgressIndicator());
@@ -383,7 +380,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             return const Center(
                               child: Text(
                                 "Error fetching transactions",
-                                style: TextStyle(color: Colors.black), // Modal is white, so black text
+                                style: TextStyle(color: Colors.black),
                               ),
                             );
                           }
@@ -392,14 +389,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             return const Center(
                               child: Text(
                                 "No transactions yet",
-                                style: TextStyle(color: Colors.black), // Modal is white, so black text
+                                style: TextStyle(color: Colors.black),
                               ),
                             );
                           }
                           return ListView.builder(
                             itemCount: transactions.length,
                             itemBuilder: (context, index) =>
-                                _buildTransactionTile(transactions[index], isModal: true),
+                                buildTransactionTile(transactions[index], isModal: true),
                           );
                         },
                       ),
@@ -419,10 +416,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
     }
 
-    // --- Main dashboard container, now tappable ---
     return InkWell(
       borderRadius: BorderRadius.circular(20),
-      onTap: _showTransactionHistoryModal,
+      onTap: showTransactionHistoryModal,
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -444,7 +440,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             SizedBox(
               height: 200,
               child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: _fetchTransactions(),
+                future: fetchTransactions(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -453,7 +449,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     return const Center(
                       child: Text(
                         "Error fetching transactions",
-                        style: TextStyle(color: Colors.white), // <-- White text
+                        style: TextStyle(color: Colors.white),
                       ),
                     );
                   }
@@ -462,14 +458,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     return const Center(
                       child: Text(
                         "No transactions yet",
-                        style: TextStyle(color: Colors.white), // <-- White text
+                        style: TextStyle(color: Colors.white),
                       ),
                     );
                   }
                   return ListView.builder(
                     itemCount: transactions.length,
                     itemBuilder: (context, index) =>
-                        _buildTransactionTile(transactions[index], isModal: false),
+                        buildTransactionTile(transactions[index], isModal: false),
                   );
                 },
               ),

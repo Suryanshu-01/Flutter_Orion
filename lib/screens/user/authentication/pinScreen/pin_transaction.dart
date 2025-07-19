@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:orion/screens/user/dashboard/dashboard_screen.dart'; // ✅ Ensure correct path
-
+import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 class SetTransactionPinScreen extends StatefulWidget {
   const SetTransactionPinScreen({super.key});
 
@@ -44,10 +43,10 @@ class _SetTransactionPinScreenState extends State<SetTransactionPinScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const DashboardScreen()),
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     } catch (e) {
-      _showError("Failed to save PIN: "+e.toString());
+      _showError("Failed to save PIN: $e");
     } finally {
       setState(() => _isLoading = false);
     }

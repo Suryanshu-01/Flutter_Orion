@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../authentication/select_user.dart';
-import '../dashboard_screen.dart';
 
 class AboutUs extends StatelessWidget {
   const AboutUs({super.key});
@@ -99,8 +97,8 @@ class AboutUs extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Column(
-                  children: const [
+                child: const Column(
+                  children: [
                     Icon(Icons.group, size: 40, color: Colors.white),
                     SizedBox(height: 10),
                     Text(
@@ -114,24 +112,26 @@ class AboutUs extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 30),
-                _buildTeamMember(
-                  name: "Kumar Suryanshu",
-                  rollNumber: "2024IMG-026",
-                  description: "Great Man",
-                ),
-                _buildTeamMember(
-                  name: "Prakhar Srivastava",
-                  rollNumber: "2024IMG-033",
-                  description: "Great Man",
-                ),
-                _buildTeamMember(
-                  name: "Aryan Singh",
-                  rollNumber: "2024IMT-013",
-                  description: "Cute boy",
-                ),
-              ],
-            ),
+              ),
+
+              const SizedBox(height: 20), // ✅ Proper use of SizedBox
+
+              _buildTeamMember(
+                name: "Kumar Suryanshu",
+                rollNumber: "2024IMG-026",
+                description: "Great Man",
+              ),
+              _buildTeamMember(
+                name: "Prakhar Srivastava",
+                rollNumber: "2024IMG-033",
+                description: "Great Man",
+              ),
+              _buildTeamMember(
+                name: "Aryan Singh",
+                rollNumber: "2024IMT-013",
+                description: "Cute boy",
+              ),
+            ],
           ),
         ),
       ),

@@ -2,10 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../dashboard_screen.dart';
-import 'settings.dart';
-import '../../authentication/select_user.dart';
-import 'aboutus.dart';
 
 class Changelogin extends StatefulWidget {
   const Changelogin({super.key});

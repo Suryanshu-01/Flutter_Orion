@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'pin_transaction.dart'; // import your next screen
+import 'pin_transaction.dart'; 
 
 class SetLoginPinScreen extends StatefulWidget {
   const SetLoginPinScreen({super.key});
@@ -49,7 +49,7 @@ class _SetLoginPinScreenState extends State<SetLoginPinScreen> {
         ),
       );
     } catch (e) {
-      _showError("Failed to save PIN: " + e.toString());
+      _showError("Failed to save PIN: $e");
     } finally {
       setState(() => _isLoading = false);
     }

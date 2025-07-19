@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Align(
         alignment: Alignment.center,
         child: Transform.rotate(
-          angle: pi, // Rotate 180 degrees
+          angle: pi, 
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
               fit: BoxFit.contain,
               repeat: false,
               onLoaded: (composition) {
-                // Navigate after animation finishes
+               
                 Future.delayed(composition.duration, () {
                   if (mounted) {
                     Navigator.pushReplacement(

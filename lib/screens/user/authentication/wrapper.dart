@@ -26,10 +26,8 @@ class _WrapperState extends State<Wrapper> {
 
           final user = authSnapshot.data;
 
-          // ✅ Not logged in → go to Signup
           if (user == null) return const SignupScreen();
 
-          // ✅ User logged in → check Firestore document
           return FutureBuilder<DocumentSnapshot>(
             future: FirebaseFirestore.instance.collection('users').doc(user.uid).get(),
             builder: (context, userSnapshot) {
@@ -38,16 +36,16 @@ class _WrapperState extends State<Wrapper> {
               }
 
               if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-                return const UserDetailsScreen(); // 🔹 No profile found
+                return const UserDetailsScreen(); 
               }
 
               final userData = userSnapshot.data!.data() as Map<String, dynamic>?;
 
               if (userData == null || !userData.containsKey('loginPin')) {
-                return const SetLoginPinScreen(); // 🔹 User hasn't set login PIN yet
+                return const SetLoginPinScreen(); 
               }
 
-              return const LoginPinScreen(); // 🔹 All good — verify login PIN
+              return const LoginPinScreen(); 
             },
           );
         },

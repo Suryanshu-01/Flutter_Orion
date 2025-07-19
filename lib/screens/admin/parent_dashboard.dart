@@ -284,7 +284,7 @@ class _ParentDashboardState extends State<ParentDashboard> {
               style: const TextStyle(color: Colors.white70),
             ),
             trailing: Text(
-              "₹ " + tx["amount"].toString(),
+              "₹ ${tx["amount"]}",
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
