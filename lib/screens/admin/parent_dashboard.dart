@@ -29,6 +29,12 @@ class _ParentDashboardState extends State<ParentDashboard> {
     {"title": "Snacks", "amount": 150, "date": "2025-07-03"},
   ];
 
+  void _onAddMoneyPressed() {
+    // For now, just a placeholder. You can navigate to another page here later.
+    // Example: Navigator.push(context, MaterialPageRoute(builder: (_) => AddMoneyPage()));
+    print("Add Money button pressed");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,6 +121,30 @@ class _ParentDashboardState extends State<ParentDashboard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // --- Add Money Button at the top ---
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 20,
+                    ),
+                  ),
+                  icon: const Icon(Icons.add, color: Colors.white),
+                  label: const Text(
+                    "Add Money",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: _onAddMoneyPressed,
+                ),
+              ),
+              const SizedBox(height: 16),
               _buildExpenditureSummary(),
               const SizedBox(height: 20),
               ElevatedButton(
