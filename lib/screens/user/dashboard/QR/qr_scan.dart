@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 import 'package:orion/screens/user/transaction/varify_phone_details2.dart';
 import '../../authentication/select_user.dart' show SelectUser;
 import '../drawer/aboutus.dart';
@@ -57,10 +58,8 @@ class _QrScanState extends State<QrScan> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => VerifyPhoneDetails(
-              phoneNumber: cleanPhone,
-              phone: cleanPhone,
-            ),
+            builder: (_) =>
+                VerifyPhoneDetails(phoneNumber: cleanPhone, phone: cleanPhone),
           ),
         );
       });
@@ -173,22 +172,37 @@ class _QrScanState extends State<QrScan> {
                 ],
               ),
             ),
-            _drawerItem(Icons.home, 'Home', () => Navigator.pop(context)),
+            _drawerItem(
+              Icons.home,
+              'Home',
+              () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => HomeScreen()),
+              ),
+            ),
             _drawerItem(Icons.person, 'Profile Manager', () {
               Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (_) => ProfileManager()));
+                context,
+                MaterialPageRoute(builder: (_) => ProfileManager()),
+              );
             }),
             _drawerItem(Icons.admin_panel_settings, 'Admin/User', () {
               Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (_) => SelectUser()));
+                context,
+                MaterialPageRoute(builder: (_) => SelectUser()),
+              );
             }),
             _drawerItem(Icons.settings, 'Settings', () {
               Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (_) => SettingsUser()));
+                context,
+                MaterialPageRoute(builder: (_) => SettingsUser()),
+              );
             }),
             _drawerItem(Icons.info_outline, 'About Us', () {
               Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (_) => AboutUs()));
+                context,
+                MaterialPageRoute(builder: (_) => AboutUs()),
+              );
             }),
           ],
         ),
@@ -199,11 +213,7 @@ class _QrScanState extends State<QrScan> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF232526),
-              Color(0xFF0f2027),
-              Color(0xFF000000),
-            ],
+            colors: [Color(0xFF232526), Color(0xFF0f2027), Color(0xFF000000)],
           ),
         ),
         child: Stack(
@@ -259,8 +269,11 @@ class _QrScanState extends State<QrScan> {
                 ),
                 child: Column(
                   children: [
-                    const Icon(Icons.qr_code_scanner,
-                        color: Colors.white, size: 30),
+                    const Icon(
+                      Icons.qr_code_scanner,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                     const SizedBox(height: 10),
                     const Text(
                       'Point camera at QR code to scan',
@@ -311,35 +324,51 @@ class ScannerFramePainter extends CustomPainter {
 
     // Top-left
     canvas.drawLine(
-        Offset(frameLeft, frameTop + cornerLength),
-        Offset(frameLeft, frameTop), paint);
+      Offset(frameLeft, frameTop + cornerLength),
+      Offset(frameLeft, frameTop),
+      paint,
+    );
     canvas.drawLine(
-        Offset(frameLeft, frameTop),
-        Offset(frameLeft + cornerLength, frameTop), paint);
+      Offset(frameLeft, frameTop),
+      Offset(frameLeft + cornerLength, frameTop),
+      paint,
+    );
 
     // Top-right
     canvas.drawLine(
-        Offset(frameRight - cornerLength, frameTop),
-        Offset(frameRight, frameTop), paint);
+      Offset(frameRight - cornerLength, frameTop),
+      Offset(frameRight, frameTop),
+      paint,
+    );
     canvas.drawLine(
-        Offset(frameRight, frameTop),
-        Offset(frameRight, frameTop + cornerLength), paint);
+      Offset(frameRight, frameTop),
+      Offset(frameRight, frameTop + cornerLength),
+      paint,
+    );
 
     // Bottom-left
     canvas.drawLine(
-        Offset(frameLeft, frameBottom - cornerLength),
-        Offset(frameLeft, frameBottom), paint);
+      Offset(frameLeft, frameBottom - cornerLength),
+      Offset(frameLeft, frameBottom),
+      paint,
+    );
     canvas.drawLine(
-        Offset(frameLeft, frameBottom),
-        Offset(frameLeft + cornerLength, frameBottom), paint);
+      Offset(frameLeft, frameBottom),
+      Offset(frameLeft + cornerLength, frameBottom),
+      paint,
+    );
 
     // Bottom-right
     canvas.drawLine(
-        Offset(frameRight - cornerLength, frameBottom),
-        Offset(frameRight, frameBottom), paint);
+      Offset(frameRight - cornerLength, frameBottom),
+      Offset(frameRight, frameBottom),
+      paint,
+    );
     canvas.drawLine(
-        Offset(frameRight, frameBottom),
-        Offset(frameRight, frameBottom - cornerLength), paint);
+      Offset(frameRight, frameBottom),
+      Offset(frameRight, frameBottom - cornerLength),
+      paint,
+    );
   }
 
   @override

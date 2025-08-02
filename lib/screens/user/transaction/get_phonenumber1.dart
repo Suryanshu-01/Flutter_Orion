@@ -6,6 +6,7 @@ import 'package:orion/screens/user/transaction/varify_phone_details2.dart';
 import '../authentication/select_user.dart';
 import '../dashboard/drawer/aboutus.dart';
 import '../dashboard/drawer/settings.dart';
+import '../dashboard/drawer/profile.dart';
 
 class GetPhoneNumber extends StatefulWidget {
   const GetPhoneNumber({super.key});
@@ -87,7 +88,10 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text("Profile Manager"),
-              onTap: () {},
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfileManager()),
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.admin_panel_settings),

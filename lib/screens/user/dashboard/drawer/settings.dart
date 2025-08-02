@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 // import 'package:orion/screens/user/dashboard/dashboard_screen.dart';
 import 'package:orion/screens/user/authentication/select_user.dart';
+import 'package:orion/screens/user/dashboard/drawer/profile.dart';
 import 'aboutus.dart';
 
 class SettingsUser extends StatelessWidget {
@@ -25,53 +26,65 @@ class SettingsUser extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       drawer: Drawer(
+        backgroundColor: Colors.white,
         child: ListView(
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.cyan[800]!, Colors.cyan[400]!],
+              decoration: const BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
                 ),
               ),
-              child: Text(
-                "Profile",
-                style: TextStyle(color: Colors.white, fontSize: 24),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.person, size: 40, color: Colors.black),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Profile',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                ],
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text("Home"),
-              onTap: () => Navigator.pushReplacement(
+            _drawerItem(
+              Icons.home,
+              'Home',
+              () => Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => HomeScreen()),
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text("Profile Manager"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.admin_panel_settings),
-              title: Text("Admin/User"),
-              onTap: () => Navigator.pushReplacement(
+            _drawerItem(Icons.person, 'Profile Manager', () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => ProfileManager()),
+              );
+            }),
+            _drawerItem(Icons.admin_panel_settings, 'Admin/User', () {
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => SelectUser()),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Settings"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.info_outline),
-              title: Text("About Us"),
-              onTap: () => Navigator.pushReplacement(
+              );
+            }),
+            _drawerItem(Icons.info_outline, 'About Us', () {
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => AboutUs()),
-              ),
-            ),
+              );
+            }),
           ],
         ),
       ),
@@ -122,4 +135,24 @@ class SettingsUser extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _drawerItem(IconData icon, String text, VoidCallback onTap) {
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+    child: ListTile(
+      leading: Icon(icon, color: Colors.black),
+      title: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w500,
+          fontFamily: 'Poppins',
+        ),
+      ),
+      onTap: onTap,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+  );
 }

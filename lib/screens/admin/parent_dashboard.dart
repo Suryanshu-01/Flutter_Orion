@@ -86,28 +86,10 @@ class _ParentDashboardState extends State<ParentDashboard> {
                 style: TextStyle(color: Colors.black, fontSize: 24),
               ),
             ),
-            _drawerItem(Icons.person, 'Profile Manager', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const ProfileManager()),
-              );
-            }),
             _drawerItem(Icons.admin_panel_settings, 'Admin/User', () {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => const SelectUser()),
-              );
-            }),
-            _drawerItem(Icons.settings, 'Settings', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const SettingsUser()),
-              );
-            }),
-            _drawerItem(Icons.info_outline, 'About Us', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const AboutUs()),
               );
             }),
           ],

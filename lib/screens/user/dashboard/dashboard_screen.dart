@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 
 // Screens for navigation
 import 'package:orion/screens/user/dashboard/drawer/profile.dart';
@@ -110,7 +111,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 style: TextStyle(color: Colors.black, fontSize: 24),
               ),
             ),
-            _drawerItem(Icons.home, 'Home', () => Navigator.pop(context)),
+            _drawerItem(
+              Icons.home,
+              'Home',
+              () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => HomeScreen()),
+              ),
+            ),
             _drawerItem(Icons.person, 'Profile Manager', () {
               Navigator.pushReplacement(
                 context,
@@ -279,7 +287,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return transactions;
     }
 
-    Widget buildTransactionTile(Map<String, dynamic> data, {bool isModal = false}) {
+    Widget buildTransactionTile(
+      Map<String, dynamic> data, {
+      bool isModal = false,
+    }) {
       final currentUserId = user?.uid;
       final isSender = data['from'] == currentUserId;
       final otherUserId = isSender ? data['to'] : data['from'];
@@ -373,8 +384,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: FutureBuilder<List<Map<String, dynamic>>>(
                         future: fetchTransactions(),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
                           }
                           if (snapshot.hasError || !snapshot.hasData) {
                             return const Center(
@@ -396,7 +410,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           return ListView.builder(
                             itemCount: transactions.length,
                             itemBuilder: (context, index) =>
-                                buildTransactionTile(transactions[index], isModal: true),
+                                buildTransactionTile(
+                                  transactions[index],
+                                  isModal: true,
+                                ),
                           );
                         },
                       ),
@@ -464,8 +481,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   }
                   return ListView.builder(
                     itemCount: transactions.length,
-                    itemBuilder: (context, index) =>
-                        buildTransactionTile(transactions[index], isModal: false),
+                    itemBuilder: (context, index) => buildTransactionTile(
+                      transactions[index],
+                      isModal: false,
+                    ),
                   );
                 },
               ),
