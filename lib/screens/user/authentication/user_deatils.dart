@@ -57,6 +57,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         'uid': user.uid,
         'loginPin': null,
         'walletBalance': 1000.0,
+        'blockTransactions': false,
       }, SetOptions(merge: true));
 
       return true;
@@ -109,25 +110,40 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   children: [
                     TextFormField(
                       controller: _nameController,
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
                       decoration: _inputDecoration("Name", Icons.person),
-                      validator: (v) => v == null || v.isEmpty ? 'Enter name' : null,
+                      validator: (v) =>
+                          v == null || v.isEmpty ? 'Enter name' : null,
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
-                      decoration: _inputDecoration("Email", Icons.email_outlined),
-                      validator: (v) => v == null || v.isEmpty ? 'Enter email' : null,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      decoration: _inputDecoration(
+                        "Email",
+                        Icons.email_outlined,
+                      ),
+                      validator: (v) =>
+                          v == null || v.isEmpty ? 'Enter email' : null,
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
                       decoration: _inputDecoration("Phone", Icons.phone),
-                      validator: (v) => v == null || v.isEmpty ? 'Enter phone' : null,
+                      validator: (v) =>
+                          v == null || v.isEmpty ? 'Enter phone' : null,
                     ),
                     const SizedBox(height: 20),
                     Container(
@@ -152,9 +168,16 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                           _dob == null
                               ? 'Select Date of Birth'
                               : 'DOB: ${_dob!.toLocal().toString().split(' ')[0]}',
-                          style: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                        trailing: const Icon(Icons.calendar_today, color: Colors.white70),
+                        trailing: const Icon(
+                          Icons.calendar_today,
+                          color: Colors.white70,
+                        ),
                         onTap: () => _pickDate(context),
                       ),
                     ),
@@ -163,9 +186,20 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       value: _gender,
                       dropdownColor: Colors.grey[900],
                       style: const TextStyle(color: Colors.white),
-                      decoration: _inputDecoration("Gender", Icons.person_outline),
+                      decoration: _inputDecoration(
+                        "Gender",
+                        Icons.person_outline,
+                      ),
                       items: ['Male', 'Female', 'Other']
-                          .map((g) => DropdownMenuItem(value: g, child: Text(g, style: const TextStyle(color: Colors.white))))
+                          .map(
+                            (g) => DropdownMenuItem(
+                              value: g,
+                              child: Text(
+                                g,
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          )
                           .toList(),
                       onChanged: (val) => setState(() => _gender = val),
                       validator: (v) => v == null ? 'Select gender' : null,
@@ -175,7 +209,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       width: double.infinity,
                       height: 50,
                       child: _isLoading
-                          ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
                           : ElevatedButton(
                               onPressed: () async {
                                 final success = await _saveDetails();
@@ -229,7 +267,10 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       prefixIcon: Icon(icon, color: Colors.white70),
       filled: true,
       fillColor: Colors.grey[900],
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.white24),
+      ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: Colors.white, width: 2),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:orion/screens/user/features/transactionHistory.dart';
+import 'package:orion/screens/admin/moneyAdd.dart';
 import 'package:orion/screens/user/authentication/select_user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ParentDashboard extends StatefulWidget {
   const ParentDashboard({super.key});
@@ -10,26 +12,31 @@ class ParentDashboard extends StatefulWidget {
 }
 
 class _ParentDashboardState extends State<ParentDashboard> {
-  bool paymentLocked = false;
-  String selectedFilter = "All";
+  Future<bool> _getBlockTransactionsStatus() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return false;
 
-  List<String> filters = [
-    "All",
-    "Highest Spending Day",
-    "Most Paid Person",
-    "Suspicious Transactions",
-  ];
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    return doc.data()?['blockTransactions'] ?? false;
+  }
 
-  List<Map<String, dynamic>> transactions = [
-    {"title": "Grocery", "amount": 500, "date": "2025-07-04"},
-    {"title": "Mobile Recharge", "amount": 200, "date": "2025-07-03"},
-    {"title": "Snacks", "amount": 150, "date": "2025-07-03"},
-  ];
+  Future<void> _setBlockTransactionsStatus(bool value) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      'blockTransactions': value,
+    });
+  }
 
   void _onAddMoneyPressed() {
-    // For now, just a placeholder. You can navigate to another page here later.
-    // Example: Navigator.push(context, MaterialPageRoute(builder: (_) => AddMoneyPage()));
-    print("Add Money button pressed");
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const MoneyAddPage()),
+    );
   }
 
   @override
@@ -43,310 +50,238 @@ class _ParentDashboardState extends State<ParentDashboard> {
           "Parent Dashboard",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.black),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Notifications"),
-                  content: const Text(
-                    "Real-time transaction alerts appear here.",
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Close"),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
       ),
+      //Drawer
       drawer: Drawer(
         backgroundColor: Colors.white,
         child: ListView(
           children: [
             DrawerHeader(
-              decoration: const BoxDecoration(color: Colors.grey),
-              child: const Text(
-                'Profile',
-                style: TextStyle(color: Colors.black, fontSize: 24),
+              decoration: const BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.person, size: 40, color: Colors.black),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Profile',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                ],
               ),
             ),
+
             _drawerItem(Icons.admin_panel_settings, 'Admin/User', () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => const SelectUser()),
+                MaterialPageRoute(builder: (_) => SelectUser()),
               );
             }),
           ],
         ),
       ),
-      body: Container(
-        width: double.infinity,
-        color: Colors.white,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // --- Add Money Button at the top ---
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 20,
-                    ),
-                  ),
-                  icon: const Icon(Icons.add, color: Colors.white),
-                  label: const Text(
-                    "Add Money",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  onPressed: _onAddMoneyPressed,
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildExpenditureSummary(),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 14,
-                    horizontal: 24,
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const TransactionHistoryScreen(),
-                    ),
-                  );
-                },
-                child: const Text(
-                  "Track your child's expenses",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 20),
-              _buildFilterDropdown(),
-              const SizedBox(height: 10),
-              _buildTransactionList(),
-              const SizedBox(height: 20),
-              _buildPaymentLockControl(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
-  Widget _buildExpenditureSummary() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
         children: [
-          const Text(
-            "Monthly Expenditure",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            "₹ 4,200",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 12),
-          LinearProgressIndicator(
-            value: 0.42,
-            backgroundColor: Colors.white.withOpacity(0.2),
-            color: Colors.white,
-            minHeight: 8,
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            "42% of monthly limit used",
-            style: TextStyle(fontSize: 14, color: Colors.white),
-          ),
-        ],
-      ),
-    );
-  }
+          FutureBuilder<DocumentSnapshot>(
+            future: FirebaseFirestore.instance
+                .collection('users')
+                .doc(FirebaseAuth.instance.currentUser?.uid)
+                .get(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (!snapshot.hasData || !snapshot.data!.exists) {
+                return const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Center(child: Text('User data not found')),
+                );
+              }
+              final data = snapshot.data!.data() as Map<String, dynamic>;
+              final name = data['name'] ?? 'User';
+              final balance = data['walletBalance'] ?? 0;
 
-  Widget _buildFilterDropdown() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          "Filter Transactions",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
+              return Padding(
+                padding: const EdgeInsets.only(
+                  top: 32.0,
+                  left: 16.0,
+                  right: 16.0,
+                ),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 24,
+                    horizontal: 20,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '$name',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Wallet Balance',
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        '₹ $balance',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.black),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              dropdownColor: Colors.black,
-              value: selectedFilter,
-              icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
-              style: const TextStyle(color: Colors.white),
-              items: filters
-                  .map(
-                    (filter) => DropdownMenuItem(
-                      value: filter,
-                      child: Text(
-                        filter,
-                        style: const TextStyle(color: Colors.white),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 24.0,
+              left: 16.0,
+              right: 16.0,
+              bottom: 8.0,
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: _onAddMoneyPressed,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.account_balance_wallet,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                    SizedBox(width: 12),
+                    Text(
+                      "Add Money",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  )
-                  .toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    selectedFilter = value;
-                  });
-                }
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTransactionList() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: transactions.map((tx) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          margin: const EdgeInsets.symmetric(vertical: 6),
-          child: ListTile(
-            leading: Icon(Icons.payment, color: Colors.white),
-            title: Text(
-              tx["title"],
-              style: const TextStyle(color: Colors.white),
-            ),
-            subtitle: Text(
-              "Date: " + tx["date"],
-              style: const TextStyle(color: Colors.white70),
-            ),
-            trailing: Text(
-              "₹ ${tx["amount"]}",
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+                  ],
+                ),
               ),
             ),
           ),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildPaymentLockControl() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Block Transactions',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+                FutureBuilder<bool>(
+                  future: _getBlockTransactionsStatus(),
+                  builder: (context, snapshot) {
+                    bool isBlocked = snapshot.data ?? false;
+                    return Switch(
+                      value: isBlocked,
+                      onChanged: (value) async {
+                        await _setBlockTransactionsStatus(value);
+                        setState(() {});
+                      },
+                      activeColor: Colors.red,
+                      inactiveThumbColor: Colors.grey,
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
+          // ...add more widgets below as needed...
         ],
       ),
-      child: SwitchListTile(
-        activeColor: Colors.white,
-        inactiveThumbColor: Colors.white,
-        inactiveTrackColor: Colors.white24,
-        title: const Text(
-          "Lock All Payments",
-          style: TextStyle(color: Colors.white),
-        ),
-        subtitle: Text(
-          paymentLocked
-              ? "Payments are currently locked"
-              : "Payments are allowed",
-          style: const TextStyle(color: Colors.white70),
-        ),
-        value: paymentLocked,
-        onChanged: (value) {
-          setState(() {
-            paymentLocked = value;
-          });
-        },
-      ),
     );
   }
 
-  Widget _drawerItem(IconData icon, String text, VoidCallback onTap) {
-    return ListTile(
+  // ...existing code...
+}
+
+Widget _drawerItem(IconData icon, String text, VoidCallback onTap) {
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+    child: ListTile(
       leading: Icon(icon, color: Colors.black),
-      title: Text(text, style: const TextStyle(color: Colors.black)),
+      title: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w500,
+          fontFamily: 'Poppins',
+        ),
+      ),
       onTap: onTap,
-    );
-  }
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+  );
 }

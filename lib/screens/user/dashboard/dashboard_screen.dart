@@ -29,6 +29,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _fetchSelectedCard();
   }
 
+  Future<void> _handleNavigation(BuildContext context, Widget page) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (uid == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("User not logged in.")));
+      return;
+    }
+
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get();
+      final isBlocked = doc['blockTransactions'] ?? false;
+
+      if (isBlocked) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Your transactions are blocked.")),
+        );
+      } else {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+    }
+  }
+
   Future<void> _fetchSelectedCard() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -229,17 +260,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildFeature(Icons.qr_code_2, "QR Code", () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => QrScan()),
-              );
+              _handleNavigation(context, QrScan());
             }),
             const SizedBox(width: 20),
             _buildFeature(Icons.send_to_mobile, "Transfer", () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const GetPhoneNumber()),
-              );
+              _handleNavigation(context, const GetPhoneNumber());
             }),
             const SizedBox(width: 20),
             _buildFeature(
