@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:orion/screens/user/features/transactionHistory.dart';
-import 'package:orion/screens/user/dashboard/drawer/profile.dart';
-import 'package:orion/screens/user/dashboard/drawer/aboutus.dart';
-import 'package:orion/screens/user/dashboard/drawer/settings.dart';
 import 'package:orion/screens/user/authentication/select_user.dart';
 
 class ParentDashboard extends StatefulWidget {
