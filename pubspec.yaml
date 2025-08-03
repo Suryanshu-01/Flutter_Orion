@@ -88,6 +88,22 @@ flutter:
     - assets/images/star_card.png
     - assets/images/toji_fushigiro.png
     - assets/images/wall_titan.png
+    - assets/coupon/brandcoupon/Boat.jpg
+    - assets/coupon/brandcoupon/Nykaa.jpg
+    - assets/coupon/brandcoupon/Swiggy.jpg
+    - assets/coupon/brandcoupon/PVR.jpg
+    - assets/coupon/cardcoupon/itachic.jpg
+    - assets/coupon/cardcoupon/lightc.jpg
+    - assets/coupon/cardcoupon/luffyc.jpg
+    - assets/coupon/cardcoupon/madarac.jpg
+    - assets/coupon/cardcoupon/shanksc.jpg
+    - assets/coupon/cardcoupon/vegetac.jpg
+    - assets/coupon/cardcoupon/itachi.png
+    - assets/coupon/cardcoupon/light.png
+    - assets/coupon/cardcoupon/luffy.png
+    - assets/coupon/cardcoupon/madara.png
+    - assets/coupon/cardcoupon/shanks.png
+    - assets/coupon/cardcoupon/vegeta.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
