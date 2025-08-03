@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:orion/services/notification_service.dart';
 import 'payment_success6.dart';
 
 class TransferProcessingScreen extends StatefulWidget {
@@ -116,6 +117,17 @@ class _TransferProcessingScreenState extends State<TransferProcessingScreen> {
         transaction.set(
           firestore.collection('transactions').doc(transactionId),
           transactionData,
+        );
+
+        // Send notification to receiver
+        final senderData = senderSnap.data();
+        final senderName = senderData?['name'] ?? 'Someone';
+        
+        // Send notification after transaction is complete
+        await NotificationService.sendMoneyReceivedNotification(
+          receiverUid: receiverDoc.id,
+          senderName: senderName,
+          amount: amount,
         );
 
         return true;

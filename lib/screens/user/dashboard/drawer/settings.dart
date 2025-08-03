@@ -3,10 +3,42 @@ import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 // import 'package:orion/screens/user/dashboard/dashboard_screen.dart';
 import 'package:orion/screens/user/authentication/select_user.dart';
 import 'package:orion/screens/user/dashboard/drawer/profile.dart';
+import 'package:orion/services/notification_service.dart';
 import 'aboutus.dart';
 
-class SettingsUser extends StatelessWidget {
+class SettingsUser extends StatefulWidget {
   const SettingsUser({super.key});
+
+  @override
+  State<SettingsUser> createState() => _SettingsUserState();
+}
+
+class _SettingsUserState extends State<SettingsUser> {
+  bool _notificationsEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotificationSettings();
+  }
+
+  Future<void> _loadNotificationSettings() async {
+    final enabled = await NotificationService.isNotificationEnabled();
+    setState(() {
+      _notificationsEnabled = enabled;
+    });
+  }
+
+  Future<void> _toggleNotifications(bool value) async {
+    if (value) {
+      await NotificationService.saveTokenToFirebase();
+    } else {
+      await NotificationService.disableNotifications();
+    }
+    setState(() {
+      _notificationsEnabled = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,11 +141,11 @@ class SettingsUser extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: const [
-                  Icon(Icons.settings, size: 60, color: Colors.white),
-                  SizedBox(height: 24),
-                  Text(
-                    "This is Settings!",
+                children: [
+                  const Icon(Icons.settings, size: 60, color: Colors.white),
+                  const SizedBox(height: 24),
+                  const Text(
+                    "Settings",
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -121,11 +153,105 @@ class SettingsUser extends StatelessWidget {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 16),
-                  Text(
-                    "You can add your settings options here.",
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
-                    textAlign: TextAlign.center,
+                  const SizedBox(height: 32),
+                  
+                  // Notification Settings
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.notifications,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 16),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Push Notifications",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                "Get notified when you receive money",
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Switch(
+                          value: _notificationsEnabled,
+                          onChanged: _toggleNotifications,
+                          activeColor: Colors.blue,
+                          activeTrackColor: Colors.blue.withOpacity(0.3),
+                          inactiveThumbColor: Colors.grey,
+                          inactiveTrackColor: Colors.grey.withOpacity(0.3),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Additional settings can be added here
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(
+                          Icons.security,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Security",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                "Manage your security settings",
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white54,
+                          size: 16,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
