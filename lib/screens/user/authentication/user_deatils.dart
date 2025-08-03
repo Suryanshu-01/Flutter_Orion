@@ -56,7 +56,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         'gender': _gender,
         'uid': user.uid,
         'loginPin': null,
-        'walletBalance': 1000.0,
+        'walletBalance': 0.0,
         'blockTransactions': false,
       }, SetOptions(merge: true));
 

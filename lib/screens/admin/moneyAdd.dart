@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -50,7 +49,13 @@ class _MoneyAddPageState extends State<MoneyAddPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Money Add')),
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: const Text('Add Money'),
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -58,17 +63,38 @@ class _MoneyAddPageState extends State<MoneyAddPage> {
           children: [
             TextField(
               controller: _amountController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
                 labelText: 'Enter amount',
-                border: OutlineInputBorder(),
+                labelStyle: const TextStyle(color: Colors.white54),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.white54),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.white),
+                ),
               ),
             ),
             const SizedBox(height: 20),
             _isLoading
-                ? const CircularProgressIndicator()
+                ? const CircularProgressIndicator(color: Colors.white)
                 : ElevatedButton(
                     onPressed: _addMoney,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 12,
+                      ),
+                      textStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
                     child: const Text('Add Money'),
                   ),
           ],
