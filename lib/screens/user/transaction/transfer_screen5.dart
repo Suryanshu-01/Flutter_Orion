@@ -95,6 +95,7 @@ class _TransferProcessingScreenState extends State<TransferProcessingScreen> {
 
         // Prepare transaction details
         final now = DateTime.now();
+        final timestamp = Timestamp.fromDate(now); // ✅ for filtering
         final today = DateFormat('yyyy-MM-dd').format(now);
         final time = DateFormat('HH:mm:ss').format(now);
         final transactionId = firestore.collection('transactions').doc().id;
@@ -103,16 +104,17 @@ class _TransferProcessingScreenState extends State<TransferProcessingScreen> {
           'transactionId': transactionId,
           'from': sender.uid,
           'to': receiverDoc.id,
-          'participants': [sender.uid, receiverDoc.id], // ✅ Key for easy querying
+          'participants': [sender.uid, receiverDoc.id],
           'amount': amount,
           'date': today,
           'time': time,
+          'timestamp': timestamp, // ✅ this fixes the issue
           'type': 'transfer',
           'status': 'success',
           'category': widget.paymentType,
         };
 
-        // Save single transaction record
+        // Save transaction document
         transaction.set(
           firestore.collection('transactions').doc(transactionId),
           transactionData,

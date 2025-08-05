@@ -4,8 +4,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:orion/screens/user/ExpenseTracker/services/firebase_services.dart';
-import 'package:orion/screens/user/ExpenseTracker/widgets/charts/animated_total_counter.dart';
+import 'package:orion/screens/user/ExpenseTracker/widgets/animated_total_counter.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/charts/monthly_bar_chart.dart';
 import 'package:orion/screens/user/features/transactionHistory.dart';
 import 'package:orion/screens/user/ExpenseTracker/monthly_detail_screen.dart';
@@ -21,7 +22,7 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
   double _totalYearlyExpense = 0.0;
   bool _isLoading = true;
   String _userName = "";
-  List<Map<String, dynamic>> _recentTransactions = [];
+  List<Map<String, dynamic>> _allTransactions = [];
   Timer? _holdTimer;
   bool _showTransactionOverlay = false;
   Map<String, String> _usersNameMap = {};
@@ -39,7 +40,7 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
     setState(() => _isLoading = true);
 
     final totalFuture = service.fetchTotalYearlyExpense();
-    final txFuture = _fetchRecentTransactions();
+    final txFuture = _fetchAllTransactions();
     final nameFuture = fetchUserName(uid);
 
     final results = await Future.wait([totalFuture, txFuture, nameFuture]);
@@ -52,13 +53,16 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
     setState(() {
       _totalYearlyExpense = total;
       _userName = userName;
-      _recentTransactions = transactions;
+      _allTransactions = transactions;
       _isLoading = false;
     });
   }
 
   Future<String> fetchUserName(String uid) async {
-    final snapshot = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
     if (snapshot.exists) {
       final data = snapshot.data() as Map<String, dynamic>;
       return data['name'] ?? "User";
@@ -66,7 +70,7 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
     return "User";
   }
 
-  Future<List<Map<String, dynamic>>> _fetchRecentTransactions() async {
+  Future<List<Map<String, dynamic>>> _fetchAllTransactions() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return [];
     final query = await FirebaseFirestore.instance
@@ -75,17 +79,29 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
         .where('status', isEqualTo: 'success')
         .get();
 
-    final tx = query.docs.map((doc) => doc.data()).toList();
+    final tx = query.docs.map((doc) {
+      final data = doc.data();
+      final dateStr = data['date'] ?? '';
+      final timeStr = data['time'] ?? '00:00';
+      final parsed = DateTime.tryParse('$dateStr $timeStr');
+      if (parsed != null) {
+        data['parsedDate'] = parsed;
+      }
+      return data;
+    }).toList();
+
     tx.sort((a, b) {
-      final dateA = DateTime.tryParse('${a['date'] ?? ''} ${a['time'] ?? '00:00'}') ?? DateTime.now();
-      final dateB = DateTime.tryParse('${b['date'] ?? ''} ${b['time'] ?? '00:00'}') ?? DateTime.now();
+      final dateA = a['parsedDate'] as DateTime? ?? DateTime.now();
+      final dateB = b['parsedDate'] as DateTime? ?? DateTime.now();
       return dateB.compareTo(dateA);
     });
 
-    return tx.take(3).toList();
+    return tx;
   }
 
-  Future<void> _prefetchUserNames(List<Map<String, dynamic>> transactions) async {
+  Future<void> _prefetchUserNames(
+    List<Map<String, dynamic>> transactions,
+  ) async {
     final currentUserId = FirebaseAuth.instance.currentUser?.uid;
     Set<String> userIds = {};
     for (var data in transactions) {
@@ -95,7 +111,10 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
     }
     Map<String, String> nameMap = {};
     for (final id in userIds) {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(id).get();
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(id)
+          .get();
       if (doc.exists) {
         final userData = doc.data() as Map<String, dynamic>;
         nameMap[id] = userData['name'] ?? userData['phone'] ?? 'Unknown';
@@ -139,10 +158,29 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
   }
 
   void _onBarTapped(int monthIndex, String monthName) {
+    final monthTx = _allTransactions.where((tx) {
+      final parsed = tx['parsedDate'] as DateTime?;
+      return parsed != null && parsed.month == monthIndex;
+    }).toList();
+
+    double total = 0;
+    Map<String, double> categoryTotals = {};
+
+    for (final tx in monthTx) {
+      final amount = (tx['amount'] ?? 0).toDouble();
+      final category = tx['category'] ?? 'Miscellaneous';
+      total += amount;
+      categoryTotals[category] = (categoryTotals[category] ?? 0) + amount;
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => MonthlyDetailScreen(month: monthIndex, monthName: monthName),
+        builder: (_) => MonthlyDetailScreen(
+          monthName: monthName,
+          transactions: monthTx,
+          userMap: _usersNameMap,
+        ),
       ),
     );
   }
@@ -155,6 +193,7 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // You may want to keep track of selectedMonth if you want selection highlighting on MonthlyBarChart
     return Stack(
       children: [
         Scaffold(
@@ -164,7 +203,10 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
             elevation: 0,
             title: const Text(
               "Expense Tracker",
-              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             iconTheme: const IconThemeData(color: Colors.black),
           ),
@@ -181,17 +223,34 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Hi $_userName 👋",
-                        style: const TextStyle(fontSize: 20, color: Colors.white)),
+                    Text(
+                      "Hi $_userName 👋",
+                      style: GoogleFonts.staatliches(
+                        textStyle: const TextStyle(
+                          fontSize: 32,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+
                     const SizedBox(height: 8),
                     _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : AnimatedTotalCounter(
+                            label: "This Year Expense",
                             totalAmount: _totalYearlyExpense,
-                            textStyle: const TextStyle(
-                              fontSize: 32,
-                              color: Colors.amber,
-                              fontWeight: FontWeight.bold,
+                            textStyle: GoogleFonts.staatliches(
+                              textStyle: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.amber,
+                              ),
+                            ),
+                            labelStyle: GoogleFonts.staatliches(
+                              textStyle: const TextStyle(
+                                fontSize: 32,
+                                color: Color.fromARGB(179, 212, 31, 31),
+                              ),
                             ),
                           ),
                   ],
@@ -209,7 +268,11 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
                   children: [
                     const Text(
                       "Monthly Expenses",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     SizedBox(
@@ -230,20 +293,33 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
                   children: [
                     const Text(
                       "Recent Transactions",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     _isLoading
-                        ? const Center(child: CircularProgressIndicator(color: Colors.white))
-                        : _recentTransactions.isEmpty
-                            ? const Text("No transactions found.", style: TextStyle(color: Colors.white70))
-                            : ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: _recentTransactions.length,
-                                itemBuilder: (context, index) =>
-                                    _dashboardStyleTransactionTile(_recentTransactions[index]),
-                              ),
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : _allTransactions.isEmpty
+                        ? const Text(
+                            "No transactions found.",
+                            style: TextStyle(color: Colors.white70),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: _allTransactions.take(3).length,
+                            itemBuilder: (context, index) =>
+                                _dashboardStyleTransactionTile(
+                                  _allTransactions[index],
+                                ),
+                          ),
                   ],
                 ),
               ),

@@ -4,7 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class MonthlyBarChart extends StatefulWidget {
-  final Function(int monthIndex, String monthName)? onBarTap; // optional
+  final void Function(int monthIndex, String monthName)? onBarTap;
 
   const MonthlyBarChart({super.key, this.onBarTap});
 
@@ -20,6 +20,7 @@ class _MonthlyBarChartState extends State<MonthlyBarChart> {
 
   Map<int, double> monthlyData = {};
   bool isLoading = true;
+  int currentMonth = DateTime.now().month;
 
   @override
   void initState() {
@@ -37,16 +38,25 @@ class _MonthlyBarChartState extends State<MonthlyBarChart> {
         .where("status", isEqualTo: "success")
         .get();
 
-    final currentYear = DateTime.now().year;
     Map<int, double> tempData = {};
     for (var doc in snapshot.docs) {
       final data = doc.data();
-      final dateStr = data['date'];
-      final timeStr = data['time'] ?? '00:00';
-      final amount = (data['amount'] ?? 0).toDouble();
-      final txnDate = DateTime.tryParse('$dateStr $timeStr');
-      if (txnDate != null && txnDate.year == currentYear) {
+      DateTime? txnDate;
+
+      final timestamp = data['timestamp'];
+      if (timestamp is Timestamp) {
+        txnDate = timestamp.toDate();
+      } else {
+        final dateStr = data['date'];
+        final timeStr = data['time'] ?? '00:00';
+        txnDate = DateTime.tryParse('$dateStr $timeStr');
+      }
+
+      if (txnDate != null &&
+          txnDate.year == DateTime.now().year &&
+          txnDate.month <= currentMonth) {
         final month = txnDate.month;
+        final amount = (data['amount'] ?? 0).toDouble();
         tempData[month] = (tempData[month] ?? 0) + amount;
       }
     }
@@ -59,113 +69,118 @@ class _MonthlyBarChartState extends State<MonthlyBarChart> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    final filteredMonths = List.generate(currentMonth, (index) => index + 1)
+        .where((m) => monthlyData[m] != null && monthlyData[m]! > 0)
+        .toList();
 
-    final currentMonth = DateTime.now().month;
-    final maxAmount = monthlyData.values.isEmpty
+    final maxAmount = filteredMonths.isEmpty
         ? 10
-        : monthlyData.values.reduce((a, b) => a > b ? a : b);
+        : filteredMonths.map((m) => monthlyData[m]!).reduce((a, b) => a > b ? a : b);
 
-    return SizedBox(
-      height: 260,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: SizedBox(
-          width: 60.0 * currentMonth,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.spaceAround,
-              gridData: FlGridData(show: false),
-              borderData: FlBorderData(show: false),
-              barTouchData: BarTouchData(
-                enabled: widget.onBarTap != null,
-                touchCallback: (event, response) {
-                  if (widget.onBarTap != null &&
-                      response != null &&
-                      response.spot != null &&
-                      event.isInterestedForInteractions) {
-                    final index = response.spot!.touchedBarGroupIndex;
-                    widget.onBarTap!(index + 1, months[index]);
-                  }
-                },
-              ),
-              titlesData: FlTitlesData(
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                rightTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                topTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    getTitlesWidget: (value, _) {
-                      final index = value.toInt();
-                      if (index >= 0 && index < currentMonth) {
-                        final amount = monthlyData[index + 1];
-                        if (amount != null && amount > 0) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
-                            child: Text(
-                              '₹${amount.toStringAsFixed(0)}',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          );
+    return isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : SizedBox(
+            height: 260,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                width: 60.0 * filteredMonths.length,
+                child: BarChart(
+                  BarChartData(
+                    alignment: BarChartAlignment.spaceAround,
+                    gridData: FlGridData(show: false),
+                    borderData: FlBorderData(show: false),
+                    barTouchData: BarTouchData(
+                      enabled: widget.onBarTap != null,
+                      touchCallback: (event, response) {
+                        if (widget.onBarTap != null &&
+                            response != null &&
+                            response.spot != null &&
+                            event.isInterestedForInteractions) {
+                          final index = response.spot!.touchedBarGroupIndex;
+                          if (index >= 0 && index < filteredMonths.length) {
+                            final monthNum = filteredMonths[index];
+                            widget.onBarTap!(monthNum, months[monthNum - 1]);
+                          }
                         }
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  ),
-                ),
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    getTitlesWidget: (value, _) {
-                      final index = value.toInt();
-                      if (index >= 0 && index < currentMonth) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            months[index],
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white, 
-                            ),
+                      },
+                    ),
+                    titlesData: FlTitlesData(
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      rightTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      topTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, _) {
+                            final index = value.toInt();
+                            if (index >= 0 && index < filteredMonths.length) {
+                              final amount = monthlyData[filteredMonths[index]];
+                              if (amount != null && amount > 0) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 4),
+                                  child: Text(
+                                    '₹${amount.toStringAsFixed(0)}',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+                      ),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, _) {
+                            final index = value.toInt();
+                            if (index >= 0 && index < filteredMonths.length) {
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  months[filteredMonths[index] - 1],
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+                      ),
+                    ),
+                    minY: 0,
+                    maxY: maxAmount + maxAmount * 0.2,
+                    barGroups: List.generate(filteredMonths.length, (index) {
+                      final month = filteredMonths[index];
+                      final value = monthlyData[month] ?? 0;
+                      return BarChartGroupData(
+                        x: index,
+                        barRods: [
+                          BarChartRodData(
+                            toY: value,
+                            width: 20,
+                            color: Colors.deepPurple,
+                            borderRadius: BorderRadius.circular(4),
                           ),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
+                        ],
+                      );
+                    }),
                   ),
                 ),
               ),
-              minY: 0,
-              maxY: maxAmount + maxAmount * 0.2,
-              barGroups: List.generate(currentMonth, (index) {
-                final value = monthlyData[index + 1] ?? 0;
-                return BarChartGroupData(
-                  x: index,
-                  barRods: [
-                    BarChartRodData(
-                      toY: value == 0 ? 1 : value,
-                      width: 20,
-                      color: Colors.deepPurple,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ],
-                );
-              }),
             ),
-          ),
-        ),
-      ),
-    );
+          );
   }
 }
