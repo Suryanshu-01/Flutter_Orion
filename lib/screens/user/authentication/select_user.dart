@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orion/screens/admin/parent_dashboard.dart';
 import 'package:orion/screens/user/authentication/wrapper.dart';
+import 'package:orion/screens/user/authentication/pinScreen/wrapper2.dart';
 
 class SelectUser extends StatelessWidget {
   const SelectUser({super.key});
@@ -88,7 +89,7 @@ class SelectUser extends StatelessWidget {
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (_) => ParentDashboard()),
+                        MaterialPageRoute(builder: (_) => const Wrapper2()),
                       );
                     },
                     style: ElevatedButton.styleFrom(

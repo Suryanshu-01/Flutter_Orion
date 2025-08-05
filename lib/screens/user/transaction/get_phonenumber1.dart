@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 import 'package:orion/screens/user/transaction/varify_phone_details2.dart';
+// import '../dashboard/dashboard_screen.dart';
 import '../authentication/select_user.dart';
 import '../dashboard/drawer/aboutus.dart';
 import '../dashboard/drawer/settings.dart';
+import '../dashboard/drawer/profile.dart';
 
 class GetPhoneNumber extends StatefulWidget {
   const GetPhoneNumber({super.key});
@@ -29,10 +31,8 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => VerifyPhoneDetails(
-            phone: phoneNumber,
-            phoneNumber: phoneNumber,
-          ),
+          builder: (context) =>
+              VerifyPhoneDetails(phone: phoneNumber, phoneNumber: phoneNumber),
         ),
       );
     } else {
@@ -88,7 +88,10 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text("Profile Manager"),
-              onTap: () {},
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfileManager()),
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.admin_panel_settings),
@@ -167,7 +170,10 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(10),
                     ],
-                    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -183,7 +189,10 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
                       hintStyle: const TextStyle(color: Colors.black54),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF018594), width: 2),
+                        borderSide: const BorderSide(
+                          color: Color(0xFF018594),
+                          width: 2,
+                        ),
                       ),
                     ),
                     onChanged: _validatePhone,
@@ -210,7 +219,12 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
                       ),
                       child: const Text(
                         "Continue",
-                        style: TextStyle(fontSize: 16, color: Colors.white, letterSpacing: 1.1, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          letterSpacing: 1.1,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

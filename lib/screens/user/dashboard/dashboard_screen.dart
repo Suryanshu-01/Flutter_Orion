@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 
 // Screens for navigation
 import 'package:orion/screens/user/dashboard/drawer/profile.dart';
@@ -26,6 +27,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _fetchSelectedCard();
+  }
+
+  Future<void> _handleNavigation(BuildContext context, Widget page) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (uid == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("User not logged in.")));
+      return;
+    }
+
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get();
+      final isBlocked = doc['blockTransactions'] ?? false;
+
+      if (isBlocked) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Your transactions are blocked.")),
+        );
+      } else {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+    }
   }
 
   Future<void> _fetchSelectedCard() async {
@@ -110,7 +142,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 style: TextStyle(color: Colors.black, fontSize: 24),
               ),
             ),
-            _drawerItem(Icons.home, 'Home', () => Navigator.pop(context)),
+            _drawerItem(
+              Icons.home,
+              'Home',
+              () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => HomeScreen()),
+              ),
+            ),
             _drawerItem(Icons.person, 'Profile Manager', () {
               Navigator.pushReplacement(
                 context,
@@ -221,17 +260,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildFeature(Icons.qr_code_2, "QR Code", () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => QrScan()),
-              );
+              _handleNavigation(context, QrScan());
             }),
             const SizedBox(width: 20),
             _buildFeature(Icons.send_to_mobile, "Transfer", () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const GetPhoneNumber()),
-              );
+              _handleNavigation(context, const GetPhoneNumber());
             }),
             const SizedBox(width: 20),
             _buildFeature(
@@ -279,7 +312,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return transactions;
     }
 
-    Widget buildTransactionTile(Map<String, dynamic> data, {bool isModal = false}) {
+    Widget buildTransactionTile(
+      Map<String, dynamic> data, {
+      bool isModal = false,
+    }) {
       final currentUserId = user?.uid;
       final isSender = data['from'] == currentUserId;
       final otherUserId = isSender ? data['to'] : data['from'];
@@ -373,8 +409,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: FutureBuilder<List<Map<String, dynamic>>>(
                         future: fetchTransactions(),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
                           }
                           if (snapshot.hasError || !snapshot.hasData) {
                             return const Center(
@@ -396,7 +435,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           return ListView.builder(
                             itemCount: transactions.length,
                             itemBuilder: (context, index) =>
-                                buildTransactionTile(transactions[index], isModal: true),
+                                buildTransactionTile(
+                                  transactions[index],
+                                  isModal: true,
+                                ),
                           );
                         },
                       ),
@@ -464,8 +506,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   }
                   return ListView.builder(
                     itemCount: transactions.length,
-                    itemBuilder: (context, index) =>
-                        buildTransactionTile(transactions[index], isModal: false),
+                    itemBuilder: (context, index) => buildTransactionTile(
+                      transactions[index],
+                      isModal: false,
+                    ),
                   );
                 },
               ),

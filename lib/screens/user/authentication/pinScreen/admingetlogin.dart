@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
-import 'package:orion/screens/user/authentication/notification_setup_screen.dart';
+import 'package:orion/screens/admin/parent_dashboard.dart';
 import 'package:pinput/pinput.dart';
 
-class LoginPinScreen extends StatefulWidget {
-  const LoginPinScreen({super.key});
+class AdminLoginPinScreen extends StatefulWidget {
+  const AdminLoginPinScreen({super.key});
 
   @override
-  State<LoginPinScreen> createState() => _LoginPinScreenState();
+  State<AdminLoginPinScreen> createState() => _AdminLoginPinScreenState();
 }
 
-class _LoginPinScreenState extends State<LoginPinScreen> {
+class _AdminLoginPinScreenState extends State<AdminLoginPinScreen> {
   final TextEditingController _pinController = TextEditingController();
   bool _isError = false;
 
@@ -30,18 +29,18 @@ class _LoginPinScreenState extends State<LoginPinScreen> {
           .get();
       final data = userDoc.data();
 
-      if (data == null || !data.containsKey('loginPin')) {
-        _showError("No login PIN found. Please register again.");
+      if (data == null || !data.containsKey('adminLoginPin')) {
+        _showError("No admin PIN found. Please set up admin PIN first.");
         return;
       }
 
-      final storedPin = data['loginPin'];
+      final storedPin = data['adminLoginPin'];
 
       if (enteredPin == storedPin) {
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const ParentDashboard()),
         );
       } else {
         setState(() => _isError = true);
@@ -65,7 +64,7 @@ class _LoginPinScreenState extends State<LoginPinScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
-          "Login PIN",
+          "Admin PIN",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
@@ -91,7 +90,7 @@ class _LoginPinScreenState extends State<LoginPinScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    "Enter your 4-digit PIN",
+                    "Enter your 4-digit Admin PIN",
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,

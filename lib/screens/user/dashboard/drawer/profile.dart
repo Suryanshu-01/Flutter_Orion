@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
+import 'package:orion/screens/user/dashboard/drawer/settings.dart';
 import 'aboutus.dart';
 import '../../authentication/select_user.dart';
 import 'changetransaction.dart';
@@ -102,11 +103,6 @@ class _ProfileManagerState extends State<ProfileManager> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.person),
-              title: Text("Profile Manager"),
-              onTap: () {},
-            ),
-            ListTile(
               leading: Icon(Icons.admin_panel_settings),
               title: Text("Admin/User"),
               onTap: () => Navigator.pushReplacement(
@@ -117,7 +113,10 @@ class _ProfileManagerState extends State<ProfileManager> {
             ListTile(
               leading: Icon(Icons.settings),
               title: Text("Settings"),
-              onTap: () {},
+              onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => SettingsUser()),
+              ),
             ),
             ListTile(
               leading: Icon(Icons.info_outline),

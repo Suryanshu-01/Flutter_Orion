@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 import 'package:orion/screens/user/authentication/select_user.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../drawer/aboutus.dart';
@@ -218,7 +219,14 @@ class _QrGenerateState extends State<QrGenerate> {
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
-            _drawerItem(Icons.home, 'Home', () => Navigator.pop(context)),
+            _drawerItem(
+              Icons.home,
+              'Home',
+              () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => HomeScreen()),
+              ),
+            ),
             _drawerItem(Icons.person, 'Profile Manager', () {
               Navigator.pushReplacement(
                 context,
