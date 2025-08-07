@@ -6,7 +6,8 @@ class NotificationSetupScreen extends StatefulWidget {
   const NotificationSetupScreen({super.key});
 
   @override
-  State<NotificationSetupScreen> createState() => _NotificationSetupScreenState();
+  State<NotificationSetupScreen> createState() =>
+      _NotificationSetupScreenState();
 }
 
 class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
@@ -20,6 +21,7 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
   }
 
   Future<void> _showNotificationDialog() async {
+    // ignore: unused_local_variable
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -58,4 +60,4 @@ class _NotificationSetupScreenState extends State<NotificationSetupScreen> {
       ),
     );
   }
-} 
+}

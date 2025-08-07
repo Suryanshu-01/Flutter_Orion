@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
-import 'package:orion/screens/user/authentication/notification_setup_screen.dart';
 import 'package:pinput/pinput.dart';
 
 class LoginPinScreen extends StatefulWidget {
@@ -123,7 +122,10 @@ class _LoginPinScreenState extends State<LoginPinScreen> {
                   if (_isError)
                     const Text(
                       'Incorrect PIN. Try again.',
-                      style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                 ],
               ),

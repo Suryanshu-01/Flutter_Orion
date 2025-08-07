@@ -1,14 +1,17 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 import 'package:orion/screens/user/authentication/select_user.dart';
 import 'package:orion/screens/user/dashboard/drawer/aboutus.dart';
 import 'package:orion/screens/user/dashboard/drawer/profile.dart';
 import 'package:orion/screens/user/dashboard/drawer/settings.dart';
-// import 'package:coupon_uikit/coupon_uikit.dart';
 
 class Coupon {
   final String imagePath;
-  final int type; // 1: Cashback, 2: Card Theme, 3: Brand
+  final int type; // 1: Brand, 2: Theme
 
   Coupon({required this.imagePath, required this.type});
 }
@@ -21,30 +24,122 @@ class Coupons extends StatefulWidget {
 }
 
 class _CouponsState extends State<Coupons> {
-  List<Coupon> coupons = [
-    Coupon(imagePath: 'assets/coupon/brandcoupon/PVR.jpg', type: 3),
-    Coupon(imagePath: 'assets/coupon/cardcoupon/lightc.jpg', type: 2),
-  ];
+  List<Coupon> coupons = [];
 
-  void _onClaim(Coupon coupon) {
-    switch (coupon.type) {
-      case 1:
-        // Add money logic
-        print("Cashback Claimed");
-        break;
-      case 2:
-        // Unlock card logic
-        print("Card Theme Unlocked");
-        break;
-      case 3:
-        // Generate random code logic
-        print("Brand Coupon Code: ${_generateCouponCode()}");
-        break;
+  final Map<String, Coupon> couponMap = {
+    'Boat.jpg': Coupon(
+      imagePath: 'assets/coupon/brandcoupon/Boat.jpg',
+      type: 1,
+    ),
+    'Nykaa.jpg': Coupon(
+      imagePath: 'assets/coupon/brandcoupon/Nykaa.jpg',
+      type: 1,
+    ),
+    'PVR.jpg': Coupon(imagePath: 'assets/coupon/brandcoupon/PVR.jpg', type: 1),
+    'Swiggy.jpg': Coupon(
+      imagePath: 'assets/coupon/brandcoupon/Swiggy.jpg',
+      type: 1,
+    ),
+    'itachic.jpg': Coupon(
+      imagePath: 'assets/coupon/cardcoupon/itachic.jpg',
+      type: 2,
+    ),
+    'lightc.jpg': Coupon(
+      imagePath: 'assets/coupon/cardcoupon/lightc.jpg',
+      type: 2,
+    ),
+    'luffyc.jpg': Coupon(
+      imagePath: 'assets/coupon/cardcoupon/luffyc.jpg',
+      type: 2,
+    ),
+    'madarac.jpg': Coupon(
+      imagePath: 'assets/coupon/cardcoupon/madarac.jpg',
+      type: 2,
+    ),
+    'shanksc.jpg': Coupon(
+      imagePath: 'assets/coupon/cardcoupon/shanksc.jpg',
+      type: 2,
+    ),
+    'vegetac.jpg': Coupon(
+      imagePath: 'assets/coupon/cardcoupon/vegetac.jpg',
+      type: 2,
+    ),
+  };
+
+  final Map<String, String> couponToThemeImage = {
+    'itachic.jpg': 'assets/coupon/cardcoupon/itachi.png',
+    'lightc.jpg': 'assets/coupon/cardcoupon/light.png',
+    'luffyc.jpg': 'assets/coupon/cardcoupon/luffy.png',
+    'madarac.jpg': 'assets/coupon/cardcoupon/madara.png',
+    'shanksc.jpg': 'assets/coupon/cardcoupon/shanks.png',
+    'vegetac.jpg': 'assets/coupon/cardcoupon/vegeta.png',
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserCoupons();
+  }
+
+  Future<void> _loadUserCoupons() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId != null) {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      final List<dynamic> userCouponStrings =
+          snapshot.data()?['userCoupons'] ?? [];
+
+      setState(() {
+        coupons = userCouponStrings
+            .map((name) => couponMap[name])
+            .where((coupon) => coupon != null)
+            .cast<Coupon>()
+            .toList();
+      });
     }
   }
 
+  Future<void> _onClaim(Coupon coupon) async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
+
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
+
+    switch (coupon.type) {
+      case 1:
+        final code = _generateCouponCode();
+        await Clipboard.setData(ClipboardData(text: code));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Coupon Code Copied to your Clipboard")),
+        );
+        await userDoc.update({
+          'userCoupons': FieldValue.arrayRemove([
+            coupon.imagePath.split('/').last,
+          ]),
+        });
+        break;
+
+      case 2:
+        final couponKey = coupon.imagePath.split('/').last;
+        final imageToAdd = couponToThemeImage[couponKey];
+        if (imageToAdd != null) {
+          await userDoc.update({
+            'newThemeCards': FieldValue.arrayUnion([imageToAdd]),
+            'userCoupons': FieldValue.arrayRemove([couponKey]),
+          });
+        }
+        break;
+    }
+
+    _loadUserCoupons();
+  }
+
   String _generateCouponCode() {
-    return DateTime.now().millisecondsSinceEpoch.toString().substring(6, 12);
+    final random = Random();
+    return List.generate(10, (_) => random.nextInt(10).toString()).join();
   }
 
   void _showImagePopup(String imagePath) {
@@ -77,54 +172,56 @@ class _CouponsState extends State<Coupons> {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       drawer: _buildDrawer(context),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: ListView.builder(
-          itemCount: coupons.length,
-          itemBuilder: (context, index) {
-            final coupon = coupons[index];
-            return GestureDetector(
-              onTap: () => _showImagePopup(coupon.imagePath),
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 15),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade200,
-                      blurRadius: 5,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                  color: Colors.white,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset(coupon.imagePath, height: 150),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () => _onClaim(coupon),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+      body: coupons.isEmpty
+          ? const Center(child: Text("No Coupons Available"))
+          : Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: ListView.builder(
+                itemCount: coupons.length,
+                itemBuilder: (context, index) {
+                  final coupon = coupons[index];
+                  return GestureDetector(
+                    onTap: () => _showImagePopup(coupon.imagePath),
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            blurRadius: 5,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                        color: Colors.white,
                       ),
-                      child: const Text(
-                        "Claim",
-                        style: TextStyle(color: Colors.white),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset(coupon.imagePath, height: 150),
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed: () => _onClaim(coupon),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: const Text(
+                              "Claim",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
-            );
-          },
-        ),
-      ),
+            ),
     );
   }
 }
@@ -169,7 +266,7 @@ Widget _buildDrawer(BuildContext context) {
           'Home',
           () => Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => HomeScreen()),
+            MaterialPageRoute(builder: (_) => const HomeScreen()),
           ),
         ),
         _drawerItem(

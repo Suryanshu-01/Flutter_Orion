@@ -12,6 +12,7 @@ import 'package:orion/screens/user/transaction/get_phonenumber1.dart';
 import 'package:orion/screens/user/dashboard/OrionCard/orionpage.dart';
 import 'package:orion/screens/user/dashboard/QR/qr_scan.dart';
 import 'package:orion/screens/user/dashboard/Coupons/coupons.dart';
+import 'package:orion/screens/user/dashboard/Request/request.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -83,10 +84,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         'selectedCard': imagePath,
       }, SetOptions(merge: true));
     }
-  }
-
-  void _handleClick(String label) {
-    debugPrint('Clicked on $label!');
   }
 
   void _openCardSelector() async {
@@ -279,7 +276,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             _buildFeature(
               Icons.request_page,
               "Request",
-              () => _handleClick("Request"),
+              () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => ParentRequest()),
+              ),
             ),
           ],
         ),

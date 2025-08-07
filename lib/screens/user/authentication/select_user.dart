@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:orion/screens/admin/parent_dashboard.dart';
 import 'package:orion/screens/user/authentication/wrapper.dart';
 import 'package:orion/screens/user/authentication/pinScreen/wrapper2.dart';
 

@@ -34,10 +34,29 @@ class _OrionpageState extends State<Orionpage> {
     'assets/images/wall_titan.png',
   ];
 
+  List<String> newThemeCards = [];
+
   @override
   void initState() {
     super.initState();
     _fetchUserData();
+    _fetchNewThemeCards();
+  }
+
+  Future<void> _fetchNewThemeCards() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      final List<dynamic>? unlocked = doc.data()?['newThemeCards'];
+      if (unlocked != null) {
+        setState(() {
+          newThemeCards = List<String>.from(unlocked);
+        });
+      }
+    }
   }
 
   Future<void> _fetchUserData() async {
@@ -302,6 +321,66 @@ class _OrionpageState extends State<Orionpage> {
                             );
                           },
                         ),
+                      ),
+                      const SizedBox(height: 30),
+                      const Divider(thickness: 2),
+                      const SizedBox(height: 10),
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Unlocked Cards:",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: newThemeCards.isEmpty
+                            ? const Text(
+                                "No Cards Available",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              )
+                            : ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: newThemeCards.length,
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(height: 16),
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                    onTap: () =>
+                                        _selectCard(newThemeCards[index]),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(16),
+                                      child: Image.asset(
+                                        newThemeCards[index],
+                                        height: 180,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                       ),
                     ],
                   ),

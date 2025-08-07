@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 
-import 'package:orion/screens/user/dashboard/dashboard_screen.dart';
 import 'package:orion/screens/user/authentication/select_user.dart';
 import 'package:orion/screens/user/dashboard/drawer/profile.dart';
 import 'package:orion/services/notification_service.dart';
@@ -155,7 +154,7 @@ class _SettingsUserState extends State<SettingsUser> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32),
-                  
+
                   // Notification Settings
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -205,9 +204,9 @@ class _SettingsUserState extends State<SettingsUser> {
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Additional settings can be added here
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -217,11 +216,7 @@ class _SettingsUserState extends State<SettingsUser> {
                     ),
                     child: const Row(
                       children: [
-                        Icon(
-                          Icons.security,
-                          color: Colors.white,
-                          size: 24,
-                        ),
+                        Icon(Icons.security, color: Colors.white, size: 24),
                         SizedBox(width: 16),
                         Expanded(
                           child: Column(

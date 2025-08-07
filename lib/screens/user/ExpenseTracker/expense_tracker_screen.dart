@@ -163,6 +163,7 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
       return parsed != null && parsed.month == monthIndex;
     }).toList();
 
+    // ignore: unused_local_variable
     double total = 0;
     Map<String, double> categoryTotals = {};
 

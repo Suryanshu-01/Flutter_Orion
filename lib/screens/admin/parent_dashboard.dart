@@ -9,7 +9,6 @@ class ParentDashboard extends StatefulWidget {
 
   @override
   State<ParentDashboard> createState() => _ParentDashboardState();
-  
 }
 
 class _ParentDashboardState extends State<ParentDashboard> {
@@ -254,6 +253,166 @@ class _ParentDashboardState extends State<ParentDashboard> {
                   ),
                 ],
               ),
+            ),
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+
+                if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return const Text("No data found.");
+                }
+
+                final userData = snapshot.data!.data() as Map<String, dynamic>;
+                final requestedMoney = userData['RequestedMoney'] ?? 0;
+                final walletBalance = userData['walletBalance'] ?? 0;
+
+                if (requestedMoney == 0) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.green),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.green),
+                        SizedBox(width: 10),
+                        Text(
+                          "No Request",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.amber[50],
+                    border: Border.all(color: Colors.orange),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Pending Money Request:",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "₹$requestedMoney",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () async {
+                                try {
+                                  final docRef = FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(
+                                        FirebaseAuth.instance.currentUser!.uid,
+                                      );
+
+                                  await docRef.update({
+                                    'walletBalance':
+                                        walletBalance + requestedMoney,
+                                    'RequestedMoney': 0,
+                                  });
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        "Request Accepted & Wallet Updated",
+                                      ),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Error: $e"),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              },
+                              icon: const Icon(Icons.check),
+                              label: const Text("Accept Request"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () async {
+                                try {
+                                  final docRef = FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(
+                                        FirebaseAuth.instance.currentUser!.uid,
+                                      );
+
+                                  await docRef.update({'RequestedMoney': 0});
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Request Declined"),
+                                      backgroundColor: Colors.orange,
+                                    ),
+                                  );
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Error: $e"),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              },
+                              icon: const Icon(Icons.close),
+                              label: const Text("Decline Request"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           ],
         ),

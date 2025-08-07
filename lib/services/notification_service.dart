@@ -1,32 +1,36 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
-  static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  static final FirebaseMessaging _firebaseMessaging =
+      FirebaseMessaging.instance;
 
   static Future<void> initialize() async {
     try {
       // Request permission for iOS
-      NotificationSettings settings = await _firebaseMessaging.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-        provisional: false,
-      );
+      NotificationSettings settings = await _firebaseMessaging
+          .requestPermission(
+            alert: true,
+            badge: true,
+            sound: true,
+            provisional: false,
+          );
 
       print('Permission status: ${settings.authorizationStatus}');
-      
+
       if (settings.authorizationStatus == AuthorizationStatus.authorized) {
         print('User granted permission');
-      } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+      } else if (settings.authorizationStatus ==
+          AuthorizationStatus.provisional) {
         print('User granted provisional permission');
       } else {
-        print('User declined or has not accepted permission: ${settings.authorizationStatus}');
+        print(
+          'User declined or has not accepted permission: ${settings.authorizationStatus}',
+        );
         // Don't throw error, just log it
       }
     } catch (e) {
@@ -40,16 +44,16 @@ class NotificationService {
 
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
     const InitializationSettings initializationSettings =
         InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
 
     await _localNotifications.initialize(
       initializationSettings,
@@ -91,10 +95,10 @@ class NotificationService {
             .collection('users')
             .doc(user.uid)
             .update({
-          'fcmToken': token,
-          'notificationEnabled': true,
-          'lastTokenUpdate': FieldValue.serverTimestamp(),
-        });
+              'fcmToken': token,
+              'notificationEnabled': true,
+              'lastTokenUpdate': FieldValue.serverTimestamp(),
+            });
         print('FCM token saved successfully for user: ${user.uid}');
       } else {
         print('Failed to get FCM token');
@@ -103,9 +107,9 @@ class NotificationService {
             .collection('users')
             .doc(user.uid)
             .update({
-          'notificationEnabled': true,
-          'fcmTokenError': 'Failed to get token',
-        });
+              'notificationEnabled': true,
+              'fcmTokenError': 'Failed to get token',
+            });
       }
     } catch (e) {
       print('Error saving FCM token: $e');
@@ -119,7 +123,7 @@ class NotificationService {
 
     if (message.notification != null) {
       print('Message also contained a notification: ${message.notification}');
-      
+
       // Show local notification
       await _showLocalNotification(
         title: message.notification!.title ?? 'New Notification',
@@ -136,22 +140,22 @@ class NotificationService {
   }) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'money_received_channel',
-      'Money Received Notifications',
-      channelDescription: 'Notifications for money received',
-      importance: Importance.max,
-      priority: Priority.high,
-      showWhen: true,
-      enableVibration: true,
-      playSound: true,
-    );
+          'money_received_channel',
+          'Money Received Notifications',
+          channelDescription: 'Notifications for money received',
+          importance: Importance.max,
+          priority: Priority.high,
+          showWhen: true,
+          enableVibration: true,
+          playSound: true,
+        );
 
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
@@ -210,7 +214,6 @@ class NotificationService {
         'timestamp': FieldValue.serverTimestamp(),
         'read': false,
       });
-
     } catch (e) {
       print('Error sending notification: $e');
     }
@@ -220,10 +223,7 @@ class NotificationService {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .update({
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
       'notificationEnabled': false,
     });
   }
@@ -277,7 +277,7 @@ class NotificationService {
 // Background message handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('Handling a background message: ${message.messageId}');
-  
+
   // Show local notification for background messages
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -285,22 +285,24 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/ic_launcher');
 
-  const InitializationSettings initializationSettings =
-      InitializationSettings(android: initializationSettingsAndroid);
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
-    'money_received_channel',
-    'Money Received Notifications',
-    channelDescription: 'Notifications for money received',
-    importance: Importance.max,
-    priority: Priority.high,
-  );
+        'money_received_channel',
+        'Money Received Notifications',
+        channelDescription: 'Notifications for money received',
+        importance: Importance.max,
+        priority: Priority.high,
+      );
 
-  const NotificationDetails platformChannelSpecifics =
-      NotificationDetails(android: androidPlatformChannelSpecifics);
+  const NotificationDetails platformChannelSpecifics = NotificationDetails(
+    android: androidPlatformChannelSpecifics,
+  );
 
   await flutterLocalNotificationsPlugin.show(
     DateTime.now().millisecondsSinceEpoch.remainder(100000),
@@ -308,4 +310,4 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     message.notification?.body ?? 'You have received money!',
     platformChannelSpecifics,
   );
-} 
+}
