@@ -51,7 +51,7 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.cyan.shade700,
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         title: const Text(
           "Transfer via Phone Number",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -69,7 +69,10 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
             DrawerHeader(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.cyan[800]!, Colors.cyan[400]!],
+                  colors: [
+                    const Color.fromARGB(255, 40, 40, 40),
+                    const Color.fromARGB(255, 0, 0, 0),
+                  ],
                 ),
               ),
               child: const Text(
@@ -179,7 +182,7 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
                       fillColor: Colors.white,
                       prefixIcon: Icon(
                         Icons.phone,
-                        color: const Color(0xFF018594),
+                        color: const Color.fromARGB(255, 52, 52, 52),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -190,7 +193,7 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color(0xFF018594),
+                          color: Color.fromARGB(255, 65, 65, 65),
                           width: 2,
                         ),
                       ),
@@ -204,7 +207,7 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
                       onPressed: _isValid ? _goToNextScreen : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _isValid
-                            ? const Color(0xFF018594)
+                            ? const Color.fromARGB(255, 26, 26, 26)
                             : Colors.grey,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(

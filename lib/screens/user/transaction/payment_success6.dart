@@ -64,7 +64,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                   const Icon(
                     Icons.check_circle,
                     size: 100,
-                    color: Colors.green,
+                    color: Color.fromARGB(255, 0, 0, 0),
                   ),
                   const SizedBox(height: 20),
                   const Text(
@@ -107,6 +107,10 @@ class PaymentSuccessScreen extends StatelessWidget {
                           ),
                           actions: [
                             TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                foregroundColor: Colors.white,
+                              ),
                               onPressed: () {
                                 Navigator.pop(context);
                                 Navigator.pushReplacement(

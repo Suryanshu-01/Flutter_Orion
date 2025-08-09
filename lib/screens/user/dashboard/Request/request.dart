@@ -44,7 +44,7 @@ class _ParentRequestState extends State<ParentRequest> {
   Future<void> sendRequest(double amount) async {
     if (requestedMoney != 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
             "Can't request more money. Please cancel the existing request.",
           ),
@@ -86,22 +86,21 @@ class _ParentRequestState extends State<ParentRequest> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black, // Black background
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         elevation: 0,
         title: const Text(
           "Request",
           style: TextStyle(
-            color: Colors.black,
+            color: Colors.white, // White text
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
       ),
       drawer: Drawer(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         child: ListView(
           children: [
             const DrawerHeader(
@@ -166,15 +165,33 @@ class _ParentRequestState extends State<ParentRequest> {
         child: Column(
           children: [
             TextField(
+              style: const TextStyle(color: Colors.white), // White text
               controller: _amountController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: InputDecoration(
                 labelText: "Enter amount to request",
-                border: OutlineInputBorder(),
+                labelStyle: const TextStyle(
+                  color: Colors.white70,
+                  fontWeight: FontWeight.bold,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.white54),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.white),
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white, // White button
+                foregroundColor: Colors.black, // Black text
+              ),
               onPressed: () {
                 if (_amountController.text.trim().isEmpty) return;
 
@@ -190,19 +207,28 @@ class _ParentRequestState extends State<ParentRequest> {
                 }
                 sendRequest(amount);
               },
-              child: const Text("Request Money"),
+              child: const Text(
+                "Request Money",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
             const SizedBox(height: 20),
             if (requestedMoney != 0)
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 75, 74, 74),
+                  foregroundColor: Colors.white,
+                ),
                 onPressed: cancelRequest,
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: const Text("Cancel Request"),
+                child: const Text(
+                  "Cancel Request",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             const SizedBox(height: 20),
             Text(
               "Current Requested Amount: ₹${requestedMoney.toStringAsFixed(2)}",
-              style: const TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16, color: Colors.white),
             ),
           ],
         ),
@@ -215,11 +241,11 @@ class _ParentRequestState extends State<ParentRequest> {
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: Icon(icon, color: Colors.black),
+        leading: Icon(icon, color: Colors.white),
         title: Text(
           text,
           style: const TextStyle(
-            color: Colors.black,
+            color: Colors.white,
             fontWeight: FontWeight.w500,
             fontFamily: 'Poppins',
           ),

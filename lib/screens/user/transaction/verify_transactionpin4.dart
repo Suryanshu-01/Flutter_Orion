@@ -77,9 +77,9 @@ class _VerifyTransactionPinScreenState
       appBar: AppBar(
         title: const Text(
           "Enter Transaction PIN",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Colors.cyan.shade700,
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         elevation: 0,
       ),
       body: Container(
@@ -128,7 +128,10 @@ class _VerifyTransactionPinScreenState
                     keyboardType: TextInputType.number,
                     obscureText: true,
                     maxLength: 4,
-                    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
                     decoration: InputDecoration(
                       labelText: "Transaction PIN",
                       labelStyle: const TextStyle(color: Colors.black87),
@@ -139,7 +142,10 @@ class _VerifyTransactionPinScreenState
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF018594), width: 2),
+                        borderSide: const BorderSide(
+                          color: Color(0xFF018594),
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -151,7 +157,7 @@ class _VerifyTransactionPinScreenState
                       style: ElevatedButton.styleFrom(
                         backgroundColor: isLoading
                             ? Colors.grey
-                            : const Color(0xFF018594),
+                            : const Color.fromARGB(255, 47, 47, 47),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

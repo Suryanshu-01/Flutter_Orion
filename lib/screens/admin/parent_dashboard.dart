@@ -232,7 +232,7 @@ class _ParentDashboardState extends State<ParentDashboard> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                      color: Colors.white,
                       fontFamily: 'Poppins',
                     ),
                   ),
@@ -246,14 +246,17 @@ class _ParentDashboardState extends State<ParentDashboard> {
                           await _setBlockTransactionsStatus(value);
                           setState(() {});
                         },
-                        activeColor: const Color.fromARGB(255, 66, 67, 66),
-                        inactiveThumbColor: Colors.grey[300],
+                        activeColor: Colors.white,
+                        activeTrackColor: Colors.black,
+                        inactiveThumbColor: Colors.black,
+                        inactiveTrackColor: Colors.white24,
                       );
                     },
                   ),
                 ],
               ),
             ),
+
             StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('users')
@@ -261,11 +264,14 @@ class _ParentDashboardState extends State<ParentDashboard> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
+                  return const CircularProgressIndicator(color: Colors.white);
                 }
 
                 if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return const Text("No data found.");
+                  return const Text(
+                    "No data found.",
+                    style: TextStyle(color: Colors.white),
+                  );
                 }
 
                 final userData = snapshot.data!.data() as Map<String, dynamic>;
@@ -280,19 +286,21 @@ class _ParentDashboardState extends State<ParentDashboard> {
                     ),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.green),
+                      color: Colors.black,
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white, width: 1.5),
                     ),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.info_outline, color: Colors.green),
+                        Icon(Icons.info_outline, color: Colors.white70),
                         SizedBox(width: 10),
                         Text(
                           "No Request",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                       ],
@@ -307,9 +315,9 @@ class _ParentDashboardState extends State<ParentDashboard> {
                   ),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.amber[50],
-                    border: Border.all(color: Colors.orange),
+                    color: Colors.black,
                     borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white, width: 1.5),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,6 +327,7 @@ class _ParentDashboardState extends State<ParentDashboard> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -327,6 +336,7 @@ class _ParentDashboardState extends State<ParentDashboard> {
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -353,22 +363,35 @@ class _ParentDashboardState extends State<ParentDashboard> {
                                       content: Text(
                                         "Request Accepted & Wallet Updated",
                                       ),
-                                      backgroundColor: Colors.green,
+                                      backgroundColor: Colors.black,
                                     ),
                                   );
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text("Error: $e"),
-                                      backgroundColor: Colors.red,
+                                      backgroundColor: Colors.black,
                                     ),
                                   );
                                 }
                               },
-                              icon: const Icon(Icons.check),
-                              label: const Text("Accept Request"),
+                              icon: const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                              ),
+                              label: const Text(
+                                "Accept",
+                                style: TextStyle(color: Colors.white),
+                              ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
+                                backgroundColor: Colors.black,
+                                side: const BorderSide(
+                                  color: Colors.white,
+                                  width: 1.5,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
                             ),
                           ),
@@ -388,22 +411,35 @@ class _ParentDashboardState extends State<ParentDashboard> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text("Request Declined"),
-                                      backgroundColor: Colors.orange,
+                                      backgroundColor: Colors.black,
                                     ),
                                   );
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text("Error: $e"),
-                                      backgroundColor: Colors.red,
+                                      backgroundColor: Colors.black,
                                     ),
                                   );
                                 }
                               },
-                              icon: const Icon(Icons.close),
-                              label: const Text("Decline Request"),
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.white,
+                              ),
+                              label: const Text(
+                                "Decline",
+                                style: TextStyle(color: Colors.white),
+                              ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.redAccent,
+                                backgroundColor: Colors.black,
+                                side: const BorderSide(
+                                  color: Colors.white,
+                                  width: 1.5,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
                             ),
                           ),

@@ -79,7 +79,6 @@ class AboutUs extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
       ),
       //Drawer
       drawer: Drawer(

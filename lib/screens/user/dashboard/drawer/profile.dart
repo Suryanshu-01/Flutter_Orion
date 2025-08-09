@@ -5,8 +5,6 @@ import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 import 'package:orion/screens/user/dashboard/drawer/settings.dart';
 import 'aboutus.dart';
 import '../../authentication/select_user.dart';
-import 'changetransaction.dart';
-import 'changelogin.dart';
 import '../QR/qr_generate.dart';
 
 class ProfileManager extends StatefulWidget {
@@ -86,7 +84,10 @@ class _ProfileManagerState extends State<ProfileManager> {
             DrawerHeader(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.cyan[800]!, Colors.cyan[400]!],
+                  colors: [
+                    const Color.fromARGB(255, 109, 108, 108),
+                    const Color.fromARGB(255, 0, 0, 0),
+                  ],
                 ),
               ),
               child: Text(
@@ -173,25 +174,6 @@ class _ProfileManagerState extends State<ProfileManager> {
                     const SizedBox(height: 20),
                     Column(
                       children: [
-                        settingsTile(
-                          label: "Change Transaction PIN",
-                          icon: Icons.lock_outline,
-                          onTap: () => Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => Changetransaction(),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        settingsTile(
-                          label: "Change Login PIN",
-                          icon: Icons.lock_outline,
-                          onTap: () => Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (_) => Changelogin()),
-                          ),
-                        ),
                         const SizedBox(height: 20),
                         settingsTile(
                           label: "Show My QR Code",

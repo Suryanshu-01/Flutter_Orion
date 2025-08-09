@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 
 import 'package:orion/screens/user/authentication/select_user.dart';
+import 'package:orion/screens/user/dashboard/drawer/changelogin.dart';
+import 'package:orion/screens/user/dashboard/drawer/changetransaction.dart';
 import 'package:orion/screens/user/dashboard/drawer/profile.dart';
 import 'package:orion/services/notification_service.dart';
 import 'aboutus.dart';
@@ -55,7 +57,6 @@ class _SettingsUserState extends State<SettingsUser> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
       ),
       drawer: Drawer(
         backgroundColor: Colors.white,
@@ -63,10 +64,11 @@ class _SettingsUserState extends State<SettingsUser> {
           children: [
             DrawerHeader(
               decoration: const BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 109, 108, 108),
+                    Color.fromARGB(255, 0, 0, 0),
+                  ],
                 ),
               ),
               child: const Column(
@@ -196,8 +198,13 @@ class _SettingsUserState extends State<SettingsUser> {
                         Switch(
                           value: _notificationsEnabled,
                           onChanged: _toggleNotifications,
-                          activeColor: Colors.blue,
-                          activeTrackColor: Colors.blue.withOpacity(0.3),
+                          activeColor: const Color.fromARGB(255, 123, 123, 124),
+                          activeTrackColor: const Color.fromARGB(
+                            255,
+                            78,
+                            81,
+                            83,
+                          ).withOpacity(0.3),
                           inactiveThumbColor: Colors.grey,
                           inactiveTrackColor: Colors.grey.withOpacity(0.3),
                         ),
@@ -214,37 +221,62 @@ class _SettingsUserState extends State<SettingsUser> {
                       color: Colors.white.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.security, color: Colors.white, size: 24),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Security",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
+                        Row(
+                          children: const [
+                            Icon(Icons.security, color: Colors.white, size: 24),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Security",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    "Manage your security settings",
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(height: 4),
-                              Text(
-                                "Manage your security settings",
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.white54,
+                              size: 16,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        settingsTile(
+                          label: "Change Transaction PIN",
+                          icon: Icons.lock_outline,
+                          onTap: () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => Changetransaction(),
+                            ),
                           ),
                         ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.white54,
-                          size: 16,
+                        const SizedBox(height: 20),
+                        settingsTile(
+                          label: "Change Login PIN",
+                          icon: Icons.lock_outline,
+                          onTap: () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) => Changelogin()),
+                          ),
                         ),
                       ],
                     ),
@@ -253,6 +285,44 @@ class _SettingsUserState extends State<SettingsUser> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget settingsTile({
+    required String label,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Icon(icon, color: Colors.white),
+          ],
         ),
       ),
     );
