@@ -100,7 +100,6 @@ class _ChangetransactionState extends State<Changetransaction> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
       ),
       drawer: Drawer(
         backgroundColor: Colors.white,

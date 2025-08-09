@@ -133,10 +133,6 @@ class _QrScanState extends State<QrScan> {
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
-        actions: [
-          IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.search), onPressed: () {}),
-        ],
       ),
       drawer: Drawer(
         backgroundColor: Colors.white,

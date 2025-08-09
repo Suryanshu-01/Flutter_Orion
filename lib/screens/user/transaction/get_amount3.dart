@@ -103,7 +103,7 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
           "Enter Amount",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.cyan.shade700,
+        backgroundColor: const Color.fromARGB(255, 33, 33, 33),
         elevation: 0,
       ),
       body: Container(
@@ -113,9 +113,15 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
+<<<<<<< HEAD
               Color(0xFF232526),
               Color(0xFF0f2027),
               Color(0xFF000000),
+=======
+              Color.fromARGB(255, 23, 23, 23), // dark gray
+              Color(0xFF0f2027), // almost black
+              Color(0xFF000000), // black
+>>>>>>> c63ba3e7dd9a8da61b0a4df2ff84d09e7a387fdf
             ],
           ),
         ),
@@ -150,10 +156,11 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
                   TextField(
                     controller: _amountController,
                     keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
-                    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
                     decoration: InputDecoration(
                       labelText: "Enter Amount",
                       labelStyle: const TextStyle(color: Colors.black87),
@@ -164,7 +171,10 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF018594), width: 2),
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          width: 2,
+                        ),
                       ),
                     ),
                     onChanged: _validateAmount,
@@ -182,13 +192,19 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF018594), width: 2),
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 46, 46, 46),
+                          width: 2,
+                        ),
                       ),
                     ),
                     items: _paymentTypes.map((type) {
                       return DropdownMenuItem<String>(
                         value: type,
-                        child: Text(type, style: const TextStyle(color: Colors.black)),
+                        child: Text(
+                          type,
+                          style: const TextStyle(color: Colors.black),
+                        ),
                       );
                     }).toList(),
                     onChanged: (value) {
@@ -208,7 +224,7 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
                           : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _isValidAmount
-                            ? const Color(0xFF018594)
+                            ? const Color.fromARGB(255, 35, 35, 35)
                             : Colors.grey,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(

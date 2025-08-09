@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 import 'package:orion/screens/user/dashboard/drawer/profile.dart';
 import 'package:orion/screens/user/dashboard/drawer/settings.dart';
@@ -105,7 +106,6 @@ class _OrionpageState extends State<Orionpage> {
             fontSize: 20,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
       ),
       drawer: Drawer(
         backgroundColor: Colors.white,
@@ -251,11 +251,65 @@ class _OrionpageState extends State<Orionpage> {
                         ),
                         child: Column(
                           children: [
-                            QrImageView(
-                              data: phoneNumber ?? 'No Data',
-                              version: QrVersions.auto,
-                              size: 180,
-                              backgroundColor: Colors.white,
+                            GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    backgroundColor: Colors.black,
+                                    contentPadding: const EdgeInsets.all(16),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ), // Adjust corner radius
+                                          child: QrImageView(
+                                            data: phoneNumber ?? 'No Data',
+                                            version: QrVersions.auto,
+                                            size: 210,
+                                            backgroundColor: Colors.white,
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 10),
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.copy,
+                                            color: Colors.white,
+                                          ),
+                                          onPressed: () {
+                                            Clipboard.setData(
+                                              ClipboardData(
+                                                text: phoneNumber ?? '',
+                                              ),
+                                            );
+                                            Navigator.pop(
+                                              context,
+                                            ); // close dialog
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  "Copied to clipboard",
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: QrImageView(
+                                data: phoneNumber ?? 'No Data',
+                                version: QrVersions.auto,
+                                size: 200,
+                                backgroundColor: Colors.white,
+                              ),
                             ),
                             const SizedBox(height: 10),
                             Text(

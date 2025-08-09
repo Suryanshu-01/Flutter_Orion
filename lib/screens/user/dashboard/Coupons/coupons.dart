@@ -200,19 +200,36 @@ class _CouponsState extends State<Coupons> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Image.asset(coupon.imagePath, height: 150),
-                          const SizedBox(height: 10),
+                          Image.asset(
+                            coupon.imagePath,
+                            height: 200, // bigger image
+                            width: 200,
+                            fit: BoxFit.cover, // ensures image fills area
+                          ),
+                          const SizedBox(height: 8), // reduced gap
                           ElevatedButton(
                             onPressed: () => _onClaim(coupon),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
                               ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  12,
+                                ), // slightly sharper
+                              ),
+                              minimumSize: Size(180, 40), // matches image width
                             ),
                             child: const Text(
                               "Claim",
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ],

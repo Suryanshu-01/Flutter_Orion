@@ -77,9 +77,9 @@ class _VerifyTransactionPinScreenState
       appBar: AppBar(
         title: const Text(
           "Enter Transaction PIN",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Colors.cyan.shade700,
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         elevation: 0,
       ),
       body: Container(
@@ -129,7 +129,13 @@ class _VerifyTransactionPinScreenState
                     obscureText: true,
                     maxLength: 4,
                     style: const TextStyle(
+<<<<<<< HEAD
                         color: Colors.black, fontWeight: FontWeight.w500),
+=======
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
+>>>>>>> c63ba3e7dd9a8da61b0a4df2ff84d09e7a387fdf
                     decoration: InputDecoration(
                       labelText: "Transaction PIN",
                       labelStyle: const TextStyle(color: Colors.black87),
@@ -140,8 +146,15 @@ class _VerifyTransactionPinScreenState
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
+<<<<<<< HEAD
                         borderSide:
                             const BorderSide(color: Color(0xFF018594), width: 2),
+=======
+                        borderSide: const BorderSide(
+                          color: Color(0xFF018594),
+                          width: 2,
+                        ),
+>>>>>>> c63ba3e7dd9a8da61b0a4df2ff84d09e7a387fdf
                       ),
                     ),
                   ),
@@ -153,7 +166,7 @@ class _VerifyTransactionPinScreenState
                       style: ElevatedButton.styleFrom(
                         backgroundColor: isLoading
                             ? Colors.grey
-                            : const Color(0xFF018594),
+                            : const Color.fromARGB(255, 47, 47, 47),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

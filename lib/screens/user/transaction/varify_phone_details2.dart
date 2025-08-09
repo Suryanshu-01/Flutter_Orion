@@ -86,7 +86,7 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
           "Verify Phone Details",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.cyan.shade700,
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         elevation: 0,
       ),
       body: Container(
@@ -96,8 +96,8 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF232526), // dark gray
-              Color(0xFF0f2027), // almost black
+              Color.fromARGB(255, 83, 87, 90), // dark gray
+              Color.fromARGB(255, 37, 45, 49), // almost black
               Color(0xFF000000), // black
             ],
           ),
@@ -169,7 +169,7 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
                                 onPressed: userFound ? _goToNextScreen : null,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: userFound
-                                      ? const Color(0xFF018594)
+                                      ? const Color.fromARGB(255, 0, 0, 0)
                                       : Colors.grey,
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 16,
@@ -201,7 +201,12 @@ class _VerifyPhoneDetailsState extends State<VerifyPhoneDetails> {
                                 Navigator.pop(context);
                               },
                               style: TextButton.styleFrom(
-                                foregroundColor: Colors.cyan.shade700,
+                                foregroundColor: const Color.fromARGB(
+                                  255,
+                                  0,
+                                  0,
+                                  0,
+                                ),
                               ),
                               child: const Text(
                                 "Edit",

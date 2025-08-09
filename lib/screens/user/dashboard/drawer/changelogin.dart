@@ -100,7 +100,6 @@ class _ChangeloginState extends State<Changelogin> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
       ),
       drawer: Drawer(
         backgroundColor: Colors.white,

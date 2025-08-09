@@ -115,7 +115,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: const Icon(Icons.menu, color: Colors.black),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
-        )
+        ),
       ),
       drawer: Drawer(
         backgroundColor: Colors.white,
