@@ -1,155 +1,163 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:orion/services/notification_service.dart';
-import 'payment_success6.dart';
 
 class TransferProcessingScreen extends StatefulWidget {
   final String receiverPhone;
   final double amount;
-  final String paymentType;
+  final String category;
 
   const TransferProcessingScreen({
     super.key,
     required this.receiverPhone,
     required this.amount,
-    required this.paymentType,
+    required this.category,
   });
 
   @override
-  State<TransferProcessingScreen> createState() => _TransferProcessingScreenState();
+  State<TransferProcessingScreen> createState() =>
+      _TransferProcessingScreenState();
 }
 
 class _TransferProcessingScreenState extends State<TransferProcessingScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  bool _isProcessing = true;
+  String _statusMessage = "Processing transaction...";
+
   @override
   void initState() {
     super.initState();
-    _startTransfer();
+    _performTransaction();
   }
 
-  Future<void> _startTransfer() async {
-    bool result = await _performTransfer(widget.amount);
-    if (!mounted) return;
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => PaymentSuccessScreen(isSuccess: result),
-      ),
-    );
-  }
-
-  Future<bool> _performTransfer(double amount) async {
-    final firestore = FirebaseFirestore.instance;
-    final auth = FirebaseAuth.instance;
-    final sender = auth.currentUser;
-
+  Future<void> _performTransaction() async {
     try {
-      final senderRef = firestore.collection('users').doc(sender!.uid);
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) throw Exception("User not authenticated");
 
-      return await firestore.runTransaction((transaction) async {
-        final senderSnap = await transaction.get(senderRef);
-        if (!senderSnap.exists) throw Exception("Sender not found");
+      final senderRef = _firestore.collection('users').doc(currentUser.uid);
+      final senderSnapshot = await senderRef.get();
+      final senderData = senderSnapshot.data();
 
-        final dynamic senderRaw = senderSnap['walletBalance'];
-        double senderBalance;
-        if (senderRaw is int) {
-          senderBalance = senderRaw.toDouble();
-        } else if (senderRaw is double) {
-          senderBalance = senderRaw;
-        } else if (senderRaw is String) {
-          senderBalance = double.tryParse(senderRaw) ?? 0.0;
-        } else {
-          throw Exception("Invalid sender balance format");
-        }
+      if (senderData == null || !senderData.containsKey('phone')) {
+        throw Exception("Sender data is incomplete");
+      }
 
-        if (senderBalance < amount) throw Exception("Insufficient balance");
+      final senderPhone = senderData['phone'];
+      final receiverQuery = await _firestore
+          .collection('users')
+          .where('phone', isEqualTo: widget.receiverPhone)
+          .limit(1)
+          .get();
 
-        final receiverQuery = await firestore
-            .collection('users')
-            .where('phone', isEqualTo: widget.receiverPhone)
-            .get();
+      if (receiverQuery.docs.isEmpty) {
+        throw Exception("Receiver not found");
+      }
 
-        if (receiverQuery.docs.isEmpty) {
-          throw Exception("Receiver not found");
-        }
+      final receiverRef = receiverQuery.docs.first.reference;
+      final receiverData = receiverQuery.docs.first.data();
 
-        final receiverDoc = receiverQuery.docs.first;
-        final receiverRef = receiverDoc.reference;
+      final double senderBalance = (senderData['balance'] ?? 0).toDouble();
+      if (senderBalance < widget.amount) {
+        setState(() {
+          _isProcessing = false;
+          _statusMessage = "Insufficient balance.";
+        });
+        return;
+      }
 
-        final dynamic receiverRaw = receiverDoc['walletBalance'];
-        double receiverBalance;
-        if (receiverRaw is int) {
-          receiverBalance = receiverRaw.toDouble();
-        } else if (receiverRaw is double) {
-          receiverBalance = receiverRaw;
-        } else if (receiverRaw is String) {
-          receiverBalance = double.tryParse(receiverRaw) ?? 0.0;
-        } else {
-          throw Exception("Invalid receiver balance format");
-        }
+      // Run Firestore transaction
+      await _firestore.runTransaction((transaction) async {
+        final newSenderBalance = senderBalance - widget.amount;
+        final newReceiverBalance =
+            (receiverData['balance'] ?? 0.0) + widget.amount;
 
-        // Update balances
-        transaction.update(senderRef, {'walletBalance': senderBalance - amount});
-        transaction.update(receiverRef, {'walletBalance': receiverBalance + amount});
+        transaction.update(senderRef, {'balance': newSenderBalance});
+        transaction.update(receiverRef, {'balance': newReceiverBalance});
 
-        // Prepare transaction details
+        final txnRef = _firestore.collection('transactions').doc();
         final now = DateTime.now();
-        final timestamp = Timestamp.fromDate(now); // ✅ for filtering
-        final today = DateFormat('yyyy-MM-dd').format(now);
-        final time = DateFormat('HH:mm:ss').format(now);
-        final transactionId = firestore.collection('transactions').doc().id;
 
-        final transactionData = {
-          'transactionId': transactionId,
-          'from': sender.uid,
-          'to': receiverDoc.id,
-          'participants': [sender.uid, receiverDoc.id],
-          'amount': amount,
-          'date': today,
-          'time': time,
-          'timestamp': timestamp, // ✅ this fixes the issue
-          'type': 'transfer',
-          'status': 'success',
-          'category': widget.paymentType,
-        };
+        transaction.set(txnRef, {
+          'senderPhone': senderPhone,
+          'receiverPhone': widget.receiverPhone,
+          'amount': widget.amount,
+          'timestamp': now,
+          'category': widget.category,
+        });
+      });
 
-        // Save transaction document
-        transaction.set(
-          firestore.collection('transactions').doc(transactionId),
-          transactionData,
-        );
+      await _updateTargets(widget.amount, widget.category);
 
-        // Send notification to receiver
-        final senderData = senderSnap.data();
-        final senderName = senderData?['name'] ?? 'Someone';
-        
-        // Send notification after transaction is complete
-        await NotificationService.sendMoneyReceivedNotification(
-          receiverUid: receiverDoc.id,
-          senderName: senderName,
-          amount: amount,
-        );
-
-        return true;
+      setState(() {
+        _isProcessing = false;
+        _statusMessage = "Transaction Successful";
       });
     } catch (e) {
-      _showSnackBar("Transfer failed: $e");
-      return false;
+      setState(() {
+        _isProcessing = false;
+        _statusMessage = "Transaction failed: $e";
+      });
     }
   }
 
-  void _showSnackBar(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: Colors.red),
-    );
+  Future<void> _updateTargets(double amount, String category) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    final now = DateTime.now();
+    final int month = now.month;
+    final int year = now.year;
+
+    final targetsRef = _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('targets');
+
+    final snapshot = await targetsRef
+        .where('month', isEqualTo: month)
+        .where('year', isEqualTo: year)
+        .get();
+
+    for (var doc in snapshot.docs) {
+      final data = doc.data();
+      final String type = data['type']; // 'total' or 'category'
+      final double targetAmount = (data['amount'] ?? 0).toDouble();
+      final double spentAmount = (data['spentAmount'] ?? 0).toDouble();
+      final String? targetCategory = data['category'];
+
+      // Check if the target applies
+      bool matches =
+          type == 'total' || (type == 'category' && targetCategory == category);
+      if (!matches) continue;
+
+      final double updatedSpent = spentAmount + amount;
+      String status =
+          updatedSpent >= targetAmount ? 'ACHIEVED' : 'IN_PROGRESS';
+
+      // Update Firestore without any notifications
+      await targetsRef.doc(doc.id).update({
+        'spentAmount': updatedSpent,
+        'status': status,
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+    return Scaffold(
+      body: Center(
+        child: _isProcessing
+            ? const CircularProgressIndicator()
+            : Text(
+                _statusMessage,
+                style: const TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+      ),
     );
   }
 }

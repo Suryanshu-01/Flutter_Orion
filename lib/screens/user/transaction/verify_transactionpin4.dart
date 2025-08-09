@@ -6,13 +6,13 @@ import 'transfer_screen5.dart';
 class VerifyTransactionPinScreen extends StatefulWidget {
   final String receiverPhone;
   final double amount;
-  final String paymentType;
+  final String category; // updated from paymentType → category
 
   const VerifyTransactionPinScreen({
     super.key,
     required this.receiverPhone,
     required this.amount,
-    required this.paymentType,
+    required this.category,
   });
 
   @override
@@ -51,7 +51,7 @@ class _VerifyTransactionPinScreenState
             builder: (_) => TransferProcessingScreen(
               receiverPhone: widget.receiverPhone,
               amount: widget.amount,
-              paymentType: widget.paymentType,
+              category: widget.category, // updated here
             ),
           ),
         );
@@ -89,9 +89,9 @@ class _VerifyTransactionPinScreenState
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF232526), // dark gray
-              Color(0xFF0f2027), // almost black
-              Color(0xFF000000), // black
+              Color(0xFF232526),
+              Color(0xFF0f2027),
+              Color(0xFF000000),
             ],
           ),
         ),
@@ -128,7 +128,8 @@ class _VerifyTransactionPinScreenState
                     keyboardType: TextInputType.number,
                     obscureText: true,
                     maxLength: 4,
-                    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
                       labelText: "Transaction PIN",
                       labelStyle: const TextStyle(color: Colors.black87),
@@ -139,7 +140,8 @@ class _VerifyTransactionPinScreenState
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF018594), width: 2),
+                        borderSide:
+                            const BorderSide(color: Color(0xFF018594), width: 2),
                       ),
                     ),
                   ),

@@ -10,7 +10,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform, // ✅ This is important!
   );
   
-  // Initialize notification service
   await NotificationService.initialize();
   
   runApp(const MyApp());

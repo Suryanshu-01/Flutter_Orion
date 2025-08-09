@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 
-// Screens for navigation
 import 'package:orion/screens/user/dashboard/drawer/profile.dart';
 import 'package:orion/screens/user/dashboard/drawer/aboutus.dart';
 import 'package:orion/screens/user/authentication/select_user.dart';
@@ -119,17 +118,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: const Icon(Icons.menu, color: Colors.black),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.black),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
+        )
       ),
       drawer: Drawer(
         backgroundColor: Colors.white,

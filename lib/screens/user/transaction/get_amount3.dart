@@ -89,7 +89,7 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
         builder: (_) => VerifyTransactionPinScreen(
           receiverPhone: widget.receiverPhone,
           amount: amount,
-          paymentType: _selectedType,
+          category: _selectedType,
         ),
       ),
     );
@@ -113,9 +113,9 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF232526), // dark gray
-              Color(0xFF0f2027), // almost black
-              Color(0xFF000000), // black
+              Color(0xFF232526),
+              Color(0xFF0f2027),
+              Color(0xFF000000),
             ],
           ),
         ),
