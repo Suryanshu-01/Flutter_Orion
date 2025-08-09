@@ -1,117 +1,149 @@
+import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
-// import '../dashboard/dashboard_screen.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
   final bool isSuccess;
 
-  const PaymentSuccessScreen({super.key, required this.isSuccess});
+  const PaymentSuccessScreen({super.key, this.isSuccess = true});
+
+  Future<String> handleCouponReward() async {
+    final List<String> brandCoupons = [
+      'Boat.jpg',
+      'Nykaa.jpg',
+      'PVR.jpg',
+      'Swiggy.jpg',
+    ];
+    final List<String> themeCoupons = [
+      'itachic.jpg',
+      'lightc.jpg',
+      'luffyc.jpg',
+      'madarac.jpg',
+      'shanksc.jpg',
+      'vegetac.jpg',
+    ];
+
+    final random = Random();
+    final shouldGiveCoupon = random.nextInt(2) == 0; // 50% chance for now
+
+    if (!shouldGiveCoupon) return 'Better Luck Next Time!';
+
+    final allCoupons = [...brandCoupons, ...themeCoupons];
+    final selectedCoupon = allCoupons[random.nextInt(allCoupons.length)];
+
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId != null) {
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+        'userCoupons': FieldValue.arrayUnion([selectedCoupon]),
+      });
+    }
+
+    return selectedCoupon;
+  }
+
+  bool isBrandCoupon(String filename) {
+    return [
+      'Boat.jpg',
+      'Nykaa.jpg',
+      'PVR.jpg',
+      'Swiggy.jpg',
+    ].contains(filename);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final Color iconColor = isSuccess ? Colors.green : Colors.red;
-    final String statusText = isSuccess
-        ? "Payment Successful!"
-        : "Payment Failed!";
-    final String buttonText = isSuccess ? "Back to Home" : "Try Again";
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Payment Status",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.cyan.shade700,
-        elevation: 0,
-      ),
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF232526), // dark gray
-              Color(0xFF0f2027), // almost black
-              Color(0xFF000000), // black
-            ],
-          ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Container(
-              padding: const EdgeInsets.all(32),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.95),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+      appBar: AppBar(title: const Text("Payment Result")),
+      body: Center(
+        child: isSuccess
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    isSuccess
-                        ? Icons.check_circle_outline
-                        : Icons.cancel_outlined,
+                  const Icon(
+                    Icons.check_circle,
                     size: 100,
-                    color: iconColor,
+                    color: Colors.green,
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    statusText,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                    textAlign: TextAlign.center,
+                  const SizedBox(height: 20),
+                  const Text(
+                    "Payment Successful",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 30),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (isSuccess) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const HomeScreen(),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final result = await handleCouponReward();
+                      final bool wonCoupon = result != 'Better Luck Next Time!';
+
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(
+                            wonCoupon
+                                ? "🎉 Coupon Won!"
+                                : "No Coupon This Time",
+                          ),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                wonCoupon
+                                    ? "Coupon added to your Coupons Section!"
+                                    : "Better Luck Next Time!",
+                              ),
+                              const SizedBox(height: 16),
+                              if (wonCoupon)
+                                Image.asset(
+                                  'assets/coupon/${isBrandCoupon(result) ? 'brandcoupon' : 'cardcoupon'}/$result',
+                                  height: 240,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      const Text(
+                                        "❌ Unable to load coupon image.",
+                                      ),
+                                ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const HomeScreen(),
+                                  ),
+                                );
+                              },
+                              child: const Text("Continue"),
                             ),
-                          );
-                        } else {
-                          Navigator.pop(context);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: iconColor,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          ],
                         ),
-                        elevation: 3,
-                      ),
-                      child: Text(
-                        buttonText,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                      );
+                    },
+                    child: const Text("Continue"),
+                  ),
+                ],
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.cancel, size: 100, color: Colors.red),
+                  const SizedBox(height: 20),
+                  const Text(
+                    "Payment Failed",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 30),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Go Back"),
                   ),
                 ],
               ),
-            ),
-          ),
-        ),
       ),
     );
   }
 }
+//6

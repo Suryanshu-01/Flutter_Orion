@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 class MonthlyBarChart extends StatefulWidget {
   final void Function(int monthIndex, String monthName)? onBarTap;
-
   const MonthlyBarChart({super.key, this.onBarTap});
 
   @override
@@ -14,10 +13,8 @@ class MonthlyBarChart extends StatefulWidget {
 
 class _MonthlyBarChartState extends State<MonthlyBarChart> {
   final List<String> months = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"
   ];
-
   Map<int, double> monthlyData = {};
   bool isLoading = true;
   int currentMonth = DateTime.now().month;
@@ -42,19 +39,21 @@ class _MonthlyBarChartState extends State<MonthlyBarChart> {
     for (var doc in snapshot.docs) {
       final data = doc.data();
       DateTime? txnDate;
-
-      final timestamp = data['timestamp'];
-      if (timestamp is Timestamp) {
-        txnDate = timestamp.toDate();
+      if (data['timestamp'] is Timestamp) {
+        txnDate = (data['timestamp'] as Timestamp).toDate();
+      } else if (data['parsedDate'] is DateTime) {
+        txnDate = data['parsedDate'];
       } else {
-        final dateStr = data['date'];
+        final dateStr = data['date'] ?? '';
         final timeStr = data['time'] ?? '00:00';
         txnDate = DateTime.tryParse('$dateStr $timeStr');
       }
 
+      // Here's the real fix! Only sum when you are the sender:
       if (txnDate != null &&
           txnDate.year == DateTime.now().year &&
-          txnDate.month <= currentMonth) {
+          txnDate.month <= currentMonth &&
+          data['from'] == currentUid) {
         final month = txnDate.month;
         final amount = (data['amount'] ?? 0).toDouble();
         tempData[month] = (tempData[month] ?? 0) + amount;
@@ -106,59 +105,35 @@ class _MonthlyBarChartState extends State<MonthlyBarChart> {
                       },
                     ),
                     titlesData: FlTitlesData(
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      rightTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      topTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, _) {
-                            final index = value.toInt();
-                            if (index >= 0 && index < filteredMonths.length) {
-                              final amount = monthlyData[filteredMonths[index]];
-                              if (amount != null && amount > 0) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 4),
-                                  child: Text(
-                                    '₹${amount.toStringAsFixed(0)}',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
-                            return const SizedBox.shrink();
-                          },
-                        ),
-                      ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, _) {
-                            final index = value.toInt();
-                            if (index >= 0 && index < filteredMonths.length) {
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  months[filteredMonths[index] - 1],
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              );
-                            }
-                            return const SizedBox.shrink();
-                          },
-                        ),
-                      ),
+                      // ...title code omitted for brevity (keep yours)...
+                      leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, _) {
+                        final index = value.toInt();
+                        if (index >= 0 && index < filteredMonths.length) {
+                          final amount = monthlyData[filteredMonths[index]];
+                          if (amount != null && amount > 0) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Text('₹${amount.toStringAsFixed(0)}',
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                              ),
+                            );
+                          }
+                        }
+                        return const SizedBox.shrink();
+                      })),
+                      bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, _) {
+                        final index = value.toInt();
+                        if (index >= 0 && index < filteredMonths.length) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(months[filteredMonths[index] - 1],
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      })),
                     ),
                     minY: 0,
                     maxY: maxAmount + maxAmount * 0.2,

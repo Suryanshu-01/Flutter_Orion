@@ -122,7 +122,10 @@ class _LoginPinScreenState extends State<LoginPinScreen> {
                   if (_isError)
                     const Text(
                       'Incorrect PIN. Try again.',
-                      style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                 ],
               ),
