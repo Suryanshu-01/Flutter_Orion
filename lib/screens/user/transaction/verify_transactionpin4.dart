@@ -129,13 +129,9 @@ class _VerifyTransactionPinScreenState
                     obscureText: true,
                     maxLength: 4,
                     style: const TextStyle(
-<<<<<<< HEAD
-                        color: Colors.black, fontWeight: FontWeight.w500),
-=======
                       color: Colors.black,
                       fontWeight: FontWeight.w500,
                     ),
->>>>>>> c63ba3e7dd9a8da61b0a4df2ff84d09e7a387fdf
                     decoration: InputDecoration(
                       labelText: "Transaction PIN",
                       labelStyle: const TextStyle(color: Colors.black87),
@@ -146,15 +142,10 @@ class _VerifyTransactionPinScreenState
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-<<<<<<< HEAD
-                        borderSide:
-                            const BorderSide(color: Color(0xFF018594), width: 2),
-=======
                         borderSide: const BorderSide(
                           color: Color(0xFF018594),
                           width: 2,
                         ),
->>>>>>> c63ba3e7dd9a8da61b0a4df2ff84d09e7a387fdf
                       ),
                     ),
                   ),

@@ -113,15 +113,10 @@ class _EnterAmountScreenState extends State<EnterAmountScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-<<<<<<< HEAD
-              Color(0xFF232526),
-              Color(0xFF0f2027),
-              Color(0xFF000000),
-=======
+
               Color.fromARGB(255, 23, 23, 23), // dark gray
               Color(0xFF0f2027), // almost black
               Color(0xFF000000), // black
->>>>>>> c63ba3e7dd9a8da61b0a4df2ff84d09e7a387fdf
             ],
           ),
         ),
