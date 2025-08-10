@@ -64,148 +64,166 @@ class AboutUs extends StatelessWidget {
     );
   }
 
+  Future<bool> _onWillPop(BuildContext context) async {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomeScreen()),
+    );
+    return false; // prevent default back behavior
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: () => _onWillPop(context),
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          "About Us",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text(
+            "About Us",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const HomeScreen()),
+              );
+            },
           ),
         ),
-      ),
-      //Drawer
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        child: ListView(
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-              ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, size: 40, color: Colors.black),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Profile',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            _drawerItem(
-              Icons.home,
-              'Home',
-              () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => HomeScreen()),
-              ),
-            ),
-            _drawerItem(Icons.person, 'Profile Manager', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => ProfileManager()),
-              );
-            }),
-            _drawerItem(Icons.admin_panel_settings, 'Admin/User', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => SelectUser()),
-              );
-            }),
-            _drawerItem(Icons.settings, 'Settings', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => SettingsUser()),
-              );
-            }),
-            _drawerItem(Icons.info_outline, 'About Us', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => AboutUs()),
-              );
-            }),
-          ],
-        ),
-      ),
-
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+        drawer: Drawer(
+          backgroundColor: Colors.white,
+          child: ListView(
             children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
+              DrawerHeader(
+                decoration: const BoxDecoration(
                   color: Colors.black,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
                 ),
                 child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Icon(Icons.group, size: 40, color: Colors.white),
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.person, size: 40, color: Colors.black),
+                    ),
                     SizedBox(height: 10),
                     Text(
-                      "We are the Team of Orion Pay",
+                      'Profile',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
-
-              const SizedBox(height: 20), // ✅ Proper use of SizedBox
-
-              _buildTeamMember(
-                name: "Kumar Suryanshu",
-                rollNumber: "2024IMG-026",
-                description: "Great Man",
+              _drawerItem(
+                Icons.home,
+                'Home',
+                () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HomeScreen()),
+                ),
               ),
-              _buildTeamMember(
-                name: "Prakhar Srivastava",
-                rollNumber: "2024IMG-033",
-                description: "Great Man",
-              ),
-              _buildTeamMember(
-                name: "Aryan Singh",
-                rollNumber: "2024IMT-013",
-                description: "Cute boy",
-              ),
+              _drawerItem(Icons.person, 'Profile Manager', () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProfileManager()),
+                );
+              }),
+              _drawerItem(Icons.admin_panel_settings, 'Admin/User', () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SelectUser()),
+                );
+              }),
+              _drawerItem(Icons.settings, 'Settings', () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SettingsUser()),
+                );
+              }),
+              _drawerItem(Icons.info_outline, 'About Us', () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AboutUs()),
+                );
+              }),
             ],
+          ),
+        ),
+        body: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: const Column(
+                    children: [
+                      Icon(Icons.group, size: 40, color: Colors.white),
+                      SizedBox(height: 10),
+                      Text(
+                        "We are the Team of Orion Pay",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                _buildTeamMember(
+                  name: "Kumar Suryanshu",
+                  rollNumber: "2024IMG-026",
+                  description: "Great Man",
+                ),
+                _buildTeamMember(
+                  name: "Prakhar Srivastava",
+                  rollNumber: "2024IMG-033",
+                  description: "Great Man",
+                ),
+                _buildTeamMember(
+                  name: "Aryan Singh",
+                  rollNumber: "2024IMT-013",
+                  description: "Cute boy",
+                ),
+              ],
+            ),
           ),
         ),
       ),

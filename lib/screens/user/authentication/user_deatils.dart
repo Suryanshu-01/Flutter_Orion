@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:orion/screens/user/authentication/pinScreen/pin_loginScreen.dart';
 
 class UserDetailsScreen extends StatefulWidget {
@@ -13,7 +14,6 @@ class UserDetailsScreen extends StatefulWidget {
 class _UserDetailsScreenState extends State<UserDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   DateTime? _dob;
   String? _gender;
@@ -34,6 +34,17 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     }
   }
 
+  Widget _buildImageSection() {
+    // Change image path as needed
+    return Center(
+      child: Image.asset(
+        'assets/images/userDetail.png', // <-- Replace with your image path
+        height: 120,
+        fit: BoxFit.contain,
+      ),
+    );
+  }
+
   Future<bool> _saveDetails() async {
     if (!_formKey.currentState!.validate() || _dob == null || _gender == null) {
       ScaffoldMessenger.of(
@@ -50,7 +61,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
       await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
         'name': _nameController.text.trim(),
-        'email': _emailController.text.trim(),
         'phone': _phoneController.text.trim(),
         'dob': _dob!.toIso8601String(),
         'gender': _gender,
@@ -108,6 +118,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    _buildImageSection(),
+                    const SizedBox(height: 32),
                     TextFormField(
                       controller: _nameController,
                       style: const TextStyle(
@@ -120,21 +132,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      decoration: _inputDecoration(
-                        "Email",
-                        Icons.email_outlined,
-                      ),
-                      validator: (v) =>
-                          v == null || v.isEmpty ? 'Enter email' : null,
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
                       style: const TextStyle(
@@ -142,8 +139,18 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                         fontWeight: FontWeight.w500,
                       ),
                       decoration: _inputDecoration("Phone", Icons.phone),
-                      validator: (v) =>
-                          v == null || v.isEmpty ? 'Enter phone' : null,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                      ],
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Enter phone';
+                        } else if (v.length != 10) {
+                          return 'Phone number must be 10 digits';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 20),
                     Container(

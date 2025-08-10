@@ -33,7 +33,7 @@ class AnimatedTotalCounter extends StatelessWidget {
         const SizedBox(height: 4),
         TweenAnimationBuilder<double>(
           tween: Tween(begin: 0, end: totalAmount),
-          duration: const Duration(seconds: 2),
+          duration: const Duration(seconds: 1),
           builder: (context, value, child) {
             return Text(
               "₹${value.toStringAsFixed(2)}",

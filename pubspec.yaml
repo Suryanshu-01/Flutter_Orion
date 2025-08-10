@@ -41,6 +41,7 @@ dependencies:
   shared_preferences: ^2.5.3
   flutter_secure_storage: ^9.2.4
   qr_flutter: ^4.1.0
+  mobile_scanner: ^7.0.1
   animated_flip_counter: ^0.3.4
   pretty_qr_code: ^3.4.0
   animated_bottom_navigation_bar: ^1.4.0
@@ -53,10 +54,16 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   coupon_uikit: ^0.2.1
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icon.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

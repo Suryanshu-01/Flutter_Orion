@@ -129,93 +129,99 @@ class _MonthlyDetailScreenState extends State<MonthlyDetailScreen> {
     final double totalExpense = _calculateTotalExpense();
     final Map<String, double> categoryData = _computeCategoryData();
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context);
+        return false;
+      },
+      child: Scaffold(
         backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        title: Text('${widget.monthName} Details'),
-      ),
-      body: GestureDetector(
-        onHorizontalDragEnd: (details) {
-          setState(() => showBarChart = !showBarChart);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AnimatedTotalCounter(
-                label: "This ${widget.monthName} Expense",
-                totalAmount: totalExpense,
-                textStyle: GoogleFonts.staatliches(
-                  textStyle: const TextStyle(
-                    fontSize: 28,
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          title: Text('${widget.monthName} Details'),
+        ),
+        body: GestureDetector(
+          onHorizontalDragEnd: (details) {
+            setState(() => showBarChart = !showBarChart);
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AnimatedTotalCounter(
+                  label: "This ${widget.monthName} Expense",
+                  totalAmount: totalExpense,
+                  textStyle: GoogleFonts.staatliches(
+                    textStyle: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange,
+                    ),
+                  ),
+                  labelStyle: GoogleFonts.staatliches(
+                    textStyle: const TextStyle(
+                      fontSize: 28,
+                      color: Color.fromARGB(179, 64, 252, 139),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'Category Breakdown',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange,
                   ),
                 ),
-                labelStyle: GoogleFonts.staatliches(
-                  textStyle: const TextStyle(
-                    fontSize: 28,
-                    color: Color.fromARGB(179, 64, 252, 139),
+                SizedBox(
+                  height: 200,
+                  child: showBarChart
+                      ? CategoryBarChart(data: categoryData)
+                      : CategoryPieChart(data: categoryData),
+                ),
+                const SizedBox(height: 8),
+                Center(
+                  child: Text(
+                    showBarChart
+                        ? 'Swipe to see Pie chart'
+                        : 'Swipe to see Bar chart',
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'Category Breakdown',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                const SizedBox(height: 20),
+                const Text(
+                  'Transaction History',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 200,
-                child: showBarChart
-                    ? CategoryBarChart(data: categoryData)
-                    : CategoryPieChart(data: categoryData),
-              ),
-              const SizedBox(height: 8),
-              Center(
-                child: Text(
-                  showBarChart
-                      ? 'Swipe to see Pie chart'
-                      : 'Swipe to see Bar chart',
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Transaction History',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Expanded(
-                child: monthlyAllTransactions.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'No transactions this month',
-                          style: TextStyle(color: Colors.grey),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: monthlyAllTransactions.isEmpty
+                      ? const Center(
+                          child: Text(
+                            'No transactions this month',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: monthlyAllTransactions.length,
+                          itemBuilder: (context, index) {
+                            final tx = monthlyAllTransactions[index];
+                            return TransactionTile(
+                              data: tx,
+                              userMap: widget.userMap,
+                            );
+                          },
                         ),
-                      )
-                    : ListView.builder(
-                        itemCount: monthlyAllTransactions.length,
-                        itemBuilder: (context, index) {
-                          final tx = monthlyAllTransactions[index];
-                          return TransactionTile(
-                            data: tx,
-                            userMap: widget.userMap,
-                          );
-                        },
-                      ),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

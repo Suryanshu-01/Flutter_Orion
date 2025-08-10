@@ -69,6 +69,17 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
+  Widget _buildImageSection() {
+    // Just update the image path below as you like
+    return Center(
+      child: Image.asset(
+        'assets/images/loginScreen.png', // <-- Change this to your image path
+        height: 120,
+        fit: BoxFit.contain,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,21 +115,18 @@ class _SignupScreenState extends State<SignupScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Center(
-                    child: Image.asset(
-                      'assets/images/loginScreen.png',
-                      height: 120,
-                    ),
-                  ),
+                  _buildImageSection(),
                   const SizedBox(height: 32),
                   TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
                       labelText: "Email",
                       labelStyle: const TextStyle(color: Colors.white70),
-                      prefixIcon: const Icon(Icons.email_outlined, color: Colors.white70),
+                      prefixIcon:
+                          const Icon(Icons.email_outlined, color: Colors.white70),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(color: Colors.white24),
@@ -127,7 +135,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       fillColor: Colors.black,
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white, width: 2),
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 2),
                       ),
                     ),
                   ),
@@ -135,11 +144,13 @@ class _SignupScreenState extends State<SignupScreen> {
                   TextField(
                     controller: _passwordController,
                     obscureText: true,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
                       labelText: "Password",
                       labelStyle: const TextStyle(color: Colors.white70),
-                      prefixIcon: const Icon(Icons.lock_outline, color: Colors.white70),
+                      prefixIcon:
+                          const Icon(Icons.lock_outline, color: Colors.white70),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(color: Colors.white24),
@@ -148,7 +159,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       fillColor: Colors.black,
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white, width: 2),
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 2),
                       ),
                     ),
                   ),
@@ -156,7 +168,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   SizedBox(
                     height: 50,
                     child: _isLoading
-                        ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                        ? const Center(
+                            child: CircularProgressIndicator(color: Colors.white))
                         : ElevatedButton(
                             onPressed: signup,
                             style: ElevatedButton.styleFrom(

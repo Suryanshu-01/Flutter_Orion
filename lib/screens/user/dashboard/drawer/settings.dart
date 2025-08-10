@@ -5,7 +5,6 @@ import 'package:orion/screens/user/authentication/select_user.dart';
 import 'package:orion/screens/user/dashboard/drawer/changelogin.dart';
 import 'package:orion/screens/user/dashboard/drawer/changetransaction.dart';
 import 'package:orion/screens/user/dashboard/drawer/profile.dart';
-import 'package:orion/services/notification_service.dart';
 import 'aboutus.dart';
 
 class SettingsUser extends StatefulWidget {
@@ -16,272 +15,211 @@ class SettingsUser extends StatefulWidget {
 }
 
 class _SettingsUserState extends State<SettingsUser> {
-  bool _notificationsEnabled = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadNotificationSettings();
-  }
-
-  Future<void> _loadNotificationSettings() async {
-    final enabled = await NotificationService.isNotificationEnabled();
-    setState(() {
-      _notificationsEnabled = enabled;
-    });
-  }
-
-  Future<void> _toggleNotifications(bool value) async {
-    if (value) {
-      await NotificationService.saveTokenToFirebase();
-    } else {
-      await NotificationService.disableNotifications();
-    }
-    setState(() {
-      _notificationsEnabled = value;
-    });
+  Future<bool> _onWillPop() async {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomeScreen()),
+    );
+    return false; // prevent default back action
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: _onWillPop, // hardware back button handler
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          "Settings",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text(
+            "Settings",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const HomeScreen()),
+              );
+            },
           ),
         ),
-      ),
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        child: ListView(
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 109, 108, 108),
-                    Color.fromARGB(255, 0, 0, 0),
+        drawer: Drawer(
+          backgroundColor: Colors.white,
+          child: ListView(
+            children: [
+              DrawerHeader(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 109, 108, 108),
+                      Color.fromARGB(255, 0, 0, 0),
+                    ],
+                  ),
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.person, size: 40, color: Colors.black),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Profile',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
                   ],
                 ),
               ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, size: 40, color: Colors.black),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Profile',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                ],
+              _drawerItem(
+                Icons.home,
+                'Home',
+                () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HomeScreen()),
+                ),
               ),
-            ),
-            _drawerItem(
-              Icons.home,
-              'Home',
-              () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => HomeScreen()),
-              ),
-            ),
-            _drawerItem(Icons.person, 'Profile Manager', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => ProfileManager()),
-              );
-            }),
-            _drawerItem(Icons.admin_panel_settings, 'Admin/User', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => SelectUser()),
-              );
-            }),
-            _drawerItem(Icons.info_outline, 'About Us', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => AboutUs()),
-              );
-            }),
-          ],
+              _drawerItem(Icons.person, 'Profile Manager', () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProfileManager()),
+                );
+              }),
+              _drawerItem(Icons.admin_panel_settings, 'Admin/User', () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SelectUser()),
+                );
+              }),
+              _drawerItem(Icons.info_outline, 'About Us', () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AboutUs()),
+                );
+              }),
+            ],
+          ),
         ),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Container(
-              width: 400,
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 16,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Icon(Icons.settings, size: 60, color: Colors.white),
-                  const SizedBox(height: 24),
-                  const Text(
-                    "Settings",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
+        body: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Container(
+                width: 400,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 16,
+                      offset: const Offset(0, 8),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 32),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Icon(Icons.settings, size: 60, color: Colors.white),
+                    const SizedBox(height: 24),
+                    const Text(
+                      "Settings",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
 
-                  // Notification Settings
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.notifications,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                        const SizedBox(width: 16),
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Push Notifications",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
+                    // Removed Push Notification section here
+
+                    // Additional settings
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: const [
+                              Icon(Icons.security, color: Colors.white, size: 24),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Security",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      "Manage your security settings",
+                                      style: TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              SizedBox(height: 4),
-                              Text(
-                                "Get notified when you receive money",
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.white54,
+                                size: 16,
                               ),
                             ],
                           ),
-                        ),
-                        Switch(
-                          value: _notificationsEnabled,
-                          onChanged: _toggleNotifications,
-                          activeColor: const Color.fromARGB(255, 123, 123, 124),
-                          activeTrackColor: const Color.fromARGB(
-                            255,
-                            78,
-                            81,
-                            83,
-                          ).withOpacity(0.3),
-                          inactiveThumbColor: Colors.grey,
-                          inactiveTrackColor: Colors.grey.withOpacity(0.3),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Additional settings can be added here
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: const [
-                            Icon(Icons.security, color: Colors.white, size: 24),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Security",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    "Manage your security settings",
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
+                          const SizedBox(height: 20),
+                          settingsTile(
+                            label: "Change Transaction PIN",
+                            icon: Icons.lock_outline,
+                            onTap: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const Changetransaction(),
                               ),
                             ),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.white54,
-                              size: 16,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        settingsTile(
-                          label: "Change Transaction PIN",
-                          icon: Icons.lock_outline,
-                          onTap: () => Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => Changetransaction(),
+                          ),
+                          const SizedBox(height: 20),
+                          settingsTile(
+                            label: "Change Login PIN",
+                            icon: Icons.lock_outline,
+                            onTap: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (_) => const Changelogin()),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        settingsTile(
-                          label: "Change Login PIN",
-                          icon: Icons.lock_outline,
-                          onTap: () => Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (_) => Changelogin()),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

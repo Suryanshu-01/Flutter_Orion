@@ -26,7 +26,7 @@ class PaymentSuccessScreen extends StatelessWidget {
     ];
 
     final random = Random();
-    final shouldGiveCoupon = random.nextInt(2) == 0; // 50% chance for now
+    final shouldGiveCoupon = random.nextInt(2) == 0; // 50% chance
 
     if (!shouldGiveCoupon) return 'Better Luck Next Time!';
 
@@ -64,7 +64,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                   const Icon(
                     Icons.check_circle,
                     size: 100,
-                    color: Color.fromARGB(255, 0, 0, 0),
+                    color: Colors.black,
                   ),
                   const SizedBox(height: 20),
                   const Text(
@@ -75,7 +75,8 @@ class PaymentSuccessScreen extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () async {
                       final result = await handleCouponReward();
-                      final bool wonCoupon = result != 'Better Luck Next Time!';
+                      final bool wonCoupon =
+                          result != 'Better Luck Next Time!';
 
                       showDialog(
                         context: context,
@@ -112,12 +113,12 @@ class PaymentSuccessScreen extends StatelessWidget {
                                 foregroundColor: Colors.white,
                               ),
                               onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.pushReplacement(
+                                Navigator.pop(context); // close dialog
+                                Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => const HomeScreen(),
-                                  ),
+                                      builder: (_) => const HomeScreen()),
+                                  (Route<dynamic> route) => false,
                                 );
                               },
                               child: const Text("Continue"),
@@ -141,7 +142,14 @@ class PaymentSuccessScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const HomeScreen()),
+                        (Route<dynamic> route) => false,
+                      );
+                    },
                     child: const Text("Go Back"),
                   ),
                 ],
@@ -150,4 +158,3 @@ class PaymentSuccessScreen extends StatelessWidget {
     );
   }
 }
-//6

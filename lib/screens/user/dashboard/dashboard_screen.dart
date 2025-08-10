@@ -1,8 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
-
 import 'package:orion/screens/user/dashboard/drawer/profile.dart';
 import 'package:orion/screens/user/dashboard/drawer/aboutus.dart';
 import 'package:orion/screens/user/authentication/select_user.dart';
@@ -31,19 +32,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _handleNavigation(BuildContext context, Widget page) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
-
     if (uid == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("User not logged in.")));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("User not logged in.")));
       return;
     }
 
     try {
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .get();
+      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final isBlocked = doc['blockTransactions'] ?? false;
 
       if (isBlocked) {
@@ -54,19 +50,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Navigator.push(context, MaterialPageRoute(builder: (_) => page));
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: ${e.toString()}")),
+      );
     }
   }
 
   Future<void> _fetchSelectedCard() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
+      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
       final savedImage = doc.data()?['selectedCard'];
       if (savedImage != null && savedImage is String) {
         setState(() {
@@ -99,82 +92,95 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  Future<bool> _onWillPop() async {
+    // Close the app when back is pressed on dashboard
+    if (Platform.isAndroid) {
+      SystemNavigator.pop();
+    } else if (Platform.isIOS) {
+      exit(0);
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          "OrionPay",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text(
+            "OrionPay",
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          ),
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.menu, color: Colors.black),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
           ),
         ),
-      ),
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        child: ListView(
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(color: Colors.grey),
-              child: const Text(
-                'Profile',
-                style: TextStyle(color: Colors.black, fontSize: 24),
+        drawer: Drawer(
+          backgroundColor: Colors.white,
+          child: ListView(
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(color: Colors.grey),
+                child: Text(
+                  'Profile',
+                  style: TextStyle(color: Colors.black, fontSize: 24),
+                ),
               ),
-            ),
-            _drawerItem(
-              Icons.home,
-              'Home',
-              () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => HomeScreen()),
+              _drawerItem(
+                Icons.home,
+                'Home',
+                () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => HomeScreen()),
+                ),
               ),
-            ),
-            _drawerItem(Icons.person, 'Profile Manager', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => ProfileManager()),
-              );
-            }),
-            _drawerItem(Icons.admin_panel_settings, 'Admin/User', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const SelectUser()),
-              );
-            }),
-            _drawerItem(Icons.settings, 'Settings', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => SettingsUser()),
-              );
-            }),
-            _drawerItem(Icons.info_outline, 'About Us', () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => AboutUs()),
-              );
-            }),
-          ],
+              _drawerItem(Icons.person, 'Profile Manager', () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => ProfileManager()),
+                );
+              }),
+              _drawerItem(Icons.admin_panel_settings, 'Admin/User', () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SelectUser()),
+                );
+              }),
+              _drawerItem(Icons.settings, 'Settings', () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => SettingsUser()),
+                );
+              }),
+              _drawerItem(Icons.info_outline, 'About Us', () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => AboutUs()),
+                );
+              }),
+            ],
+          ),
         ),
-      ),
-      body: Container(
-        width: double.infinity,
-        color: Colors.white,
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            _buildCard(),
-            const SizedBox(height: 20),
-            _buildFeatureGrid(),
-            const SizedBox(height: 20),
-            _buildTransactionHistory(),
-          ],
+        body: Container(
+          width: double.infinity,
+          color: Colors.white,
+          child: ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              _buildCard(),
+              const SizedBox(height: 20),
+              _buildFeatureGrid(),
+              const SizedBox(height: 20),
+              _buildTransactionHistory(),
+            ],
+          ),
         ),
       ),
     );
@@ -301,10 +307,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return transactions;
     }
 
-    Widget buildTransactionTile(
-      Map<String, dynamic> data, {
-      bool isModal = false,
-    }) {
+    Widget buildTransactionTile(Map<String, dynamic> data, {bool isModal = false}) {
       final currentUserId = user?.uid;
       final isSender = data['from'] == currentUserId;
       final otherUserId = isSender ? data['to'] : data['from'];
@@ -314,10 +317,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final category = data['category'] ?? 'Miscellaneous';
 
       return FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance
-            .collection('users')
-            .doc(otherUserId)
-            .get(),
+        future: FirebaseFirestore.instance.collection('users').doc(otherUserId).get(),
         builder: (context, snapshot) {
           String name = 'Unknown';
           if (snapshot.hasData && snapshot.data!.exists) {
@@ -398,8 +398,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: FutureBuilder<List<Map<String, dynamic>>>(
                         future: fetchTransactions(),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Center(
                               child: CircularProgressIndicator(),
                             );
@@ -424,10 +423,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           return ListView.builder(
                             itemCount: transactions.length,
                             itemBuilder: (context, index) =>
-                                buildTransactionTile(
-                                  transactions[index],
-                                  isModal: true,
-                                ),
+                                buildTransactionTile(transactions[index], isModal: true),
                           );
                         },
                       ),
@@ -495,10 +491,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   }
                   return ListView.builder(
                     itemCount: transactions.length,
-                    itemBuilder: (context, index) => buildTransactionTile(
-                      transactions[index],
-                      isModal: false,
-                    ),
+                    itemBuilder: (context, index) =>
+                        buildTransactionTile(transactions[index], isModal: false),
                   );
                 },
               ),

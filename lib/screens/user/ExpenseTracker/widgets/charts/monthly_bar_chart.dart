@@ -11,17 +11,48 @@ class MonthlyBarChart extends StatefulWidget {
   State<MonthlyBarChart> createState() => _MonthlyBarChartState();
 }
 
-class _MonthlyBarChartState extends State<MonthlyBarChart> {
+class _MonthlyBarChartState extends State<MonthlyBarChart>
+    with TickerProviderStateMixin {
   final List<String> months = [
-    "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
   ];
   Map<int, double> monthlyData = {};
   bool isLoading = true;
   int currentMonth = DateTime.now().month;
 
+  late AnimationController _barController;
+  late Animation<double> _barAnimation;
+
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
+
+  int? _tappedIndex;
+
   @override
   void initState() {
     super.initState();
+
+    // Bar growth animation
+    _barController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+    _barAnimation = CurvedAnimation(
+      parent: _barController,
+      curve: Curves.easeOutCubic,
+    );
+
+    // Fade-in animation
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeIn,
+    );
+
     fetchMonthlyData();
   }
 
@@ -49,7 +80,7 @@ class _MonthlyBarChartState extends State<MonthlyBarChart> {
         txnDate = DateTime.tryParse('$dateStr $timeStr');
       }
 
-      // Here's the real fix! Only sum when you are the sender:
+      // Only sum when you are the sender
       if (txnDate != null &&
           txnDate.year == DateTime.now().year &&
           txnDate.month <= currentMonth &&
@@ -64,6 +95,17 @@ class _MonthlyBarChartState extends State<MonthlyBarChart> {
       monthlyData = tempData;
       isLoading = false;
     });
+
+    // Start animations after data is ready
+    _fadeController.forward();
+    _barController.forward();
+  }
+
+  @override
+  void dispose() {
+    _barController.dispose();
+    _fadeController.dispose();
+    super.dispose();
   }
 
   @override
@@ -74,84 +116,138 @@ class _MonthlyBarChartState extends State<MonthlyBarChart> {
 
     final maxAmount = filteredMonths.isEmpty
         ? 10
-        : filteredMonths.map((m) => monthlyData[m]!).reduce((a, b) => a > b ? a : b);
+        : filteredMonths
+            .map((m) => monthlyData[m]!)
+            .reduce((a, b) => a > b ? a : b);
 
     return isLoading
         ? const Center(child: CircularProgressIndicator())
-        : SizedBox(
-            height: 260,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SizedBox(
-                width: 60.0 * filteredMonths.length,
-                child: BarChart(
-                  BarChartData(
-                    alignment: BarChartAlignment.spaceAround,
-                    gridData: FlGridData(show: false),
-                    borderData: FlBorderData(show: false),
-                    barTouchData: BarTouchData(
-                      enabled: widget.onBarTap != null,
-                      touchCallback: (event, response) {
-                        if (widget.onBarTap != null &&
-                            response != null &&
-                            response.spot != null &&
-                            event.isInterestedForInteractions) {
-                          final index = response.spot!.touchedBarGroupIndex;
-                          if (index >= 0 && index < filteredMonths.length) {
-                            final monthNum = filteredMonths[index];
-                            widget.onBarTap!(monthNum, months[monthNum - 1]);
-                          }
-                        }
-                      },
-                    ),
-                    titlesData: FlTitlesData(
-                      // ...title code omitted for brevity (keep yours)...
-                      leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, _) {
-                        final index = value.toInt();
-                        if (index >= 0 && index < filteredMonths.length) {
-                          final amount = monthlyData[filteredMonths[index]];
-                          if (amount != null && amount > 0) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 4),
-                              child: Text('₹${amount.toStringAsFixed(0)}',
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
-                              ),
-                            );
-                          }
-                        }
-                        return const SizedBox.shrink();
-                      })),
-                      bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, _) {
-                        final index = value.toInt();
-                        if (index >= 0 && index < filteredMonths.length) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(months[filteredMonths[index] - 1],
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      })),
-                    ),
-                    minY: 0,
-                    maxY: maxAmount + maxAmount * 0.2,
-                    barGroups: List.generate(filteredMonths.length, (index) {
-                      final month = filteredMonths[index];
-                      final value = monthlyData[month] ?? 0;
-                      return BarChartGroupData(
-                        x: index,
-                        barRods: [
-                          BarChartRodData(
-                            toY: value,
-                            width: 20,
-                            color: Colors.deepPurple,
-                            borderRadius: BorderRadius.circular(4),
+        : FadeTransition(
+            opacity: _fadeAnimation,
+            child: SizedBox(
+              height: 260,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  width: 60.0 * filteredMonths.length,
+                  child: AnimatedBuilder(
+                    animation: _barAnimation,
+                    builder: (context, child) {
+                      return BarChart(
+                        BarChartData(
+                          alignment: BarChartAlignment.spaceAround,
+                          gridData: FlGridData(show: false),
+                          borderData: FlBorderData(show: false),
+                          barTouchData: BarTouchData(
+                            enabled: widget.onBarTap != null,
+                            touchCallback: (event, response) {
+                              if (widget.onBarTap != null &&
+                                  response != null &&
+                                  response.spot != null &&
+                                  event.isInterestedForInteractions) {
+                                final index =
+                                    response.spot!.touchedBarGroupIndex;
+                                if (index >= 0 &&
+                                    index < filteredMonths.length) {
+                                  final monthNum = filteredMonths[index];
+                                  widget.onBarTap!(
+                                      monthNum, months[monthNum - 1]);
+                                  setState(() {
+                                    _tappedIndex = index;
+                                  });
+                                }
+                              } else {
+                                setState(() {
+                                  _tappedIndex = null;
+                                });
+                              }
+                            },
                           ),
-                        ],
+                          titlesData: FlTitlesData(
+                            leftTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false)),
+                            rightTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false)),
+                            topTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (value, _) {
+                                  final index = value.toInt();
+                                  if (index >= 0 &&
+                                      index < filteredMonths.length) {
+                                    final amount =
+                                        monthlyData[filteredMonths[index]];
+                                    if (amount != null && amount > 0) {
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 4),
+                                        child: Text(
+                                          '₹${amount.toStringAsFixed(0)}',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (value, _) {
+                                  final index = value.toInt();
+                                  if (index >= 0 &&
+                                      index < filteredMonths.length) {
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.only(top: 8.0),
+                                      child: Text(
+                                        months[filteredMonths[index] - 1],
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                            ),
+                          ),
+                          minY: 0,
+                          maxY: maxAmount + maxAmount * 0.2,
+                          barGroups:
+                              List.generate(filteredMonths.length, (index) {
+                            final month = filteredMonths[index];
+                            final value = monthlyData[month] ?? 0;
+                            double animatedValue =
+                                value * _barAnimation.value;
+                            bool isTapped = _tappedIndex == index;
+
+                            return BarChartGroupData(
+                              x: index,
+                              barRods: [
+                                BarChartRodData(
+                                  toY: animatedValue,
+                                  width: isTapped ? 26 : 20, // pop effect
+                                  color: isTapped
+                                      ? Colors.orangeAccent
+                                      : Colors.deepPurple,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ],
+                            );
+                          }),
+                        ),
                       );
-                    }),
+                    },
                   ),
                 ),
               ),

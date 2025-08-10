@@ -154,91 +154,109 @@ class _CouponsState extends State<Coupons> {
     );
   }
 
+  Future<bool> _onWillPop() async {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomeScreen()),
+    );
+    return false; // prevent default back behavior
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          "Coupons",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text(
+            "Coupons",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          iconTheme: const IconThemeData(color: Colors.black),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const HomeScreen()),
+              );
+            },
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      drawer: _buildDrawer(context),
-      body: coupons.isEmpty
-          ? const Center(child: Text("No Coupons Available"))
-          : Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ListView.builder(
-                itemCount: coupons.length,
-                itemBuilder: (context, index) {
-                  final coupon = coupons[index];
-                  return GestureDetector(
-                    onTap: () => _showImagePopup(coupon.imagePath),
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 15),
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.shade200,
-                            blurRadius: 5,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            coupon.imagePath,
-                            height: 200, // bigger image
-                            width: 200,
-                            fit: BoxFit.cover, // ensures image fills area
-                          ),
-                          const SizedBox(height: 8), // reduced gap
-                          ElevatedButton(
-                            onPressed: () => _onClaim(coupon),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  12,
-                                ), // slightly sharper
-                              ),
-                              minimumSize: Size(180, 40), // matches image width
+        drawer: _buildDrawer(context),
+        body: coupons.isEmpty
+            ? const Center(child: Text("No Coupons Available"))
+            : Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: ListView.builder(
+                  itemCount: coupons.length,
+                  itemBuilder: (context, index) {
+                    final coupon = coupons[index];
+                    return GestureDetector(
+                      onTap: () => _showImagePopup(coupon.imagePath),
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade200,
+                              blurRadius: 5,
+                              offset: const Offset(0, 4),
                             ),
-                            child: const Text(
-                              "Claim",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                          ],
+                          color: Colors.white,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              coupon.imagePath,
+                              height: 200,
+                              width: 200,
+                              fit: BoxFit.cover,
+                            ),
+                            const SizedBox(height: 8),
+                            ElevatedButton(
+                              onPressed: () => _onClaim(coupon),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                minimumSize: const Size(180, 40),
+                              ),
+                              child: const Text(
+                                "Claim",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
+      ),
     );
   }
 }

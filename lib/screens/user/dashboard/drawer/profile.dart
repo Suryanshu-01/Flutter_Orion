@@ -61,132 +61,152 @@ class _ProfileManagerState extends State<ProfileManager> {
     }
   }
 
+  Future<bool> _onWillPop() async {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomeScreen()),
+    );
+    return false; // Prevent default back action
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: _onWillPop, // Handle hardware back button
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          "Profile",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text(
+            "Profile",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          iconTheme: const IconThemeData(color: Colors.black),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const HomeScreen()),
+              );
+            },
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    const Color.fromARGB(255, 109, 108, 108),
-                    const Color.fromARGB(255, 0, 0, 0),
-                  ],
+        drawer: Drawer(
+          child: ListView(
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color.fromARGB(255, 109, 108, 108),
+                      const Color.fromARGB(255, 0, 0, 0),
+                    ],
+                  ),
+                ),
+                child: const Text(
+                  "Profile",
+                  style: TextStyle(color: Colors.white, fontSize: 24),
                 ),
               ),
-              child: Text(
-                "Profile",
-                style: TextStyle(color: Colors.white, fontSize: 24),
+              ListTile(
+                leading: const Icon(Icons.home),
+                title: const Text("Home"),
+                onTap: () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HomeScreen()),
+                ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text("Home"),
-              onTap: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => HomeScreen()),
+              ListTile(
+                leading: const Icon(Icons.admin_panel_settings),
+                title: const Text("Admin/User"),
+                onTap: () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SelectUser()),
+                ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.admin_panel_settings),
-              title: Text("Admin/User"),
-              onTap: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => SelectUser()),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text("Settings"),
+                onTap: () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SettingsUser()),
+                ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Settings"),
-              onTap: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => SettingsUser()),
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: const Text("About Us"),
+                onTap: () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AboutUs()),
+                ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.info_outline),
-              title: Text("About Us"),
-              onTap: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => AboutUs()),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(color: Colors.black),
-                )
-              : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.account_circle,
-                      size: 100,
-                      color: Colors.black,
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(color: Colors.black),
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.account_circle,
+                        size: 100,
                         color: Colors.black,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          profileDetail("Name", name),
-                          const Divider(color: Colors.white24),
-                          profileDetail("Email", email),
-                          const Divider(color: Colors.white24),
-                          profileDetail("Phone", phone),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        settingsTile(
-                          label: "Show My QR Code",
-                          icon: Icons.qr_code,
-                          onTap: () => Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (_) => QrGenerate()),
-                          ),
+                      const SizedBox(height: 20),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            profileDetail("Name", name),
+                            const Divider(color: Colors.white24),
+                            profileDetail("Email", email),
+                            const Divider(color: Colors.white24),
+                            profileDetail("Phone", phone),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          settingsTile(
+                            label: "Show My QR Code",
+                            icon: Icons.qr_code,
+                            onTap: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (_) => const QrGenerate()),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+          ),
         ),
       ),
     );
