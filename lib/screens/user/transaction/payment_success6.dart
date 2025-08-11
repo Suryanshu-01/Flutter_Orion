@@ -1,13 +1,45 @@
 import 'dart:math';
+import 'package:animated_check/animated_check.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
 
-class PaymentSuccessScreen extends StatelessWidget {
+class PaymentSuccessScreen extends StatefulWidget {
   final bool isSuccess;
 
   const PaymentSuccessScreen({super.key, this.isSuccess = true});
+
+  @override
+  State<PaymentSuccessScreen> createState() => _PaymentSuccessScreenState();
+}
+
+class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _checkAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 1));
+
+    _scaleAnimation =
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack);
+
+    _checkAnimation =
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutCirc);
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   Future<String> handleCouponReward() async {
     final List<String> brandCoupons = [
@@ -55,21 +87,29 @@ class PaymentSuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Payment Result")),
+      backgroundColor: Colors.grey[100], // match TransferProcessingScreen style
+      appBar: AppBar(
+        title: const Text("Payment Result"),
+        backgroundColor: Colors.blue, // same theme color
+      ),
       body: Center(
-        child: isSuccess
+        child: widget.isSuccess
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.check_circle,
-                    size: 100,
-                    color: Colors.black,
+                  ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: AnimatedCheck(
+                      progress: _checkAnimation,
+                      size: 220, // ⬆ Increased tick size
+                      color: Colors.green,
+                      strokeWidth: 10,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   const Text(
                     "Payment Successful",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton(
@@ -113,7 +153,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                                 foregroundColor: Colors.white,
                               ),
                               onPressed: () {
-                                Navigator.pop(context); // close dialog
+                                Navigator.pop(context);
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
@@ -134,11 +174,18 @@ class PaymentSuccessScreen extends StatelessWidget {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.cancel, size: 100, color: Colors.red),
+                  ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: Icon(
+                      Icons.close_rounded,
+                      size: 180, // ⬆ Increased cross size
+                      color: Colors.red,
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   const Text(
                     "Payment Failed",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton(
