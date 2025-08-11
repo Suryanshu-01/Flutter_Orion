@@ -334,7 +334,13 @@ class _ChangeloginState extends State<Changelogin> {
                     const SizedBox(height: 20),
                     OutlinedButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SettingsUser(),
+                          ),
+                          (route) => false,
+                        );
                       },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.white,

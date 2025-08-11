@@ -7,7 +7,7 @@ import 'package:orion/services/notification_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform, // ✅ This is important!
+    options: DefaultFirebaseOptions.currentPlatform, 
   );
   
   await NotificationService.initialize();

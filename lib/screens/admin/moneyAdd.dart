@@ -19,31 +19,30 @@ class _MoneyAddPageState extends State<MoneyAddPage> {
 
     final amount = double.tryParse(_amountController.text);
     if (amount == null || amount <= 0) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Enter a valid amount')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter a valid amount')),
+      );
       return;
     }
 
     setState(() => _isLoading = true);
 
-    final userDoc = FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid);
+    final userDoc =
+        FirebaseFirestore.instance.collection('users').doc(user.uid);
 
     await FirebaseFirestore.instance.runTransaction((transaction) async {
       final snapshot = await transaction.get(userDoc);
-      final currentBalance = (snapshot.data()?['walletBalance'] ?? 0)
-          .toDouble();
+      final currentBalance =
+          (snapshot.data()?['walletBalance'] ?? 0).toDouble();
       transaction.update(userDoc, {'walletBalance': currentBalance + amount});
     });
 
     setState(() => _isLoading = false);
     _amountController.clear();
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Money added successfully!')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Money added successfully!')),
+    );
   }
 
   @override
@@ -63,18 +62,21 @@ class _MoneyAddPageState extends State<MoneyAddPage> {
           children: [
             TextField(
               controller: _amountController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              style: const TextStyle(color: Colors.white),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              style: const TextStyle(color: Colors.black), // Text inside box black
               decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white, // Box background white
                 labelText: 'Enter amount',
-                labelStyle: const TextStyle(color: Colors.white54),
+                labelStyle: const TextStyle(color: Colors.black54),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.white54),
+                  borderSide: const BorderSide(color: Colors.white),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.white),
+                  borderSide: const BorderSide(color: Colors.white, width: 2),
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
             ),

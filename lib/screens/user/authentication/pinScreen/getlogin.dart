@@ -61,13 +61,13 @@ class _AdminLoginPinScreenState extends State<AdminLoginPinScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         elevation: 0,
         title: const Text(
           "Admin PIN",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -132,4 +132,4 @@ class _AdminLoginPinScreenState extends State<AdminLoginPinScreen> {
       ),
     );
   }
-} 
+}

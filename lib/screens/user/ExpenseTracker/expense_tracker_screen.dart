@@ -9,7 +9,6 @@ import 'package:orion/screens/user/ExpenseTracker/widgets/animated_total_counter
 import 'package:orion/screens/user/ExpenseTracker/widgets/charts/monthly_bar_chart.dart';
 import 'package:orion/screens/user/ExpenseTracker/monthly_detail_screen.dart';
 import 'package:orion/screens/user/ExpenseTracker/widgets/nav/homescreen.dart';
-import 'package:orion/screens/user/dashboard/dashboard_screen.dart'; // Import your dashboard screen
 
 class ExpenseTrackerScreen extends StatefulWidget {
   const ExpenseTrackerScreen({super.key});
@@ -132,9 +131,9 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
     final category = data['category'] ?? 'Miscellaneous';
     final name = _usersNameMap[otherUserId] ?? 'Unknown';
 
-    final textColor = isModal ? Colors.black : Colors.white;
+    final textColor = isModal ? Colors.white : Colors.white;
     final subtitleColor = isModal
-        ? Colors.black.withOpacity(0.7)
+        ? Colors.white70
         : Colors.white.withOpacity(0.7);
 
     return ListTile(
@@ -185,8 +184,8 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
   void _showTransactionHistoryPopup() {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final width = math.min(screenWidth * 0.98, 850.0); // wider
-    final height = screenHeight * 0.85; // taller
+    final width = math.min(screenWidth * 0.98, 850.0);
+    final height = screenHeight * 0.85;
 
     showGeneralDialog(
       context: context,
@@ -201,9 +200,9 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
             child: Container(
               width: width,
               height: height,
-              padding: const EdgeInsets.all(16), // extra padding inside
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.black,  // Black background
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
@@ -214,34 +213,38 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
                         child: Text(
                           "Transaction History",
                           style: TextStyle(
-                              color: Colors.black,
+                              color: Colors.white,  // White text
                               fontSize: 22,
                               fontWeight: FontWeight.bold),
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close, color: Colors.black),
+                        icon: const Icon(Icons.close, color: Colors.white), // White close icon
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ],
                   ),
-                  const Divider(height: 1),
+                  const Divider(color: Colors.white70, height: 1), // White divider
                   Expanded(
                     child: _isLoading
-                        ? const Center(child: CircularProgressIndicator())
+                        ? const Center(
+                            child: CircularProgressIndicator(color: Colors.white),
+                          )
                         : (_allTransactions.isEmpty
                             ? const Center(
                                 child: Text(
                                   "No transactions yet",
-                                  style: TextStyle(color: Colors.black54),
+                                  style: TextStyle(color: Colors.white70),
                                 ),
                               )
                             : Scrollbar(
+                                thumbVisibility: true,
                                 child: ListView.separated(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 8),
                                   itemCount: _allTransactions.length,
-                                  separatorBuilder: (_, __) => const Divider(),
+                                  separatorBuilder: (_, __) =>
+                                      const Divider(color: Colors.white24),
                                   itemBuilder: (context, index) {
                                     final data = _allTransactions[index];
                                     return _buildTransactionTile(data,
@@ -285,9 +288,12 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
           automaticallyImplyLeading: false,
           title: const Text(
             "Expense Tracker",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: Color.fromARGB(255, 236, 217, 147),
+                fontWeight: FontWeight.bold),
           ),
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme:
+              const IconThemeData(color: Color.fromARGB(255, 226, 148, 148)),
         ),
         body: ListView(
           padding: const EdgeInsets.all(20),
@@ -311,7 +317,7 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
                   _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : AnimatedTotalCounter(
-                          label: "This Year Expense",
+                          label: "This Year's Expense",
                           totalAmount: _totalYearlyExpense,
                           textStyle: GoogleFonts.staatliches(
                             textStyle: const TextStyle(

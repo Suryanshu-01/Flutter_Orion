@@ -24,8 +24,8 @@ class MonthlyDetailScreen extends StatefulWidget {
 
 class _MonthlyDetailScreenState extends State<MonthlyDetailScreen> {
   bool showBarChart = true;
-  late List<Map<String, dynamic>> monthlyTransactions;      // only expenses
-  late List<Map<String, dynamic>> monthlyAllTransactions;   // all sent/received
+  late List<Map<String, dynamic>> monthlyTransactions; // only expenses
+  late List<Map<String, dynamic>> monthlyAllTransactions; // all sent/received
   late String _currentUserId;
 
   static const List<String> _paymentTypes = [
@@ -45,10 +45,29 @@ class _MonthlyDetailScreenState extends State<MonthlyDetailScreen> {
 
   int _getMonthNumber(String monthName) {
     const monthNames = {
-      'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5,
-      'June': 6, 'July': 7, 'August': 8, 'September': 9, 'October': 10,
-      'November': 11, 'December': 12, 'Jan': 1, 'Feb': 2, 'Mar': 3,
-      'Apr': 4, 'Jun': 6, 'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12
+      'January': 1,
+      'February': 2,
+      'March': 3,
+      'April': 4,
+      'May': 5,
+      'June': 6,
+      'July': 7,
+      'August': 8,
+      'September': 9,
+      'October': 10,
+      'November': 11,
+      'December': 12,
+      'Jan': 1,
+      'Feb': 2,
+      'Mar': 3,
+      'Apr': 4,
+      'Jun': 6,
+      'Jul': 7,
+      'Aug': 8,
+      'Sep': 9,
+      'Oct': 10,
+      'Nov': 11,
+      'Dec': 12,
     };
     return monthNames[monthName] ?? DateTime.now().month;
   }
@@ -138,8 +157,15 @@ class _MonthlyDetailScreenState extends State<MonthlyDetailScreen> {
         backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
-          title: Text('${widget.monthName} Details'),
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          title: Text(
+            '${widget.monthName} Details',
+            style: const TextStyle(
+              color: Color.fromARGB(255, 236, 217, 147),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         body: GestureDetector(
           onHorizontalDragEnd: (details) {
@@ -151,7 +177,7 @@ class _MonthlyDetailScreenState extends State<MonthlyDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AnimatedTotalCounter(
-                  label: "This ${widget.monthName} Expense",
+                  label: "${widget.monthName} Expense",
                   totalAmount: totalExpense,
                   textStyle: GoogleFonts.staatliches(
                     textStyle: const TextStyle(
