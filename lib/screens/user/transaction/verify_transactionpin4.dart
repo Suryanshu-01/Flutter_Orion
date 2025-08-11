@@ -170,8 +170,6 @@ class _VerifyTransactionPinScreenState
                     focusedPinTheme: focusedPinTheme,
                     errorPinTheme: errorPinTheme,
                     onCompleted: (pin) {
-                      // auto-verify on complete (optional)
-                      // _verifyPin();
                     },
                   ),
                   const SizedBox(height: 30),

@@ -56,8 +56,10 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
   }
 
   Future<String> fetchUserName(String uid) async {
-    final snapshot =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
     if (snapshot.exists) {
       final data = snapshot.data() as Map<String, dynamic>;
       return data['name'] ?? "User";
@@ -89,16 +91,16 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
       }
       data['parsedDate'] = parsed;
       return data;
-    }).toList()
-      ..sort((a, b) {
-        final dateA = a['parsedDate'] as DateTime? ?? DateTime.now();
-        final dateB = b['parsedDate'] as DateTime? ?? DateTime.now();
-        return dateB.compareTo(dateA);
-      });
+    }).toList()..sort((a, b) {
+      final dateA = a['parsedDate'] as DateTime? ?? DateTime.now();
+      final dateB = b['parsedDate'] as DateTime? ?? DateTime.now();
+      return dateB.compareTo(dateA);
+    });
   }
 
   Future<void> _prefetchUserNames(
-      List<Map<String, dynamic>> transactions) async {
+    List<Map<String, dynamic>> transactions,
+  ) async {
     final currentUserId = FirebaseAuth.instance.currentUser?.uid;
     final userIds = <String>{};
     for (final tx in transactions) {
@@ -109,8 +111,10 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
 
     final nameMap = <String, String>{};
     for (final id in userIds) {
-      final doc =
-          await FirebaseFirestore.instance.collection('users').doc(id).get();
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(id)
+          .get();
       if (doc.exists) {
         final userData = doc.data() as Map<String, dynamic>;
         nameMap[id] = userData['name'] ?? userData['phone'] ?? 'Unknown';
@@ -119,8 +123,10 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
     _usersNameMap = nameMap;
   }
 
-  Widget _buildTransactionTile(Map<String, dynamic> data,
-      {bool isModal = false}) {
+  Widget _buildTransactionTile(
+    Map<String, dynamic> data, {
+    bool isModal = false,
+  }) {
     final currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
     final isSender = data['from'] == currentUserId;
     final otherUserId = isSender ? data['to'] : data['from'];
@@ -202,7 +208,7 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
               height: height,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.black,  // Black background
+                color: Colors.black, // Black background
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
@@ -213,45 +219,58 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
                         child: Text(
                           "Transaction History",
                           style: TextStyle(
-                              color: Colors.white,  // White text
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold),
+                            color: Colors.white, // White text
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white), // White close icon
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                        ),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ],
                   ),
-                  const Divider(color: Colors.white70, height: 1), // White divider
+                  const Divider(
+                    color: Colors.white70,
+                    height: 1,
+                  ), 
                   Expanded(
                     child: _isLoading
                         ? const Center(
-                            child: CircularProgressIndicator(color: Colors.white),
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
                           )
                         : (_allTransactions.isEmpty
-                            ? const Center(
-                                child: Text(
-                                  "No transactions yet",
-                                  style: TextStyle(color: Colors.white70),
-                                ),
-                              )
-                            : Scrollbar(
-                                thumbVisibility: true,
-                                child: ListView.separated(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                  itemCount: _allTransactions.length,
-                                  separatorBuilder: (_, __) =>
-                                      const Divider(color: Colors.white24),
-                                  itemBuilder: (context, index) {
-                                    final data = _allTransactions[index];
-                                    return _buildTransactionTile(data,
-                                        isModal: true);
-                                  },
-                                ),
-                              )),
+                              ? const Center(
+                                  child: Text(
+                                    "No transactions yet",
+                                    style: TextStyle(color: Colors.white70),
+                                  ),
+                                )
+                              : Scrollbar(
+                                  thumbVisibility: true,
+                                  child: ListView.separated(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
+                                    itemCount: _allTransactions.length,
+                                    separatorBuilder: (_, __) =>
+                                        const Divider(color: Colors.white24),
+                                    itemBuilder: (context, index) {
+                                      final data = _allTransactions[index];
+                                      return _buildTransactionTile(
+                                        data,
+                                        isModal: true,
+                                      );
+                                    },
+                                  ),
+                                )),
                   ),
                 ],
               ),
@@ -261,8 +280,7 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
       },
       transitionBuilder: (context, anim1, anim2, child) {
         return ScaleTransition(
-          scale:
-              CurvedAnimation(parent: anim1, curve: Curves.easeOutBack),
+          scale: CurvedAnimation(parent: anim1, curve: Curves.easeOutBack),
           child: child,
         );
       },
@@ -273,7 +291,6 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Navigate explicitly to DashboardScreen on back pressed
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -289,11 +306,13 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
           title: const Text(
             "Expense Tracker",
             style: TextStyle(
-                color: Color.fromARGB(255, 236, 217, 147),
-                fontWeight: FontWeight.bold),
+              color: Color.fromARGB(255, 236, 217, 147),
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          iconTheme:
-              const IconThemeData(color: Color.fromARGB(255, 226, 148, 148)),
+          iconTheme: const IconThemeData(
+            color: Color.fromARGB(255, 226, 148, 148),
+          ),
         ),
         body: ListView(
           padding: const EdgeInsets.all(20),
@@ -308,11 +327,15 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Hi $_userName 👋",
-                      style: GoogleFonts.staatliches(
-                        textStyle:
-                            const TextStyle(fontSize: 32, color: Colors.white),
-                      )),
+                  Text(
+                    "Hi $_userName 👋",
+                    style: GoogleFonts.staatliches(
+                      textStyle: const TextStyle(
+                        fontSize: 32,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
@@ -321,14 +344,16 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
                           totalAmount: _totalYearlyExpense,
                           textStyle: GoogleFonts.staatliches(
                             textStyle: const TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.amber),
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.amber,
+                            ),
                           ),
                           labelStyle: GoogleFonts.staatliches(
                             textStyle: const TextStyle(
-                                fontSize: 32,
-                                color: Color.fromARGB(179, 212, 31, 31)),
+                              fontSize: 32,
+                              color: Color.fromARGB(179, 212, 31, 31),
+                            ),
                           ),
                         ),
                 ],
@@ -344,11 +369,14 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Monthly Expenses",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white)),
+                  const Text(
+                    "Monthly Expenses",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   SizedBox(
                     height: 220,
@@ -369,28 +397,33 @@ class _ExpenseTrackerScreenState extends State<ExpenseTrackerScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Recent Transactions",
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white)),
+                    const Text(
+                      "Recent Transactions",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     _isLoading
                         ? const Center(
-                            child: CircularProgressIndicator(color: Colors.white),
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
                           )
                         : _allTransactions.isEmpty
-                            ? const Text("No transactions found.",
-                                style: TextStyle(color: Colors.white70))
-                            : ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount:
-                                    math.min(3, _allTransactions.length),
-                                itemBuilder: (context, index) =>
-                                    _buildTransactionTile(
-                                        _allTransactions[index]),
-                              ),
+                        ? const Text(
+                            "No transactions found.",
+                            style: TextStyle(color: Colors.white70),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: math.min(3, _allTransactions.length),
+                            itemBuilder: (context, index) =>
+                                _buildTransactionTile(_allTransactions[index]),
+                          ),
                     const SizedBox(height: 8),
                     const Text(
                       "Tap to view full history",

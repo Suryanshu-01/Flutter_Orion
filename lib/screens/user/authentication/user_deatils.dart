@@ -35,10 +35,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   }
 
   Widget _buildImageSection() {
-    // Change image path as needed
     return Center(
       child: Image.asset(
-        'assets/images/userDetail.png', // <-- Replace with your image path
+        'assets/images/userDetail.png',
         height: 120,
         fit: BoxFit.contain,
       ),

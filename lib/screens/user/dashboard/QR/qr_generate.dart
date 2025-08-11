@@ -161,8 +161,6 @@ class _QrGenerateState extends State<QrGenerate> {
   }
 
   void _copyQrCode() {
-    // For now, we'll copy the phone number as text
-    // In a real app, you might want to save the QR code as an image
     Clipboard.setData(ClipboardData(text: phoneNumber ?? ''));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -251,9 +249,9 @@ class _QrGenerateState extends State<QrGenerate> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF232526), // dark gray
-              Color(0xFF0f2027), // almost black
-              Color(0xFF000000), // black
+              Color(0xFF232526),
+              Color(0xFF0f2027),
+              Color(0xFF000000),
             ],
           ),
         ),
@@ -323,7 +321,7 @@ class _QrGenerateState extends State<QrGenerate> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  // QR Code
+                                  
                                   Container(
                                     padding: const EdgeInsets.all(20),
                                     decoration: BoxDecoration(
@@ -339,7 +337,6 @@ class _QrGenerateState extends State<QrGenerate> {
                                   ),
                                   const SizedBox(height: 20),
 
-                                  // Tap to view text
                                   const Text(
                                     "Tap to view details",
                                     style: TextStyle(
@@ -354,7 +351,6 @@ class _QrGenerateState extends State<QrGenerate> {
                             ),
                           ),
 
-                          // Copy Button
                           const SizedBox(height: 30),
                           Container(
                             decoration: BoxDecoration(

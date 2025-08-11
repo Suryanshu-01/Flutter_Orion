@@ -26,7 +26,6 @@ class _CategoryBarChartState extends State<CategoryBarChart>
   void initState() {
     super.initState();
 
-    // Animation for bar growth
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),

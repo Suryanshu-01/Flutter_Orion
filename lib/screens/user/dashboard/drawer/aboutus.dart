@@ -69,7 +69,7 @@ class AboutUs extends StatelessWidget {
       context,
       MaterialPageRoute(builder: (_) => const HomeScreen()),
     );
-    return false; // prevent default back behavior
+    return false;
   }
 
   @override
@@ -210,17 +210,17 @@ class AboutUs extends StatelessWidget {
                 _buildTeamMember(
                   name: "Kumar Suryanshu",
                   rollNumber: "2024IMG-026",
-                  description: "Great Man",
+                  description: "Lead Backend Developer – Built the core backend logic, database integration, transaction logic, and navigation flow. Implemented secure authentication and made fully functioning Expense Tracking.",
                 ),
                 _buildTeamMember(
                   name: "Prakhar Srivastava",
                   rollNumber: "2024IMG-033",
-                  description: "Great Man",
+                  description: "Lead Frontend Developer – Designed and developed the app’s UI/UX, including all major screens, animations, and navigation. Created the branding elements like logo, icons, and theme for a consistent visual experience.",
                 ),
                 _buildTeamMember(
                   name: "Aryan Singh",
                   rollNumber: "2024IMT-013",
-                  description: "Cute boy",
+                  description: "Contributor – Assisted in connecting frontend with backend, performed testing, supported documentation and deployment tasks and admin control features ensuring smooth app functionality.",
                 ),
               ],
             ),

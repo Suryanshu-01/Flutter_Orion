@@ -165,7 +165,7 @@ class _SetTransactionPinScreenState extends State<SetTransactionPinScreen> {
                               elevation: 3,
                             ),
                             child: const Text(
-                              "Save and Continue to Dashboard",
+                              "Save and Continue",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,

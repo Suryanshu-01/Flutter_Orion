@@ -87,10 +87,10 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100], // match TransferProcessingScreen style
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text("Payment Result"),
-        backgroundColor: Colors.blue, // same theme color
+        backgroundColor: Colors.blue,
       ),
       body: Center(
         child: widget.isSuccess
@@ -101,7 +101,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
                     scale: _scaleAnimation,
                     child: AnimatedCheck(
                       progress: _checkAnimation,
-                      size: 220, // ⬆ Increased tick size
+                      size: 220, 
                       color: Colors.green,
                       strokeWidth: 10,
                     ),
@@ -178,7 +178,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen>
                     scale: _scaleAnimation,
                     child: Icon(
                       Icons.close_rounded,
-                      size: 180, // ⬆ Increased cross size
+                      size:220 , 
                       color: Colors.red,
                     ),
                   ),

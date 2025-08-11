@@ -16,7 +16,6 @@ class ProfileManager extends StatefulWidget {
 
 class _ProfileManagerState extends State<ProfileManager> {
   String name = '';
-  String email = '';
   String phone = '';
   bool isLoading = true;
 
@@ -38,14 +37,12 @@ class _ProfileManagerState extends State<ProfileManager> {
         if (data != null) {
           setState(() {
             name = data['name'] ?? 'No Name';
-            email = data['email'] ?? 'No Email';
             phone = data['phone'] ?? 'No Phone';
             isLoading = false;
           });
         } else {
           setState(() {
             name = 'No Data Found';
-            email = '';
             phone = '';
             isLoading = false;
           });
@@ -54,7 +51,6 @@ class _ProfileManagerState extends State<ProfileManager> {
     } catch (e) {
       setState(() {
         name = 'Error loading data';
-        email = e.toString();
         phone = '';
         isLoading = false;
       });
@@ -66,13 +62,13 @@ class _ProfileManagerState extends State<ProfileManager> {
       context,
       MaterialPageRoute(builder: (_) => const HomeScreen()),
     );
-    return false; // Prevent default back action
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onWillPop, // Handle hardware back button
+      onWillPop: _onWillPop,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -184,8 +180,6 @@ class _ProfileManagerState extends State<ProfileManager> {
                           children: [
                             profileDetail("Name", name),
                             const Divider(color: Colors.white24),
-                            profileDetail("Email", email),
-                            const Divider(color: Colors.white24),
                             profileDetail("Phone", phone),
                           ],
                         ),
@@ -198,19 +192,12 @@ class _ProfileManagerState extends State<ProfileManager> {
                             label: "Show My QR Code",
                             icon: Icons.qr_code,
                             onTap: () {
-                              Navigator.pushReplacement(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => const HomeScreen(),
+                                  builder: (context) => const QrGenerate(),
                                 ),
-                              ).then((_) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const QrGenerate(),
-                                  ),
-                                );
-                              });
+                              );
                             },
                           ),
                         ],

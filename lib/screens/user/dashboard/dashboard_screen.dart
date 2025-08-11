@@ -93,7 +93,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<bool> _onWillPop() async {
-    // Close the app when back is pressed on dashboard
+    
     if (Platform.isAndroid) {
       SystemNavigator.pop();
     } else if (Platform.isIOS) {
@@ -368,7 +368,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 width: MediaQuery.of(context).size.width * 0.9,
                 height: MediaQuery.of(context).size.height * 0.7,
                 decoration: BoxDecoration(
-                  color: Colors.black, // Changed here from white to black
+                  color: Colors.black, 
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Column(
@@ -381,14 +381,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: Text(
                               "Transaction History",
                               style: TextStyle(
-                                color: Colors.white, // changed black to white
+                                color: Colors.white,
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.close, color: Colors.white), // added white color
+                            icon: const Icon(Icons.close, color: Colors.white), 
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                         ],
@@ -400,14 +400,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Center(
-                              child: CircularProgressIndicator(color: Colors.white), // added color white
+                              child: CircularProgressIndicator(color: Colors.white), 
                             );
                           }
                           if (snapshot.hasError || !snapshot.hasData) {
                             return const Center(
                               child: Text(
                                 "Error fetching transactions",
-                                style: TextStyle(color: Colors.white), // changed black to white
+                                style: TextStyle(color: Colors.white), 
                               ),
                             );
                           }
@@ -416,7 +416,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             return const Center(
                               child: Text(
                                 "No transactions yet",
-                                style: TextStyle(color: Colors.white), // changed black to white
+                                style: TextStyle(color: Colors.white), 
                               ),
                             );
                           }

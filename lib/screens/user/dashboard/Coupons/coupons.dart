@@ -11,7 +11,7 @@ import 'package:orion/screens/user/dashboard/drawer/settings.dart';
 
 class Coupon {
   final String imagePath;
-  final int type; // 1: Brand, 2: Theme
+  final int type;
 
   Coupon({required this.imagePath, required this.type});
 }
@@ -159,7 +159,7 @@ class _CouponsState extends State<Coupons> {
       context,
       MaterialPageRoute(builder: (_) => const HomeScreen()),
     );
-    return false; // prevent default back behavior
+    return false;
   }
 
   @override

@@ -20,13 +20,13 @@ class _SettingsUserState extends State<SettingsUser> {
       context,
       MaterialPageRoute(builder: (_) => const HomeScreen()),
     );
-    return false; // prevent default back action
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onWillPop, // hardware back button handler
+      onWillPop: _onWillPop,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -149,9 +149,6 @@ class _SettingsUserState extends State<SettingsUser> {
                     ),
                     const SizedBox(height: 32),
 
-                    // Removed Push Notification section here
-
-                    // Additional settings
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(

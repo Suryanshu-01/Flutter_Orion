@@ -33,7 +33,6 @@ class _MonthlyBarChartState extends State<MonthlyBarChart>
   void initState() {
     super.initState();
 
-    // Bar growth animation
     _barController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -80,7 +79,6 @@ class _MonthlyBarChartState extends State<MonthlyBarChart>
         txnDate = DateTime.tryParse('$dateStr $timeStr');
       }
 
-      // Only sum when you are the sender
       if (txnDate != null &&
           txnDate.year == DateTime.now().year &&
           txnDate.month <= currentMonth &&
@@ -96,7 +94,6 @@ class _MonthlyBarChartState extends State<MonthlyBarChart>
       isLoading = false;
     });
 
-    // Start animations after data is ready
     _fadeController.forward();
     _barController.forward();
   }

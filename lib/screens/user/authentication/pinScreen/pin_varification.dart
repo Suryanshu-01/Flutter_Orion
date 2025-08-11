@@ -59,7 +59,7 @@ class _LoginPinScreenState extends State<LoginPinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color.fromARGB(255, 240, 239, 239),
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,

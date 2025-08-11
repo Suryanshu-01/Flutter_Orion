@@ -25,7 +25,6 @@ class _Wrapper2State extends State<Wrapper2> {
           final user = authSnapshot.data;
 
           if (user == null) {
-            // If no user is logged in, redirect to signup
             return const Center(
               child: Text(
                 "Please login first",
@@ -54,10 +53,10 @@ class _Wrapper2State extends State<Wrapper2> {
               final userData = userSnapshot.data!.data() as Map<String, dynamic>?;
 
               if (userData == null || !userData.containsKey('adminLoginPin')) {
-                return const SetAdminLoginPinScreen(); // Set admin PIN for first time
+                return const SetAdminLoginPinScreen();
               }
 
-              return const AdminLoginPinScreen(); // Verify admin PIN for subsequent access
+              return const AdminLoginPinScreen(); 
             },
           );
         },

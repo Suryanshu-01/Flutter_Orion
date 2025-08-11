@@ -64,12 +64,12 @@ class _MoneyAddPageState extends State<MoneyAddPage> {
               controller: _amountController,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
-              style: const TextStyle(color: Colors.black), // Text inside box black
+              style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.white, // Box background white
-                labelText: 'Enter amount',
-                labelStyle: const TextStyle(color: Colors.black54),
+                fillColor: Colors.white,
+                hintText: 'Enter amount',
+                hintStyle: const TextStyle(color: Colors.black54),
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.white),
                   borderRadius: BorderRadius.circular(8),

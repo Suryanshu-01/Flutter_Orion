@@ -205,7 +205,7 @@ class _VerifyPhoneDetailsQRState extends State<VerifyPhoneDetailsQR> {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white, // White text on black card
+                            color: Colors.white, 
                           ),
                         ),
                         const SizedBox(height: 20),

@@ -69,12 +69,12 @@ class _SetAdminLoginPinScreenState extends State<SetAdminLoginPinScreen> {
         backgroundColor: Colors.black,
         elevation: 0,
         iconTheme: const IconThemeData(
-          color: Color.fromARGB(255, 236, 217, 147), // gold icons
+          color: Color.fromARGB(255, 236, 217, 147),
         ),
         title: const Text(
           "Set Admin PIN",
           style: TextStyle(
-            color: Color.fromARGB(255, 236, 217, 147), // gold text
+            color: Color.fromARGB(255, 236, 217, 147),
             fontWeight: FontWeight.bold,
           ),
         ),

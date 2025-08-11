@@ -1,4 +1,3 @@
-// home_screen.dart (or wherever your bottom nav + FAB is)
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -38,14 +37,12 @@ class _HomeScreenState extends State<HomeScreen> {
         final uid = _auth.currentUser?.uid;
         if (uid == null) return;
 
-        // Get all users for userMap
         final usersSnap = await _firestore.collection('users').get();
         final Map<String, String> userMap = {
           for (var doc in usersSnap.docs)
             doc.id: (doc.data()['name'] ?? 'Unknown').toString()
         };
 
-        // Get current month transactions
         final now = DateTime.now();
         final monthName = _monthName(now.month);
 

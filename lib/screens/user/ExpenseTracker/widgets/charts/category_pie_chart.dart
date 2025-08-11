@@ -42,8 +42,8 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
     final total = data.values.fold(0.0, (a, b) => a + b);
     final colors = _generateColors(entriesList.length);
 
-    const double finalRadius = 42.0; // final radius for slices
-    const double finalCenterSpace = 24.0; // final center hole size
+    const double finalRadius = 42.0;
+    const double finalCenterSpace = 24.0;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -55,31 +55,24 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
             duration: const Duration(milliseconds: 900),
             curve: Curves.easeOutCubic,
             builder: (context, progress, child) {
-              // progress: 0 -> single point, 1 -> full pie
-              // Use progress to scale radius and fade-in colors.
               return PieChart(
                 PieChartData(
                   sectionsSpace: 2,
-                  // Reduce center space at start so it truly appears from a point
                   centerSpaceRadius: finalCenterSpace * (progress * 0.6),
-                  // rotate slightly into place during animation for a nicer effect
                   startDegreeOffset: 270 * (1 - progress),
                   sections: List.generate(entriesList.length, (index) {
                     final entry = entriesList[index];
                     final value = entry.value;
-                    // radius grows from 0 -> finalRadius
                     final radius = finalRadius * progress;
-                    // Fade color in with progress (optional but looks smoother)
                     final color = colors[index].withOpacity(0.2 + 0.8 * progress);
 
-                    // show percent label only when animation is nearly done
                     final displayLabel = progress >= 0.98
                         ? (total == 0 ? '0%' : '${(entry.value / total * 100).toStringAsFixed(1)}%')
                         : '';
 
                     return PieChartSectionData(
                       color: color,
-                      value: value, // keep proportions consistent
+                      value: value, 
                       radius: radius,
                       title: displayLabel,
                       titleStyle: const TextStyle(

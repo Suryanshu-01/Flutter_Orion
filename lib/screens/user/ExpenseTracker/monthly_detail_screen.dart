@@ -24,8 +24,8 @@ class MonthlyDetailScreen extends StatefulWidget {
 
 class _MonthlyDetailScreenState extends State<MonthlyDetailScreen> {
   bool showBarChart = true;
-  late List<Map<String, dynamic>> monthlyTransactions; // only expenses
-  late List<Map<String, dynamic>> monthlyAllTransactions; // all sent/received
+  late List<Map<String, dynamic>> monthlyTransactions; 
+  late List<Map<String, dynamic>> monthlyAllTransactions;
   late String _currentUserId;
 
   static const List<String> _paymentTypes = [
@@ -71,14 +71,10 @@ class _MonthlyDetailScreenState extends State<MonthlyDetailScreen> {
     };
     return monthNames[monthName] ?? DateTime.now().month;
   }
-
-  /// Filters for this month
   void _filterMonthlyTransactions() {
     final selectedMonth = _getMonthNumber(widget.monthName);
     final currentYear = DateTime.now().year;
     final currentUid = _currentUserId;
-
-    // For chart/analytics: only money SENT by you
     monthlyTransactions = widget.transactions.where((tx) {
       final rawDate = tx['timestamp'] ?? tx['parsedDate'] ?? tx['date'];
       DateTime? date;
@@ -99,7 +95,6 @@ class _MonthlyDetailScreenState extends State<MonthlyDetailScreen> {
           tx['from'] == currentUid;
     }).toList();
 
-    // For transaction history: ALL transactions you participated (sent or received) that month
     monthlyAllTransactions = widget.transactions.where((tx) {
       final rawDate = tx['timestamp'] ?? tx['parsedDate'] ?? tx['date'];
       DateTime? date;
@@ -123,7 +118,6 @@ class _MonthlyDetailScreenState extends State<MonthlyDetailScreen> {
   }
 
   double _calculateTotalExpense() {
-    // Only sum transactions you SENT
     return monthlyTransactions.fold(
       0.0,
       (sum, tx) => sum + (tx['amount'] ?? 0).toDouble(),

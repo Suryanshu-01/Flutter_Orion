@@ -70,10 +70,9 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   Widget _buildImageSection() {
-    // Just update the image path below as you like
     return Center(
       child: Image.asset(
-        'assets/images/loginScreen.png', // <-- Change this to your image path
+        'assets/images/loginScreen.png',
         height: 120,
         fit: BoxFit.contain,
       ),

@@ -51,9 +51,7 @@ class _QrScanState extends State<QrScan> {
 
       if (!mounted) return;
 
-      // Pop current QRScan screen first, then push the details screen
       Navigator.pop(context);
-      // Optionally, you can add a slight delay to allow pop animation to finish
       Future.delayed(const Duration(milliseconds: 300), () {
         Navigator.push(
           context,

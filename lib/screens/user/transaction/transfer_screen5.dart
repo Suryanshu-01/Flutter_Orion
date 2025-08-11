@@ -2,13 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:orion/services/notification_service.dart';
 import 'payment_success6.dart';
 
 class TransferProcessingScreen extends StatefulWidget {
   final String receiverPhone;
   final double amount;
-  final String category; // category/paymentType
+  final String category;
 
   const TransferProcessingScreen({
     super.key,
@@ -54,7 +53,6 @@ class _TransferProcessingScreenState extends State<TransferProcessingScreen> {
       final senderRef = _firestore.collection('users').doc(sender.uid);
 
       return await _firestore.runTransaction((transaction) async {
-        // --- Fetch sender ---
         final senderSnap = await transaction.get(senderRef);
         if (!senderSnap.exists) throw Exception("Sender not found");
 
@@ -63,7 +61,6 @@ class _TransferProcessingScreenState extends State<TransferProcessingScreen> {
 
         if (senderBalance < amount) throw Exception("Insufficient balance");
 
-        // --- Fetch receiver ---
         final receiverQuery = await _firestore
             .collection('users')
             .where('phone', isEqualTo: widget.receiverPhone)
@@ -77,11 +74,9 @@ class _TransferProcessingScreenState extends State<TransferProcessingScreen> {
         final dynamic receiverRaw = receiverDoc['walletBalance'];
         double receiverBalance = _parseBalance(receiverRaw);
 
-        // --- Update balances ---
         transaction.update(senderRef, {'walletBalance': senderBalance - amount});
         transaction.update(receiverRef, {'walletBalance': receiverBalance + amount});
 
-        // --- Create transaction document ---
         final now = DateTime.now();
         final transactionId = _firestore.collection('transactions').doc().id;
 
@@ -104,13 +99,6 @@ class _TransferProcessingScreenState extends State<TransferProcessingScreen> {
           transactionData,
         );
 
-        // --- Send notification to receiver ---
-        final senderName = senderSnap.data()?['name'] ?? 'Someone';
-        await NotificationService.sendMoneyReceivedNotification(
-          receiverUid: receiverDoc.id,
-          senderName: senderName,
-          amount: amount,
-        );
 
         return true;
       }).then((success) async {

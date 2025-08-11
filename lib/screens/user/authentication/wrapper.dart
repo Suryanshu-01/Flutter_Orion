@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:orion/screens/user/authentication/signup_screen.dart';
 import 'package:orion/screens/user/authentication/user_deatils.dart';
 import 'package:orion/screens/user/authentication/pinScreen/pin_loginScreen.dart';
-import 'package:orion/screens/user/authentication/pinScreen/pin_varification.dart'; // ✅ Rename for clarity
+import 'package:orion/screens/user/authentication/pinScreen/pin_varification.dart'; // 
 
 class Wrapper extends StatefulWidget {
   const Wrapper({super.key});
