@@ -197,10 +197,21 @@ class _ProfileManagerState extends State<ProfileManager> {
                           settingsTile(
                             label: "Show My QR Code",
                             icon: Icons.qr_code,
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (_) => const QrGenerate()),
-                            ),
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const HomeScreen(),
+                                ),
+                              ).then((_) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const QrGenerate(),
+                                  ),
+                                );
+                              });
+                            },
                           ),
                         ],
                       ),
